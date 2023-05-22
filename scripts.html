@@ -311,13 +311,12 @@
     const animateHeader = () => {
         try {
             const threeMonths = document.querySelector('#row-vdLrkiAk0X')
+            const sectionInner = document.querySelector('#section-nMyY9vZJBI>.inner')
             const parent = document.querySelector('#row-pWgdbNq0gX')
-            parent.appendChild(threeMonths)
-
-
             const originalButton = document.querySelector('#button-nqR07-BPrY button')
-            const originalButtonHeight = originalButton.offsetHeight
-            const button = originalButton.cloneNode(true)
+            const button = originalButton.cloneNode(true);
+            const mainNavbar = document.querySelector('#section-E6bq0gyrf4')
+            const mobileNavbar = document.querySelector('#section-VYHOVsuz9g')
             button.setAttribute('id', 'floating-button')
             button.classList.add('floating-button')
             button.classList.add('hidden')
@@ -327,13 +326,14 @@
                 originalButton.click()
             })
 
+
+
             let timeOutID;
             const handleStickyButton = () => {
                 clearTimeout(timeOutID)
                 const distanceOfButtonOriginalTopToScreenTop = getElementFullOffsetTop(originalButton);
-                // const distanceOfOriginalBottomToScreenTop = distanceOfButtonOriginalTopToScreenTop + originalButtonHeight
                 const scrollPosition = window.scrollY
-                const distanceToTop = distanceOfButtonOriginalTopToScreenTop - scrollPosition - 60; // remove header height
+                const distanceToTop = distanceOfButtonOriginalTopToScreenTop - scrollPosition - (window.innerHeight > 900 ? mainNavbar.offsetHeight : mobileNavbar.offsetHeight);
                 const shouldShowNewButton = distanceToTop < 0;
                 if (shouldShowNewButton) {
                     button.classList.remove('hidden-opacity')
@@ -346,12 +346,36 @@
                     }, 300)
                 }
             }
-            window.addEventListener('scroll', () => {
+
+
+            const handleButtons = () => {
                 setTimeout(() => {
                     handleStickyButton()
                 }, 0)
-            })
-            handleStickyButton()
+            }
+
+            const handleHeader = () => {
+                if (window.innerWidth > 900) {
+                    parent.appendChild(threeMonths)
+                } else {
+                    sectionInner.insertBefore(threeMonths, parent)
+                }
+                window.addEventListener('scroll', handleButtons)
+                handleButtons()
+            }
+
+            let resizeTimeout;
+
+            const handleWindowResize = () => {
+                clearTimeout(resizeTimeout);
+                window.removeEventListener('scroll', handleButtons)
+                resizeTimeout = setTimeout(() => {
+                    handleHeader();
+                }, 1000);
+            }
+
+            handleHeader();
+            window.addEventListener('resize', handleWindowResize);
         } catch (error) {
             console.log('animateHeader', error);
         }
