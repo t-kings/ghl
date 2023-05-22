@@ -236,15 +236,17 @@
                 }, 0)
             }
 
-            const forLargeScreensAbove1000 = () => {
+            const forLargeScreensAbove900 = () => {
                 toggleNavBars();
                 window.addEventListener('scroll', scrollingEventHandlerForNavbar);
             }
 
             const openButton = document.querySelector('#image-M_5uM8v5BD')
             const closeButton = document.querySelector('#image-aaYcYZIx-9')
+            const mobileNavParent = document.querySelector('#section-VYHOVsuz9g')
             const mobileNavbar = document.querySelector('#section-PZI44N8w6t')
             const mobileNavAnchors = document.querySelectorAll('#nav-menu-nMy9j9184U .nav-menu-wrapper .nav-menu .nav-menu-item a')
+            const header = document.querySelector('#section-v8zXakbUxK')
 
             const openMobileNavbar = () => {
                 mobileNavbar.classList.add('active')
@@ -255,20 +257,21 @@
 
 
 
-            const forSmallScreensBelow1000 = () => {
+            const forSmallScreensBelow900 = () => {
                 closeMobileNavbar();
                 openButton.addEventListener('click', openMobileNavbar)
                 closeButton.addEventListener('click', closeMobileNavbar)
+                header.style.marginTop = `${mobileNavParent.offsetHeight}px`
                 mobileNavAnchors.forEach(mobileNavAnchor => {
                     mobileNavAnchor.addEventListener('click', closeMobileNavbar)
                 })
             }
 
             const handleNavbar = () => {
-                if (window.innerWidth > 1000) {
-                    forLargeScreensAbove1000();
+                if (window.innerWidth > 900) {
+                    forLargeScreensAbove900();
                 } else {
-                    forSmallScreensBelow1000();
+                    forSmallScreensBelow900();
                 }
             }
 
@@ -280,6 +283,7 @@
                     window.removeEventListener('scroll', scrollingEventHandlerForNavbar);
                     openButton.removeEventListener('click', openMobileNavbar)
                     closeButton.removeEventListener('click', closeMobileNavbar)
+                    header.style = ''
                     mobileNavAnchors.forEach(mobileNavAnchor => {
                         mobileNavAnchor.removeEventListener('click', closeMobileNavbar)
                     })
