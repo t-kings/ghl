@@ -26,8 +26,13 @@
 
 
     const createWrappingParent = (elementID) => {
+        let sectionParent = document.querySelector(`${elementID}-parent`)
+
+        if (sectionParent) {
+            return sectionParent
+        }
         // Create parent div
-        const sectionParent = document.createElement('div')
+        sectionParent = document.createElement('div')
         sectionParent.setAttribute('id', `${elementID}-parent`.replace('#', ''))
         sectionParent.style = 'display:flex; flex-flow: column nowrap; justify-content: flex-start; overflow:hidden;'
 
@@ -99,6 +104,8 @@
         return floatingButtonSpaceToBottomScreen
     }
 
+
+    const handleCustomStickyListeners = []
     const handleCustomSticky = (sectionID, heightDelay = window.innerHeight) => {
         // wrap element
         const parentElement = createWrappingParent(sectionID)
@@ -112,10 +119,9 @@
         childElement.style.zIndex = '97'
 
 
-        const parentHeight = parentElement.offsetHeight
 
-
-        window.addEventListener("scroll", function () {
+        const scrollEventListener = () => {
+            const parentHeight = parentElement.offsetHeight
             const scrollPosition = window.scrollY
             const parentTopPosition = getElementFullOffsetTop(parentElement);
             const childTopPosition = getElementFullOffsetTop(childElement);
@@ -152,8 +158,12 @@
                     childElement.style.position = "relative";
                 }
             }
-        });
+        }
 
+        if (!handleCustomStickyListeners.includes(handleCustomStickyListeners)) {
+            window.addEventListener("scroll", scrollEventListener);
+            handleCustomStickyListeners.push(sectionID)
+        }
         return parentElement
     }
 
@@ -392,167 +402,197 @@
     // =====================================
 
 
-
     const animatesBeforeAndAfter = () => {
         try {
-            fixBottomPaddingForSections('#section-6KNcZ1CMyo')
-            const rowIDs = [
-                '#row-1CvP7CZYAM',
-                '#row-jIpu4rvCzI',
-                '#row-zh6mu-2hP1',
-                '#row-xq5TdFlW8B'
-            ]
-            const rows = rowIDs.map(id => document.querySelector(id))
-            const max = rowIDs.length;
-            const dots = document.querySelectorAll('#col-vVEf2kCcgf>.inner>div')
+            let layoutAlreadySet = false;
+            const setLayout = () => {
+                fixBottomPaddingForSections('#section-6KNcZ1CMyo')
+                const rowIDs = [
+                    '#row-1CvP7CZYAM',
+                    '#row-jIpu4rvCzI',
+                    '#row-zh6mu-2hP1',
+                    '#row-xq5TdFlW8B'
+                ]
+                const rows = rowIDs.map(id => document.querySelector(id))
+                const max = rowIDs.length;
+                const dots = document.querySelectorAll('#col-vVEf2kCcgf>.inner>div')
 
 
-            const getMaxHeightOfAllRows = () => {
-                let maxHeightOfRows = 0;
-                for (let index = 0; index < max; index++) {
-                    const row = rows[index];
-                    row.style.display = "block"
-                    maxHeightOfRows = maxHeightOfRows < row.offsetHeight ? row.offsetHeight : maxHeightOfRows
+                const getMaxHeightOfAllRows = () => {
+                    let maxHeightOfRows = 0;
+                    for (let index = 0; index < max; index++) {
+                        const row = rows[index];
+                        row.style.height = "auto"
+                        row.style.display = "block"
+                        maxHeightOfRows = maxHeightOfRows < row.offsetHeight ? row.offsetHeight : maxHeightOfRows
+                        row.style.height = "100%"
+                    }
+                    return maxHeightOfRows
                 }
-                return maxHeightOfRows
-            }
-            const containerID = 'before-after-stack-container'
-            const containerHeight = getMaxHeightOfAllRows();
-            let container;
-            const formCube = () => {
-                container = document.createElement('div');
-                container.classList.add('stack-container');
-                container.setAttribute('id', containerID);
-                container.style.height = `${containerHeight}px`;
+                const containerID = 'before-after-stack-container'
+                const containerHeight = getMaxHeightOfAllRows();
+                let container;
+                const formCube = () => {
+                    if (!layoutAlreadySet) {
+                        container = document.createElement('div');
+                        container.classList.add('stack-container');
+                        container.setAttribute('id', containerID);
+                    } else {
+                        container = document.querySelector(`#${containerID}`)
+                    }
+                    container.style.height = `${containerHeight}px`;
 
-                rows[0].parentNode.appendChild(container);
-
-                return rows.map((row, index) => {
-                    const stackChild = document.createElement('div')
-                    stackChild.classList.add('stack-child')
-                    row.classList.add('stack-main-row')
-                    const cols = row.querySelectorAll(`#${row.id}>.inner>div`)
-                    cols.forEach(col => {
-                        col.classList.add('stack-main-col')
+                    if (!layoutAlreadySet) {
+                        rows[0].parentNode.appendChild(container);
+                    }
+                    return rows.map((row, index) => {
+                        if (!layoutAlreadySet) {
+                            const stackChild = document.createElement('div')
+                            stackChild.classList.add('stack-child')
+                            row.classList.add('stack-main-row')
+                            const cols = row.querySelectorAll(`#${row.id}>.inner>div`)
+                            cols.forEach(col => {
+                                col.classList.add('stack-main-col')
+                            })
+                            stackChild.appendChild(row)
+                            container.appendChild(stackChild)
+                            return stackChild
+                        }
+                        return row.parentNode
                     })
-                    stackChild.appendChild(row)
-                    container.appendChild(stackChild)
-                    return stackChild
-                })
-            }
+                }
 
 
-            const stackChildren = formCube()
+                const stackChildren = formCube()
 
-            const heightDelay = stackChildren[0].offsetHeight * 2;
+                const heightDelay = stackChildren[0].offsetHeight * 2;
 
-            const buttonSubTexts = [
-                'EMPOWER YOUR OPERATIONS TODAY',
-                'STREAMLINE YOUR BUSINESS TODAY',
-                'FIX OPERATIONAL ERRORS TODAY',
-                'UNLOCK YOUR FULL BUSINESS POTENTIAL'
-            ]
+                const buttonSubTexts = [
+                    'EMPOWER YOUR OPERATIONS TODAY',
+                    'STREAMLINE YOUR BUSINESS TODAY',
+                    'FIX OPERATIONAL ERRORS TODAY',
+                    'UNLOCK YOUR FULL BUSINESS POTENTIAL'
+                ]
 
 
-            const changeDisplays = (count = 0, positiveDistance) => {
-                for (let index = 0; index < max; index++) {
-                    const stackChild = stackChildren[index];
-                    const dot = dots[index];
-                    if (count > index || index === 0) {
-                        stackChild.style.transform = 'translateY(0)'
-                        dot.classList.add('active')
-                    } else if (count === index) {
-                        if (positiveDistance) {
-                            const actualCount = (positiveDistance / heightDelay) * 4
-                            const remainder = actualCount - count;
-                            const remainderInPercentage = remainder * 100;
-                            let translateY = 100 - remainderInPercentage;
-                            translateY = translateY < 0 ? 0 : translateY
-                            if (translateY < 20 && isScrolledUpOrDown === 'down') {
-                                stackChild.style.transition = 'transform 0.3s'
-                                setTimeout(() => {
-                                    stackChild.style.transition = 'none'
-                                }, 300);
-                                translateY = 0
-                            } else if (translateY > 80 && isScrolledUpOrDown === 'up') {
-                                stackChild.style.transition = 'transform 0.3s'
-                                setTimeout(() => {
-                                    stackChild.style.transition = 'none'
-                                }, 300);
-                                translateY = 100
-                            }
-                            stackChild.style.transform = `translateY(${translateY}%)`
-                            // stackChild.classList.remove('hide')
-                            if (translateY < 50) {
+                const changeDisplays = (count = 0, positiveDistance) => {
+                    for (let index = 0; index < max; index++) {
+                        const stackChild = stackChildren[index];
+                        const dot = dots[index];
+                        if (count > index || index === 0) {
+                            stackChild.style.transform = 'translateY(0)'
+                            dot.classList.add('active')
+                        } else if (count === index) {
+                            if (positiveDistance) {
+                                const actualCount = (positiveDistance / heightDelay) * 4
+                                const remainder = actualCount - count;
+                                const remainderInPercentage = remainder * 100;
+                                let translateY = 100 - remainderInPercentage;
+                                translateY = translateY < 0 ? 0 : translateY
+                                if (translateY < 20 && isScrolledUpOrDown === 'down') {
+                                    stackChild.style.transition = 'transform 0.3s'
+                                    setTimeout(() => {
+                                        stackChild.style.transition = 'none'
+                                    }, 300);
+                                    translateY = 0
+                                } else if (translateY > 80 && isScrolledUpOrDown === 'up') {
+                                    stackChild.style.transition = 'transform 0.3s'
+                                    setTimeout(() => {
+                                        stackChild.style.transition = 'none'
+                                    }, 300);
+                                    translateY = 100
+                                }
+                                stackChild.style.transform = `translateY(${translateY}%)`
+                                // stackChild.classList.remove('hide')
+                                if (translateY < 50) {
+                                    dot.classList.add('active')
+                                }
+                            } else {
+                                stackChild.style.transform = 'translateY(0%)'
                                 dot.classList.add('active')
                             }
                         } else {
-                            stackChild.style.transform = 'translateY(0%)'
-                            dot.classList.add('active')
+                            stackChild.style.transform = 'translateY(100%)'
+                            // stackChild.classList.add('hide')
+                            dot.classList.remove('active')
                         }
-                    } else {
-                        stackChild.style.transform = 'translateY(100%)'
-                        // stackChild.classList.add('hide')
-                        dot.classList.remove('active')
                     }
                 }
-            }
-            changeDisplays();
+                changeDisplays();
 
 
-            const parentElement = handleCustomSticky('#section-6KNcZ1CMyo', heightDelay)
+                const parentElement = handleCustomSticky('#section-6KNcZ1CMyo', heightDelay)
 
 
-            const handleDotsEventListeners = () => {
-                dots.forEach((dot, index) => {
-                    dot.addEventListener('click', () => {
-                        const positiveDistance = ((index + 1) * heightDelay) / 4
-                        const parentDistanceToTop = positiveDistance * -1;
-                        const parentTopPosition = getElementFullOffsetTop(parentElement);
-                        const scrollPosition = parentTopPosition - parentDistanceToTop;
-                        window.scrollTo({
-                            top: scrollPosition - 1,
-                            left: 0,
-                            behavior: 'instant'
+                const handleDotsEventListeners = () => {
+                    dots.forEach((dot, index) => {
+                        dot.addEventListener('click', () => {
+                            const positiveDistance = ((index + 1) * heightDelay) / 4
+                            const parentDistanceToTop = positiveDistance * -1;
+                            const parentTopPosition = getElementFullOffsetTop(parentElement);
+                            const scrollPosition = parentTopPosition - parentDistanceToTop;
+                            window.scrollTo({
+                                top: scrollPosition - 1,
+                                left: 0,
+                                behavior: 'instant'
+                            })
                         })
                     })
-                })
+                }
+
+                if (!layoutAlreadySet) {
+                    handleDotsEventListeners()
+                }
+
+                const scrollEventHandler = () => {
+                    const scrollPosition = window.scrollY
+                    const parentTopPosition = getElementFullOffsetTop(parentElement);
+                    const parentDistanceToTop = parentTopPosition - scrollPosition;
+                    const positiveDistance = parentDistanceToTop * -1
+                    let changeButtonText = false
+                    if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay) {
+                        // changeButtonSubText('EMPOWER YOUR OPERATIONS TODAY')
+                        changeButtonText = true
+                    } else if (parentDistanceToTop <= 0 && positiveDistance > heightDelay + window.innerHeight / 2 && positiveDistance <= heightDelay + window.innerHeight) {
+                        scrollToSection('#section-atl9fSO8P-')
+                    }
+                    let count = Math.floor((positiveDistance / heightDelay) * 4)
+                    if (count > 3) {
+                        count = 3
+                    }
+                    if (count < 0) {
+                        count = 0
+                    }
+                    if (changeButtonText) {
+                        changeButtonSubText(buttonSubTexts[count])
+                    }
+                    changeDisplays(count, positiveDistance)
+                }
+                scrollEventHandler()
+
+                if (!layoutAlreadySet) {
+                    window.addEventListener('scroll', () => {
+                        setTimeout(() => {
+                            scrollEventHandler()
+                        }, 0)
+                    })
+                }
+                layoutAlreadySet = true
             }
 
-            handleDotsEventListeners()
+            setLayout()
 
-            const scrollEventHandler = () => {
-                const scrollPosition = window.scrollY
-                const parentTopPosition = getElementFullOffsetTop(parentElement);
-                const parentDistanceToTop = parentTopPosition - scrollPosition;
-                const positiveDistance = parentDistanceToTop * -1
-                let changeButtonText = false
-                if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay) {
-                    // changeButtonSubText('EMPOWER YOUR OPERATIONS TODAY')
-                    changeButtonText = true
-                } else if (parentDistanceToTop <= 0 && positiveDistance > heightDelay + window.innerHeight / 2 && positiveDistance <= heightDelay + window.innerHeight) {
-                    scrollToSection('#section-atl9fSO8P-')
-                }
-                let count = Math.floor((positiveDistance / heightDelay) * 4)
-                if (count > 3) {
-                    count = 3
-                }
-                if (count < 0) {
-                    count = 0
-                }
-                if (changeButtonText) {
-                    changeButtonSubText(buttonSubTexts[count])
-                }
+            let resizeTimeout;
 
-                changeDisplays(count, positiveDistance)
+            const handleWindowResize = () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    setLayout();
+                }, 1000);
             }
-            scrollEventHandler()
 
-            window.addEventListener('scroll', () => {
-                setTimeout(() => {
-                    scrollEventHandler()
-                }, 0)
-            })
+            window.addEventListener('resize', handleWindowResize);
+
         } catch (error) {
             console.log('animatesBeforeAndAfter', error);
         }
@@ -572,6 +612,7 @@
     // START WHAT CLIENTS ARE SAYING
     // =====================================
     const animateWhatClientsAreSaying = () => {
+
         const section = document.querySelector('#section-atl9fSO8P-')
         fixBottomPaddingForSections('#section-atl9fSO8P-')
         const sectionHeight = section.offsetHeight;
