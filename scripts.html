@@ -1,0 +1,2102 @@
+<script src="https://player.vimeo.com/api/player.js"></script>
+<script>
+
+
+    // =====================================
+    // START HELPER  FUNCTIONS
+    // =====================================
+
+
+    let isScrolledUpOrDown = 'down'
+    const getIsScrolledUpOrDown = () => {
+        let previousScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+        window.addEventListener('scroll', function () {
+            var currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+            if (currentScrollPosition > previousScrollPosition) {
+                isScrolledUpOrDown = 'down'
+            } else if (currentScrollPosition < previousScrollPosition) {
+                isScrolledUpOrDown = 'up'
+            }
+            previousScrollPosition = currentScrollPosition;
+        });
+    }
+
+    getIsScrolledUpOrDown()
+
+
+
+    const createWrappingParent = (elementID) => {
+        // Create parent div
+        const sectionParent = document.createElement('div')
+        sectionParent.setAttribute('id', `${elementID}-parent`.replace('#', ''))
+        sectionParent.style = 'display:flex; flex-flow: column nowrap; justify-content: flex-start; overflow:hidden;'
+
+
+        // Replace the existing element with the new div
+        const section = document.querySelector(elementID)
+        section.parentNode.replaceChild(sectionParent, section);
+
+        // // Move the section into the parent
+        sectionParent.appendChild(section)
+
+        return sectionParent
+    }
+
+    const getElementFullOffsetTop = (childElement) => {
+        let distance = childElement.offsetTop + parseInt(getComputedStyle(childElement).marginTop);
+
+        let offsetParent = childElement.offsetParent;
+        while (offsetParent != null) {
+            distance += offsetParent.offsetTop;
+            distance += parseInt(getComputedStyle(offsetParent).marginTop);
+            // distance += parseInt(getComputedStyle(offsetParent).paddingTop);
+            offsetParent = offsetParent.offsetParent;
+        }
+
+        return distance
+    }
+
+    let presentScrollingTo;
+    const scrollToSection = (bottomSectionID, topSectionID) => {
+        try {
+            if (isScrolledUpOrDown === 'down') {
+                if (presentScrollingTo !== bottomSectionID) {
+                    presentScrollingTo = bottomSectionID;
+                    let parentElement = document.querySelector(`${bottomSectionID}-parent`)
+                    if (!parentElement) {
+                        parentElement = document.querySelector(bottomSectionID)
+                    }
+                    const parentTopPosition = getElementFullOffsetTop(parentElement);
+                    window.scrollTo({
+                        left: 0,
+                        top: parentTopPosition,
+                        behavior: 'smooth'
+                    })
+                    setTimeout(() => {
+                        presentScrollingTo = ''
+                    }, 1000)
+                }
+            }
+        } catch (error) {
+            console.log('scrollToSection', bottomSectionID, error);
+        }
+    }
+
+
+    const fixBottomPaddingForSections = (sectionID, applyPadding = true) => {
+        const section = document.querySelector(sectionID)
+        const originalButton = document.querySelector('#button-nqR07-BPrY button')
+        const originalButtonOffsetHeight = originalButton.offsetHeight
+        const originalButtonTopPadding = parseInt(getComputedStyle(originalButton).paddingTop)
+        const originalButtonBottomPadding = parseInt(getComputedStyle(originalButton).paddingBottom)
+        const originalButtonInnerHeight = originalButtonOffsetHeight - originalButtonTopPadding - originalButtonBottomPadding;
+        const floatingButtonInnerHeight = originalButtonInnerHeight * 2 // has sub header
+        const floatingButtonOffsetHeight = floatingButtonInnerHeight + originalButtonTopPadding + originalButtonBottomPadding;
+        const floatingButtonSpaceToBottomScreen = floatingButtonOffsetHeight + 60;
+        if (applyPadding) {
+            section.style.paddingBottom = `${floatingButtonSpaceToBottomScreen}px`
+        }
+        return floatingButtonSpaceToBottomScreen
+    }
+
+    const handleCustomSticky = (sectionID, heightDelay = window.innerHeight) => {
+        // wrap element
+        const parentElement = createWrappingParent(sectionID)
+
+        // Add height to section parent
+        parentElement.style.height = `${window.innerHeight + heightDelay}px`
+
+        const childElement = document.querySelector(sectionID);
+
+        // Add high z-index to section
+        childElement.style.zIndex = '97'
+
+
+        const parentHeight = parentElement.offsetHeight
+
+
+        window.addEventListener("scroll", function () {
+            const scrollPosition = window.scrollY
+            const parentTopPosition = getElementFullOffsetTop(parentElement);
+            const childTopPosition = getElementFullOffsetTop(childElement);
+            const childDistanceToTop = childTopPosition - scrollPosition
+            const isChildReachedTop = childDistanceToTop <= 0;
+
+            const parentDistanceToTop = parentTopPosition - scrollPosition
+            const isParentReachedTop = parentDistanceToTop <= 0;
+
+
+
+
+            const parentBottomPosition = parentTopPosition + parentHeight
+
+            const parentBottomDistanceToTop = parentBottomPosition - scrollPosition
+            const isParentBottomReachedWindowBottom = parentBottomDistanceToTop <= window.innerHeight;
+
+            // Move element in parent
+            parentElement.style.justifyContent = isParentBottomReachedWindowBottom ? 'flex-end' : 'flex-start'
+
+            const childElementPosition = getComputedStyle(childElement).position
+            const childElementPositionIsFixed = childElementPosition === 'fixed'
+
+            if (isParentReachedTop && !isParentBottomReachedWindowBottom) {
+                if (!childElementPositionIsFixed) {
+                    childElement.style.position = "fixed";
+                    childElement.style.top = `0`;
+                    childElement.style.left = "0";
+                    childElement.style.right = "0";
+                    childElement.style.bottom = "0";
+                }
+            } else {
+                if (childElementPositionIsFixed) {
+                    childElement.style.position = "relative";
+                }
+            }
+        });
+
+        return parentElement
+    }
+
+
+    const changeButtonSubText = (text) => {
+        const buttonSubText = document.querySelector('#floating-button .sub-heading-button')
+        buttonSubText.innerHTML = text
+    }
+
+
+    const createToolTip = (paragraphID, contentText, useTop = false) => {
+        const paragraphWithTooltip = document.querySelector(`${paragraphID} u`)
+        paragraphWithTooltip.classList.add('custom-tool-tip')
+        const tooltipContent = document.createElement('div')
+        tooltipContent.classList.add('custom-tool-tip-content')
+        const caret = document.createElement('div')
+        caret.classList.add('custom-tool-tip-caret')
+        const content = document.createElement('p')
+        content.innerHTML = contentText
+        paragraphWithTooltip.appendChild(tooltipContent)
+
+        if (useTop) {
+            caret.innerHTML = `<svg width="20" height="10" viewBox="0 0 20 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M9.29289 9.29289C9.68342 9.68342 10.3166 9.68342 10.7071 9.29289L20 1.90735e-06L0 1.90735e-06L9.29289 9.29289Z" fill="#151A4F"/>
+</svg>
+`
+            tooltipContent.appendChild(content)
+            tooltipContent.appendChild(caret)
+        } else {
+            caret.innerHTML = `<svg width="20" height="10" viewBox="0 0 20 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M10.7071 0.707108C10.3166 0.316584 9.68342 0.316583 9.29289 0.707108L8.74228e-07 10L20 10L10.7071 0.707108Z" fill="#151A4F"/>
+</svg>
+`
+            tooltipContent.appendChild(caret)
+            tooltipContent.appendChild(content)
+        }
+
+    }
+    // =====================================
+    // END HELPER  FUNCTIONS
+    // =====================================
+
+
+    // =====================================
+    // START NAVBAR
+    // =====================================
+
+    const animateNavBar = () => {
+        try {
+            const toggleNavBars = () => {
+                const navBar1 = document.querySelector('.preview-container #section-egZS4GNJr')
+                const navBar2 = document.querySelector('.preview-container #section-E6bq0gyrf4')
+                const inner1 = document.querySelector('.preview-container #section-egZS4GNJr>.inner')
+                const inner2 = document.querySelector('.preview-container #section-E6bq0gyrf4>.inner')
+                try {
+                    const scrollPosition = window.scrollY;
+                    const hideOrShowElement = (element, innerElement, show) => {
+                        if (show) {
+                            element.style.opacity = "1"
+                            element.style.zIndex = "100"
+                        } else {
+                            element.style.opacity = '0'
+                            element.style.zIndex = "99"
+                        }
+                    }
+                    const getActiveContainerHeight = () => {
+                        return inner2.offsetHeight * 1
+                    }
+                    navBar1.parentNode.style.marginTop = `${getActiveContainerHeight()}px`
+                    const isScrolled = scrollPosition >= getActiveContainerHeight();
+                    hideOrShowElement(navBar1, inner1, isScrolled)
+                    hideOrShowElement(navBar2, inner2, !isScrolled)
+                } catch (error) {
+                    //
+                }
+            }
+            const scrollingEventHandlerForNavbar = () => {
+                setTimeout(() => {
+                    toggleNavBars()
+                }, 0)
+            }
+
+            const forLargeScreensAbove1000 = () => {
+                toggleNavBars();
+                window.addEventListener('scroll', scrollingEventHandlerForNavbar);
+            }
+
+            const openButton = document.querySelector('#image-M_5uM8v5BD')
+            const closeButton = document.querySelector('#image-aaYcYZIx-9')
+            const mobileNavbar = document.querySelector('#section-PZI44N8w6t')
+            const mobileNavAnchors = document.querySelectorAll('#nav-menu-nMy9j9184U .nav-menu-wrapper .nav-menu .nav-menu-item a')
+
+            const openMobileNavbar = () => {
+                mobileNavbar.classList.add('active')
+            }
+            const closeMobileNavbar = () => {
+                mobileNavbar.classList.remove('active')
+            }
+
+
+
+            const forSmallScreensBelow1000 = () => {
+                closeMobileNavbar();
+                openButton.addEventListener('click', openMobileNavbar)
+                closeButton.addEventListener('click', closeMobileNavbar)
+                mobileNavAnchors.forEach(mobileNavAnchor => {
+                    mobileNavAnchor.addEventListener('click', closeMobileNavbar)
+                })
+            }
+
+            const handleNavbar = () => {
+                if (window.innerWidth > 1000) {
+                    forLargeScreensAbove1000();
+                } else {
+                    forSmallScreensBelow1000();
+                }
+            }
+
+            let resizeTimeout;
+
+            const handleWindowResize = () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    window.removeEventListener('scroll', scrollingEventHandlerForNavbar);
+                    openButton.removeEventListener('click', openMobileNavbar)
+                    closeButton.removeEventListener('click', closeMobileNavbar)
+                    mobileNavAnchors.forEach(mobileNavAnchor => {
+                        mobileNavAnchor.removeEventListener('click', closeMobileNavbar)
+                    })
+                    handleNavbar();
+                }, 1000);
+            }
+
+            handleNavbar();
+            window.addEventListener('resize', handleWindowResize);
+        } catch (error) {
+            console.log('animateNavBar', error);
+        }
+    }
+
+    animateNavBar()
+
+    // =====================================
+    // END NAVBAR
+    // =====================================
+
+
+    // =====================================
+    // START HEADER
+    // =====================================
+    const animateHeader = () => {
+        try {
+            const threeMonths = document.querySelector('#row-vdLrkiAk0X')
+            const parent = document.querySelector('#row-pWgdbNq0gX')
+            parent.appendChild(threeMonths)
+
+
+            const originalButton = document.querySelector('#button-nqR07-BPrY button')
+            const originalButtonHeight = originalButton.offsetHeight
+            const button = originalButton.cloneNode(true)
+            button.setAttribute('id', 'floating-button')
+            button.classList.add('floating-button')
+            button.classList.add('hidden')
+            button.classList.add('hidden-opacity')
+            document.body.appendChild(button)
+            button.addEventListener('click', () => {
+                originalButton.click()
+            })
+
+            let timeOutID;
+            const handleStickyButton = () => {
+                clearTimeout(timeOutID)
+                const distanceOfButtonOriginalTopToScreenTop = getElementFullOffsetTop(originalButton);
+                // const distanceOfOriginalBottomToScreenTop = distanceOfButtonOriginalTopToScreenTop + originalButtonHeight
+                const scrollPosition = window.scrollY
+                const distanceToTop = distanceOfButtonOriginalTopToScreenTop - scrollPosition - 60; // remove header height
+                const shouldShowNewButton = distanceToTop < 0;
+                if (shouldShowNewButton) {
+                    button.classList.remove('hidden-opacity')
+                    button.classList.remove('hidden')
+                    alreadyShown = true
+                } else {
+                    button.classList.add('hidden-opacity')
+                    timeOutID = setTimeout(() => {
+                        button.classList.add('hidden')
+                    }, 300)
+                }
+            }
+            window.addEventListener('scroll', () => {
+                setTimeout(() => {
+                    handleStickyButton()
+                }, 0)
+            })
+            handleStickyButton()
+        } catch (error) {
+            console.log('animateHeader', error);
+        }
+    }
+    animateHeader()
+    // =====================================
+    // END HEADER
+    // =====================================
+
+
+
+    // =====================================
+    // START BEFORE AND AFTER
+    // =====================================
+
+
+
+    const animatesBeforeAndAfter = () => {
+        try {
+            fixBottomPaddingForSections('#section-6KNcZ1CMyo')
+            const rowIDs = [
+                '#row-1CvP7CZYAM',
+                '#row-jIpu4rvCzI',
+                '#row-zh6mu-2hP1',
+                '#row-xq5TdFlW8B'
+            ]
+            const rows = rowIDs.map(id => document.querySelector(id))
+            const max = rowIDs.length;
+            const dots = document.querySelectorAll('#col-vVEf2kCcgf>.inner>div')
+
+
+            const getMaxHeightOfAllRows = () => {
+                let maxHeightOfRows = 0;
+                for (let index = 0; index < max; index++) {
+                    const row = rows[index];
+                    row.style.display = "block"
+                    maxHeightOfRows = maxHeightOfRows < row.offsetHeight ? row.offsetHeight : maxHeightOfRows
+                }
+                return maxHeightOfRows
+            }
+            const containerID = 'before-after-stack-container'
+            const containerHeight = getMaxHeightOfAllRows();
+            let container;
+            const formCube = () => {
+                container = document.createElement('div');
+                container.classList.add('stack-container');
+                container.setAttribute('id', containerID);
+                container.style.height = `${containerHeight}px`;
+
+                rows[0].parentNode.appendChild(container);
+
+                return rows.map((row, index) => {
+                    const stackChild = document.createElement('div')
+                    stackChild.classList.add('stack-child')
+                    row.classList.add('stack-main-row')
+                    const cols = row.querySelectorAll(`#${row.id}>.inner>div`)
+                    cols.forEach(col => {
+                        col.classList.add('stack-main-col')
+                    })
+                    stackChild.appendChild(row)
+                    container.appendChild(stackChild)
+                    return stackChild
+                })
+            }
+
+
+            const stackChildren = formCube()
+
+            const heightDelay = stackChildren[0].offsetHeight * 2;
+
+            const buttonSubTexts = [
+                'EMPOWER YOUR OPERATIONS TODAY',
+                'STREAMLINE YOUR BUSINESS TODAY',
+                'FIX OPERATIONAL ERRORS TODAY',
+                'UNLOCK YOUR FULL BUSINESS POTENTIAL'
+            ]
+
+
+            const changeDisplays = (count = 0, positiveDistance) => {
+                for (let index = 0; index < max; index++) {
+                    const stackChild = stackChildren[index];
+                    const dot = dots[index];
+                    if (count > index || index === 0) {
+                        stackChild.style.transform = 'translateY(0)'
+                        dot.classList.add('active')
+                    } else if (count === index) {
+                        if (positiveDistance) {
+                            const actualCount = (positiveDistance / heightDelay) * 4
+                            const remainder = actualCount - count;
+                            const remainderInPercentage = remainder * 100;
+                            let translateY = 100 - remainderInPercentage;
+                            translateY = translateY < 0 ? 0 : translateY
+                            if (translateY < 20 && isScrolledUpOrDown === 'down') {
+                                stackChild.style.transition = 'transform 0.3s'
+                                setTimeout(() => {
+                                    stackChild.style.transition = 'none'
+                                }, 300);
+                                translateY = 0
+                            } else if (translateY > 80 && isScrolledUpOrDown === 'up') {
+                                stackChild.style.transition = 'transform 0.3s'
+                                setTimeout(() => {
+                                    stackChild.style.transition = 'none'
+                                }, 300);
+                                translateY = 100
+                            }
+                            stackChild.style.transform = `translateY(${translateY}%)`
+                            // stackChild.classList.remove('hide')
+                            if (translateY < 50) {
+                                dot.classList.add('active')
+                            }
+                        } else {
+                            stackChild.style.transform = 'translateY(0%)'
+                            dot.classList.add('active')
+                        }
+                    } else {
+                        stackChild.style.transform = 'translateY(100%)'
+                        // stackChild.classList.add('hide')
+                        dot.classList.remove('active')
+                    }
+                }
+            }
+            changeDisplays();
+
+
+            const parentElement = handleCustomSticky('#section-6KNcZ1CMyo', heightDelay)
+
+
+            const handleDotsEventListeners = () => {
+                dots.forEach((dot, index) => {
+                    dot.addEventListener('click', () => {
+                        const positiveDistance = ((index + 1) * heightDelay) / 4
+                        const parentDistanceToTop = positiveDistance * -1;
+                        const parentTopPosition = getElementFullOffsetTop(parentElement);
+                        const scrollPosition = parentTopPosition - parentDistanceToTop;
+                        window.scrollTo({
+                            top: scrollPosition - 1,
+                            left: 0,
+                            behavior: 'instant'
+                        })
+                    })
+                })
+            }
+
+            handleDotsEventListeners()
+
+            const scrollEventHandler = () => {
+                const scrollPosition = window.scrollY
+                const parentTopPosition = getElementFullOffsetTop(parentElement);
+                const parentDistanceToTop = parentTopPosition - scrollPosition;
+                const positiveDistance = parentDistanceToTop * -1
+                let changeButtonText = false
+                if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay) {
+                    // changeButtonSubText('EMPOWER YOUR OPERATIONS TODAY')
+                    changeButtonText = true
+                } else if (parentDistanceToTop <= 0 && positiveDistance > heightDelay + window.innerHeight / 2 && positiveDistance <= heightDelay + window.innerHeight) {
+                    scrollToSection('#section-atl9fSO8P-')
+                }
+                let count = Math.floor((positiveDistance / heightDelay) * 4)
+                if (count > 3) {
+                    count = 3
+                }
+                if (count < 0) {
+                    count = 0
+                }
+                if (changeButtonText) {
+                    changeButtonSubText(buttonSubTexts[count])
+                }
+
+                changeDisplays(count, positiveDistance)
+            }
+            scrollEventHandler()
+
+            window.addEventListener('scroll', () => {
+                setTimeout(() => {
+                    scrollEventHandler()
+                }, 0)
+            })
+        } catch (error) {
+            console.log('animatesBeforeAndAfter', error);
+        }
+
+    }
+    animatesBeforeAndAfter();
+
+    // =====================================
+    // END BEFORE AND AFTER
+    // =====================================
+
+
+
+
+
+    // =====================================
+    // START WHAT CLIENTS ARE SAYING
+    // =====================================
+    const animateWhatClientsAreSaying = () => {
+        const section = document.querySelector('#section-atl9fSO8P-')
+        fixBottomPaddingForSections('#section-atl9fSO8P-')
+        const sectionHeight = section.offsetHeight;
+        const sectionTopPadding = parseInt(getComputedStyle(section).paddingTop)
+        const sectionBottomPadding = parseInt(getComputedStyle(section).paddingBottom)
+        const sectionInnerHeight = sectionHeight - sectionBottomPadding - sectionTopPadding
+        const title = document.querySelector('#row-Olo6JNyBqa')
+        const titleHeight = title.offsetHeight;
+        const freeHeight = sectionInnerHeight - titleHeight;
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('atl9fSO8P-scroll-wrapper');
+        wrapper.style.height = `${freeHeight - 90}px`
+
+        const containerID = 'what-saying-after-stack-container'
+
+        const container = document.createElement('div');
+        container.classList.add('stack-container-2');
+        container.setAttribute('id', containerID);
+
+        wrapper.appendChild(container);
+
+        const rowIDs = ['#row-1V9rp1nZ4o', '#row-tmycXeuNQX'];
+        const rows = rowIDs.map(id => document.querySelector(id))
+        rows[0].parentNode.appendChild(wrapper)
+
+
+        const stackChildren = rows.map((row, index) => {
+            const stackChild = document.createElement('div')
+            stackChild.classList.add('stack-child-2')
+            stackChild.appendChild(row)
+            container.appendChild(stackChild)
+            return stackChild
+        })
+
+        const heightDelay = window.innerHeight;
+        const parentElement = handleCustomSticky('#section-atl9fSO8P-', heightDelay)
+
+
+        stackChildren[0].classList.remove('cover')
+        stackChildren[1].classList.add('cover')
+
+        const changeDisplays = () => {
+            const scrollPosition = window.scrollY
+            const parentTopPosition = getElementFullOffsetTop(parentElement);
+            const parentDistanceToTop = parentTopPosition - scrollPosition;
+            const positiveDistance = parentDistanceToTop * -1
+
+            if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay) {
+                changeButtonSubText('TRANSFORM YOUR BUSINESS TODAY')
+                let count = Math.floor((positiveDistance / heightDelay) * 2)
+                if (count > 1) {
+                    count = 1
+                }
+                if (count < 0) {
+                    count = 0
+                }
+                if (count === 1) {
+                    stackChildren.forEach((stackChild) => {
+                        stackChild.classList.add('go-up')
+                    })
+                    stackChildren[0].classList.add('cover')
+                    stackChildren[1].classList.remove('cover')
+                } else {
+                    stackChildren.forEach((stackChild) => {
+                        stackChild.classList.remove('go-up')
+                    })
+                    stackChildren[0].classList.remove('cover')
+                    stackChildren[1].classList.add('cover')
+                }
+
+
+            } else if (parentDistanceToTop <= 0 && positiveDistance > heightDelay && positiveDistance <= heightDelay + window.innerHeight) {
+                scrollToSection('#section-hCHffR5p7p')
+            }
+
+        }
+
+        window.addEventListener('scroll', () => {
+            setTimeout(() => {
+                changeDisplays()
+            }, 0)
+        })
+
+
+        const handleWatchVideo = () => {
+            const watchButton = document.querySelector('#button-qEuegzKTs6 button')
+            const watchButton2 = document.querySelector('#button-ylwne1poij button')
+
+            const videoRow = document.querySelector('#row-zNpAvepKag')
+            const videoRowInner = document.querySelector('#row-zNpAvepKag>.inner')
+            const videoRow2 = document.querySelector('#row-vF190QfavZ')
+            const videoRowInner2 = document.querySelector('#row-vF190QfavZ>.inner')
+
+            const closeButton1 = document.querySelector('#button-gJIYR0lhHT button')
+            const closeButton2 = document.querySelector('#button-wncf6qJnUJ button')
+
+            const onClose = () => {
+                try {
+                    const iframe = videoRow.querySelector('iframe');
+                    const player = new Vimeo.Player(iframe);
+                    player.pause()
+                } catch (error) {
+
+                } finally {
+                    videoRow.style.display = 'none'
+                    // document.documentElement.style.overflow = 'auto'
+                }
+            }
+
+            if (closeButton1) {
+                closeButton1.addEventListener('click', (e) => {
+                    e.preventDefault()
+                    onClose()
+                })
+            }
+
+
+
+            const onClose2 = () => {
+                try {
+                    const iframe = videoRow2.querySelector('iframe');
+                    const player = new Vimeo.Player(iframe);
+                    player.pause()
+                } catch (error) {
+
+                } finally {
+                    videoRow2.style.display = 'none'
+                    // document.documentElement.style.overflow = 'auto'
+                }
+            }
+
+            window.addEventListener('click', (event) => {
+                // event.preventDefault() 
+                if (event.target == videoRow || event.target === videoRowInner) {
+                    onClose()
+                } else if (event.target == videoRow2 || event.target === videoRowInner2) {
+                    onClose2()
+                }
+            })
+
+            if (closeButton2) {
+                closeButton2.addEventListener('click', (e) => {
+                    e.preventDefault()
+                    onClose2()
+                })
+            }
+
+
+            if (watchButton) {
+                watchButton.addEventListener('click', (e) => {
+                    e.preventDefault()
+                    if (videoRow) {
+                        videoRow.style.display = 'flex'
+                        // document.documentElement.style.overflow = 'hidden'
+                    }
+                })
+            }
+
+            if (watchButton2) {
+                watchButton2.addEventListener('click', (e) => {
+                    e.preventDefault()
+                    if (videoRow2) {
+                        videoRow2.style.display = 'flex'
+                        // document.documentElement.style.overflow = 'hidden'
+                    }
+                })
+            }
+        }
+        handleWatchVideo()
+    }
+    animateWhatClientsAreSaying()
+
+    // =====================================
+    // END WHAT CLIENTS ARE SAYING
+    // =====================================
+
+
+
+
+
+    // =====================================
+    // START WHAT WE HELP WITH
+    // =====================================
+    const animateWhatWeHelpWith = () => {
+        try {
+            const floatingButtonSpaceToBottomScreen = fixBottomPaddingForSections('#section-hCHffR5p7p', false)
+
+            const sectionInner = document.querySelector('#section-hCHffR5p7p>.inner')
+            const wrapper = document.createElement('div')
+            wrapper.classList.add('scroll-wrapper')
+            const container = document.createElement('div')
+            container.classList.add('scroll-container')
+            wrapper.appendChild(container)
+            const listIDs = [
+                '#row-Bvp97zRHYJ',
+                '#row-Y7I-2mbyFK',
+                '#row-T5DwNzna9_',
+                '#row-Ufh4vUrvFE',
+                '#row-WVWYWhIo9B',
+                '#row-GCv5t3UwQG',
+                '#row-wKfqCubkdc',
+                '#row-QDRnuzpj2n',
+            ]
+            const listElements = listIDs.map(id => document.querySelector(id))
+            listElements.forEach((element, index) => {
+                container.appendChild(element)
+                element.addEventListener('click', () => {
+                    const positiveDistance = index * window.innerHeight
+                    const parentDistanceToTop = -1 * positiveDistance
+                    const parentTopPosition = getElementFullOffsetTop(document.querySelector('#section-T-iFKIxbuE').parentNode);
+                    const scrollPosition = parentTopPosition - parentDistanceToTop
+                    window.scrollTo({
+                        left: 0,
+                        top: scrollPosition,
+                        behavior: 'instant'
+                    })
+                })
+            })
+            sectionInner.append(wrapper)
+            const sectionHeight = sectionInner.offsetHeight;
+            const sectionTopPadding = parseInt(getComputedStyle(sectionInner).paddingTop)
+            const sectionBottomPadding = parseInt(getComputedStyle(sectionInner).paddingBottom)
+            const sectionInnerHeight = sectionHeight - sectionTopPadding - sectionBottomPadding
+            const title = document.querySelector('#row-pQYQLUoAyO')
+            const titleHeight = title.offsetHeight;
+            const freeHeight = sectionInnerHeight - titleHeight;
+            wrapper.style.height = `${freeHeight}px`
+
+            const containerHeight = container.offsetHeight;
+            const scrollShift = containerHeight - freeHeight + floatingButtonSpaceToBottomScreen
+
+            const useScrollOnly = scrollShift < 0
+
+            const heightDelay = useScrollOnly ? window.innerHeight / 2 : scrollShift;
+            const parentElement = handleCustomSticky('#section-hCHffR5p7p', heightDelay)
+
+            const changeDisplays = () => {
+                const scrollPosition = window.scrollY
+                const parentTopPosition = getElementFullOffsetTop(parentElement);
+                const parentDistanceToTop = parentTopPosition - scrollPosition;
+                const positiveDistance = parentDistanceToTop * -1
+
+                if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay && !useScrollOnly) {
+                    container.style.transform = `translateY(${parentDistanceToTop}px)`
+                } else if (parentDistanceToTop <= 0 && positiveDistance > heightDelay && positiveDistance <= heightDelay + window.innerHeight) {
+                    scrollToSection('#section-T-iFKIxbuE')
+                }
+            }
+
+            window.addEventListener('scroll', () => {
+                setTimeout(() => {
+                    changeDisplays()
+                }, 0)
+            })
+            changeDisplays()
+
+
+        } catch (error) {
+            console.log('animateWhatWeHelpWith', error);
+        }
+    }
+
+    animateWhatWeHelpWith()
+
+
+    // =====================================
+    // END WHAT WE HELP WITH
+    // =====================================
+
+
+
+
+
+    // =====================================
+    // START WE HELP WITH
+    // =====================================
+
+
+
+    const animateWeHelpWith = () => {
+        fixBottomPaddingForSections('#section-T-iFKIxbuE')
+
+        const rows = [
+            {
+                images: [
+                    '#image-rFxD0ezIEc',
+                    '#image-NKzNLuyCr5',
+                    '#image-75jcZeG1iF',
+                    '#image-j_hC5Sxbgj'
+                ],
+                listID: '#bulletList-RP5elIIvE-',
+                titleID: '#heading-U-7HzzV9Kz',
+                id: '#row-Brgw50LPQh',
+                imageContainer: document.querySelector('#col-XVler0NN0t> .inner'),
+                imageContainerColumn: document.querySelector('#col-XVler0NN0t'),
+                position: 'right',
+                buttonText: 'START YOUR TRANSFORMATION TODAY'
+            },
+            {
+                listID: '#bulletList-MwXvIgjbK8',
+                images: [
+                    "#image-d1h1-DgCEH",
+                    "#image-ZPWXfg8_hJ",
+                    "#image-AXdwJTL8Or",
+                    "#image-T5S_XsBHeW",
+                ],
+                titleID: '#heading-2Bb_Kql0Ms',
+                id: '#row-pvApn6POnF',
+                imageContainer: document.querySelector('#col-xkTS7A__iz> .inner'),
+                imageContainerColumn: document.querySelector('#col-xkTS7A__iz'),
+                position: 'left',
+                buttonText: 'AUTOMATE YOUR BUSINESS TODAY'
+            },
+            {
+                listID: '#bulletList-_pnaXn5KcZ',
+                images: [
+                    "#image-HROyNqXzra",
+                    "#image-dr7Yh-bHa6",
+                    "#image-bJMQpFlq4V",
+                    "#image-VI_FILxji9",
+                ],
+                titleID: '#heading-9LAlbsiiyH',
+                id: '#row-N6C_yhn5rl',
+                imageContainer: document.querySelector('#col-o2hYJleQbL> .inner'),
+                imageContainerColumn: document.querySelector('#col-o2hYJleQbL'),
+                position: 'right',
+                buttonText: 'BOOST YOUR SALES TODAY'
+            },
+            {
+                listID: '#bulletList-mHrMcwQp22',
+                images: [
+                    "#image-XTQdlcMvmV",
+                    "#image-DWAheAfCGZ",
+                    "#image-cw1gTu9Yl-",
+                    "#image-DN3wkWc3u9",
+                ],
+                titleID: '#heading-ulF13TRq4f',
+                id: '#row-2OwwgPS_DD',
+                imageContainer: document.querySelector('#col-zD_SAZY4AT> .inner'),
+                imageContainerColumn: document.querySelector('#col-zD_SAZY4AT'),
+                position: 'left',
+                buttonText: 'GET BETTER CLIENT RETENTION TODAY'
+            },
+            {
+                listID: '#bulletList-f6zVxaksDO',
+                images: [
+                    '#image-4hJDPSPq4M',
+                    '#image-oni7V7VPlY',
+                    '#image-aXcEfvoiJr',
+                    '#image-EToaBBGc-0',
+                ],
+                titleID: '#heading-Pw-En_-4n8',
+                id: '#row-36_TQuQvyo',
+                imageContainer: document.querySelector('#col-nyUME684Ft> .inner'),
+                imageContainerColumn: document.querySelector('#col-nyUME684Ft'),
+                position: 'right',
+                buttonText: 'TRANSFORM YOUR PROCESSES TODAY'
+
+            },
+            {
+                listID: '#bulletList-Oq2hpyEiKQ',
+                images: [
+                    '#image-o4bwQfkVbe',
+                    '#image-mcvyVpGoqp',
+                    '#image-PFnWOHaXeJ',
+                    '#image-gfPs649oED',
+                ],
+                titleID: '#heading-c-vLNWdAfv',
+                id: '#row-knxVbqtY7j',
+                imageContainer: document.querySelector('#col-mlKGc0P_48> .inner'),
+                imageContainerColumn: document.querySelector('#col-mlKGc0P_48'),
+                position: 'left',
+                buttonText: 'DO ACCOUNTING LIKE NEVER BEFORE'
+            },
+            {
+                listID: '#bulletList-MriHatdPOu',
+                images: [
+                    '#image-MYI1u2zYfS',
+                    '#image-JLODfTaCkr',
+                    '#image-z7Dx8g1H-J',
+                    '#image-aJp-RZUonG',
+                ],
+                titleID: '#heading-o62Ax4zawF',
+                id: '#row-IaWSNnf8P5',
+                imageContainer: document.querySelector('#col-PgooDPirQH> .inner'),
+                imageContainerColumn: document.querySelector('#col-PgooDPirQH'),
+                position: 'right',
+                buttonText: 'START YOUR TRANSFORMATION TODAY'
+            },
+            {
+                images: [],
+                titleID: '#heading-_0jiEAyZTv',
+                id: '#row-tOxrkkh1iv',
+                buttonText: 'TRANSFORM YOUR BUSINESS TODAY'
+            }
+        ]
+
+        const sectionInner = document.querySelector('#section-T-iFKIxbuE>.inner')
+        const wrapper = document.createElement('div')
+        wrapper.classList.add('iFKIxbuE-scroll-wrapper')
+        rows.forEach(({ id, listID, images }, index) => {
+            const row = document.querySelector(id);
+            row.style.display = 'block'
+            const container = document.createElement('div')
+            container.classList.add('iFKIxbuE-scroll-container')
+            container.style.display = index === 0 ? 'block' : 'none'
+            container.appendChild(row)
+            wrapper.appendChild(container)
+            const dotsWrapper = document.createElement('div')
+            dotsWrapper.setAttribute('id', `${row.id}-dots`);
+            dotsWrapper.classList.add('help-row-dots')
+            if (index < rows.length - 1) {
+                for (let i = 0; i < images.length; i++) {
+                    const dot = document.createElement('div')
+                    dot.classList.add('help-row-dot')
+                    dotsWrapper.appendChild(dot)
+                    dot.addEventListener('click', () => {
+                        positiveDistance = (i / images.length + index) * window.innerHeight
+                        const parentDistanceToTop = -1 * positiveDistance
+                        const parentTopPosition = getElementFullOffsetTop(document.querySelector('#section-T-iFKIxbuE').parentNode);
+                        const scrollPosition = parentTopPosition - parentDistanceToTop;
+                        window.scrollTo({
+                            left: 0,
+                            top: scrollPosition + 1,
+                            behavior: 'instant'
+                        })
+                    })
+                }
+            }
+            container.appendChild(dotsWrapper)
+        })
+        sectionInner.append(wrapper)
+        const sectionHeight = sectionInner.offsetHeight;
+        const sectionTopPadding = parseInt(getComputedStyle(sectionInner).paddingTop)
+        const sectionBottomPadding = parseInt(getComputedStyle(sectionInner).paddingBottom)
+        const sectionInnerHeight = sectionHeight - sectionTopPadding - sectionBottomPadding
+        const title = document.querySelector('#heading-U-7HzzV9Kz')
+        const titleHeight = title.offsetHeight;
+        const freeHeight = sectionInnerHeight - titleHeight;
+        wrapper.style.height = `${freeHeight}px`
+
+
+        const heightDelay = window.innerHeight * rows.length;
+        const parentElement = handleCustomSticky('#section-T-iFKIxbuE', heightDelay)
+
+        const loopThings = (rowCount = 0, count = 0) => {
+            try {
+                const row = rows[rowCount];
+                const { imageContainer, listID, images: imageIDs, id: rowID, imageContainerColumn, position } = row
+                const listUl = document.querySelector(listID);
+                const list = listUl.querySelectorAll("li");
+                const images = imageIDs.map(image => document.querySelector(image))
+                const imageContainerHeight = imageContainer.offsetHeight
+                const imageContainerWidth = imageContainer.offsetWidth
+                const imageContainerTopPadding = parseInt(getComputedStyle(imageContainer).paddingTop)
+                const imageContainerLeftPadding = parseInt(getComputedStyle(imageContainer).paddingLeft)
+                const imageContainerBottomPadding = parseInt(getComputedStyle(imageContainer).paddingBottom)
+                const imageContainerRightPadding = parseInt(getComputedStyle(imageContainer).paddingRight)
+                const imageContainerInnerHeight = imageContainerHeight - imageContainerBottomPadding - imageContainerTopPadding;
+                const imageContainerInnerWidth = imageContainerWidth - imageContainerLeftPadding - imageContainerRightPadding;
+
+                const isEven = count % 2 === 0;
+                const rowInner = document.querySelector(`${rowID}>.inner`)
+                const isImageColumnFirstChild = position === 'left'
+
+                const shouldReverse = (!isImageColumnFirstChild && isEven) || (isImageColumnFirstChild && !isEven)
+
+                if (shouldReverse) {
+                    rowInner.style.flexDirection = 'row'
+                } else {
+                    rowInner.style.flexDirection = 'row-reverse'
+                }
+
+                if ((isImageColumnFirstChild && isEven) || (!isImageColumnFirstChild && isEven)) {
+                    imageContainerColumn.style.paddingLeft = '60px'
+                    imageContainerColumn.style.paddingRight = '0px'
+                } else {
+                    imageContainerColumn.style.paddingLeft = '0px'
+                    imageContainerColumn.style.paddingRight = '60px'
+                }
+
+
+
+                const dots = document.querySelectorAll(`${rowID}-dots>div`)
+                const max = list.length;
+                for (let index = 0; index < max; index++) {
+                    const item = list[index];
+                    const image = images[index];
+                    const dot = dots[index];
+                    const img = image.querySelector('img')
+                    img.style = `height:${imageContainerInnerHeight}px !important; width:${imageContainerInnerWidth}px !important;object-fit:contain; max-width: 700px; object-position:center;`
+                    image.style.display = index === count ? "block" : 'none'
+                    image.style.opacity = index === count ? "1" : '0'
+                    if (index === count) {
+                        item.classList.add('active')
+                        dot.classList.add('active')
+                    } else {
+                        item.classList.remove('active')
+                        dot.classList.remove('active')
+                    }
+                }
+            } catch (error) {
+                //
+            }
+        }
+        const replaceTitle = (rowCount = 0) => {
+            const titleIDs = rows.map((row) => row.titleID)
+            const titleElements = titleIDs.map(titleID => document.querySelector(titleID))
+            titleElements.forEach((element, index) => {
+                if (rowCount === index) {
+                    element.style.display = 'block'
+                } else {
+                    element.style.display = 'none'
+                }
+            })
+        }
+
+        const replaceButtonSubText = (rowCount = 0) => {
+            const buttonText = rows[rowCount].buttonText
+            changeButtonSubText(buttonText)
+        }
+
+        const replaceRow = (rowCount = 0) => {
+            const rowElements = wrapper.querySelectorAll('.iFKIxbuE-scroll-container')
+            rowElements.forEach((element, index) => {
+                if (rowCount === index) {
+                    element.style.display = 'block'
+                } else {
+                    element.style.display = 'none'
+                }
+            })
+        }
+
+
+
+        let activeImageContainer;
+        let activeImageColumn;
+        let activeRow;
+
+
+
+
+        const setBackDefaultValues = () => {
+            activeSection = null
+            activeImageContainer = null
+            activeImageColumn = null
+        }
+        replaceButtonSubText()
+
+
+
+        replaceRow()
+        loopThings()
+        replaceTitle()
+
+        window.addEventListener('scroll', () => {
+            setTimeout(() => {
+                const scrollPosition = window.scrollY
+                const parentTopPosition = getElementFullOffsetTop(parentElement);
+                const parentDistanceToTop = parentTopPosition - scrollPosition;
+                const positiveDistance = parentDistanceToTop * -1;
+                const delayInSingleRow = heightDelay / rows.length
+
+
+                if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay - window.innerHeight / 2) {
+                    let rowCount = Math.floor((positiveDistance / heightDelay) * rows.length)
+                    if (rowCount > rows.length) {
+                        rowCount = rows.length
+                    }
+                    if (rowCount < 0) {
+                        rowCount = 0
+                    }
+
+                    const row = rows[rowCount];
+                    if (row) {
+                        replaceTitle(rowCount)
+                        replaceRow(rowCount)
+                        replaceButtonSubText(rowCount)
+                        const scrolledInPresentRow = positiveDistance - (delayInSingleRow * rowCount)
+                        let active = Math.floor((scrolledInPresentRow / delayInSingleRow) * row.images.length)
+                        if (active > row.images.length - 1) {
+                            active = row.images.length
+                        }
+                        if (active < 0) {
+                            active = 0
+                        }
+                        if (active !== row.images.length) {
+                            loopThings(rowCount, active)
+                        }
+                    } else {
+                        setBackDefaultValues()
+                    }
+
+                } else if (parentDistanceToTop <= 0 && positiveDistance > heightDelay - window.innerHeight / 2 && positiveDistance <= heightDelay + window.innerHeight) {
+                    scrollToSection('#section-AsM28PkJVo')
+                    setBackDefaultValues()
+                } else {
+                    setBackDefaultValues()
+                }
+            }, 0)
+
+        })
+
+
+    }
+
+    animateWeHelpWith()
+
+
+    // =====================================
+    // END WHAT WE HELP WITH
+    // =====================================
+
+
+
+
+
+    // =====================================
+    // START CASE STUDIES
+    // =====================================
+
+    const animateWhatCaseStudies = () => {
+        // fixBottomPaddingForSections('#section-AsM28PkJVo')
+
+        const section = document.querySelector('#section-AsM28PkJVo>.inner')
+        const sectionHeight = section.offsetHeight;
+        const sectionTopPadding = parseInt(getComputedStyle(section).paddingTop)
+        const sectionBottomPadding = parseInt(getComputedStyle(section).paddingBottom)
+        const sectionInnerHeight = sectionHeight - sectionTopPadding - sectionBottomPadding
+        const title = document.querySelector('#row-rAJGAuFDB_')
+        const titleHeight = title.offsetHeight;
+        const freeHeight = sectionInnerHeight - titleHeight;
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('AsM28PkJVo-scroll-wrapper');
+        wrapper.style.height = `${freeHeight}px`
+
+        const containerID = 'case-study-stack-container'
+
+        const container = document.createElement('div');
+        container.classList.add('AsM28PkJVo-stack-container');
+        container.setAttribute('id', containerID);
+
+        wrapper.appendChild(container);
+
+        const rowIDs = ['#row-iXa0b7T3L5', '#row-Sq8tYfucrW'];
+        const rows = rowIDs.map(id => document.querySelector(id))
+        rows[0].parentNode.appendChild(wrapper)
+
+        const stackChildren = rows.map((row, index) => {
+            const stackChild = document.createElement('div')
+            stackChild.classList.add('AsM28PkJVo-stack-child')
+            stackChild.appendChild(row)
+            container.appendChild(stackChild)
+            return stackChild
+        })
+
+
+        const listItems = [...document.querySelectorAll('#bulletList-1E-tVCvQYj li'), ...document.querySelectorAll('#bulletList-kr8c293U7r li')]
+
+        listItems.forEach(listItem => {
+            const svgContainer = document.createElement('div')
+            svgContainer.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M9 11L12 14L22 4" stroke="#151A4F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M21 12V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H16" stroke="#151A4F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+`
+            listItem.insertBefore(svgContainer, listItem.querySelector('p'));
+        })
+
+        const heightDelay = window.innerHeight;
+        const parentElement = handleCustomSticky('#section-AsM28PkJVo', heightDelay)
+
+        stackChildren[0].classList.remove('cover')
+        stackChildren[1].classList.add('cover')
+
+        const changeDisplays = () => {
+            const scrollPosition = window.scrollY
+            const parentTopPosition = getElementFullOffsetTop(parentElement);
+            const parentDistanceToTop = parentTopPosition - scrollPosition;
+            const positiveDistance = parentDistanceToTop * -1
+            if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay) {
+                changeButtonSubText('UNLOCK YOUR TRUE BUSINESS POTENTIAL')
+                let count = Math.floor((positiveDistance / heightDelay) * 2)
+                if (count > 1) {
+                    count = 1
+                }
+                if (count < 0) {
+                    count = 0
+                }
+                if (count === 1) {
+                    stackChildren.forEach((stackChild) => {
+                        stackChild.classList.add('go-up')
+                    })
+                    stackChildren[0].classList.add('cover')
+                    stackChildren[1].classList.remove('cover')
+                } else {
+                    stackChildren.forEach((stackChild) => {
+                        stackChild.classList.remove('go-up')
+                    })
+                    stackChildren[0].classList.remove('cover')
+                    stackChildren[1].classList.add('cover')
+                }
+            } else if (parentDistanceToTop <= 0 && positiveDistance > heightDelay && positiveDistance <= heightDelay + window.innerHeight) {
+                scrollToSection('#section-ekIK0EfwBp')
+            }
+        }
+
+        window.addEventListener('scroll', () => {
+            setTimeout(() => {
+                changeDisplays()
+            }, 0)
+        })
+
+
+
+    }
+
+    animateWhatCaseStudies()
+
+    // =====================================
+    // END CASE STUDIES
+    // =====================================
+
+
+
+
+    // =====================================
+    // START OUR PROCESSES
+    // =====================================
+    const animateOurProcesses = () => {
+        try {
+            const floatingButtonSpaceToBottomScreen = fixBottomPaddingForSections('#section-ekIK0EfwBp', false)
+
+            const sectionInner = document.querySelector('#section-ekIK0EfwBp>.inner')
+            const wrapper = document.createElement('div')
+            wrapper.classList.add('ekIK0EfwBp-scroll-wrapper')
+            const container = document.createElement('div')
+            container.classList.add('ekIK0EfwBp-scroll-container')
+            wrapper.appendChild(container)
+            const listIDs = [
+                "#row-v401wbCKdd",
+                "#row-XKNabX21ox",
+                "#row-ZF69tc7Sx4",
+                "#row-yiza6zSG8x",
+                "#row--OmxzUELMI",
+                "#row-5UEM-s-KLA",
+                "#row-Gpeq01kKzr",
+                "#row-uWqd6b8pbn",
+            ]
+
+            sectionInner.append(wrapper)
+            const sectionHeight = sectionInner.offsetHeight;
+            const sectionTopPadding = parseInt(getComputedStyle(sectionInner).paddingTop)
+            const sectionBottomPadding = parseInt(getComputedStyle(sectionInner).paddingBottom)
+            const sectionInnerHeight = sectionHeight - sectionTopPadding - sectionBottomPadding
+            const title = document.querySelector('#row-qJpG8s_klK')
+            const titleHeight = title.offsetHeight;
+            const freeHeight = sectionInnerHeight - titleHeight;
+            wrapper.style.height = `${freeHeight}px`
+            const listElements = listIDs.map(id => document.querySelector(id))
+            listElements.forEach((element, index) => {
+                const innerElement = document.querySelector(`#${element.id}>.inner`)
+                innerElement.style.minHeight = `${freeHeight - floatingButtonSpaceToBottomScreen - 96 / 2}px`
+                container.appendChild(element)
+            })
+            const containerHeight = container.offsetHeight;
+            const scrollShift = containerHeight - freeHeight + floatingButtonSpaceToBottomScreen
+
+
+            const headersIds = [
+                "#heading-gVGhmDi6sf",
+                "#heading-Bqa4MiWPAa",
+                "#heading-x8Xq8MxvXU",
+                "#heading-Q9b2Nrl2gj",
+                "#heading-nKbrnFliH4",
+                "#heading-OtFCgUFZ52",
+                "#heading-V127dU-abJ",
+            ]
+
+            const titleIDs = [
+                "#heading-D_Deu2fAZO",
+                "#heading-oldFebf24I",
+                "#heading-KRaKgg7KHd",
+                "#heading-1HBdujIoBr",
+                "#heading-TZVZ2AednD",
+                "#heading-Te-paZY0kP",
+                "#heading-_zHb6Sxtex",
+            ]
+
+            const paragraphsIDs = [
+                "#paragraph-KlM11iwF8H",
+                "#paragraph-teR91LSf_W",
+                "#paragraph-LqFoYek_nI",
+                "#paragraph-NewDfg1rKm",
+                "#paragraph-vT-R8PMI54",
+                "#paragraph-LFQVq9FZ8T",
+                "#paragraph-1nclZNm8EE",
+                "#paragraph-SVE56WC51Z",
+            ]
+
+            const titleElements = titleIDs.map(titleID => document.querySelector(titleID))
+
+            const headersElements = headersIds.map(headersId => document.querySelector(headersId))
+            const paragraphsElements = paragraphsIDs.map(paragraphID => document.querySelector(paragraphID))
+
+
+            const listElementsIncreasingHeight = listElements.reduce((total, current, index) => {
+                return total.concat((total[index - 1] || 0) + current.offsetHeight)
+            }, [])
+            const getPresentScrolledIndex = (positiveDistance = 0) => {
+                for (let index = 0; index < listElementsIncreasingHeight.length; index++) {
+                    const height = listElementsIncreasingHeight[index];
+                    if (positiveDistance < height) {
+                        return [index, listElementsIncreasingHeight[index - 1] || 0]
+                    }
+                }
+                return [listElementsIncreasingHeight.length - 1, listElementsIncreasingHeight[listElementsIncreasingHeight.length - 1]]
+            }
+            const useScrollOnly = scrollShift < 0
+
+            const heightDelay = useScrollOnly ? window.innerHeight / 2 : scrollShift;
+            const parentElement = handleCustomSticky('#section-ekIK0EfwBp', heightDelay)
+
+            const changeDisplays = () => {
+                const scrollPosition = window.scrollY
+                const parentTopPosition = getElementFullOffsetTop(parentElement);
+                const parentDistanceToTop = parentTopPosition - scrollPosition;
+                const positiveDistance = parentDistanceToTop * -1
+
+                if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay && !useScrollOnly) {
+                    const [presentScrolledIndex, height] = getPresentScrolledIndex(positiveDistance)
+                    container.style.transform = `translateY(-${height}px)`
+                    headersElements.forEach((headersElement, index) => {
+                        if (presentScrolledIndex - 1 === index) {
+                            headersElement.classList.add('active')
+                            titleElements[index].classList.add('active')
+                        } else {
+                            headersElement.classList.remove('active')
+                            titleElements[index].classList.remove('active')
+                        }
+                    })
+
+                    paragraphsElements.forEach((paragraphsElement, index) => {
+                        if (presentScrolledIndex === index) {
+                            paragraphsElement.classList.add('active')
+                        } else {
+                            paragraphsElement.classList.remove('active')
+                        }
+                    })
+
+
+                } else if (parentDistanceToTop <= 0 && positiveDistance > heightDelay && positiveDistance <= heightDelay + window.innerHeight) {
+                    scrollToSection('#section-Pu__96wdWR')
+
+                }
+            }
+            window.addEventListener('scroll', () => {
+                setTimeout(() => {
+                    changeDisplays()
+                }, 0)
+            })
+            changeDisplays()
+
+            createToolTip('#paragraph-LFQVq9FZ8T', `We usually plan our efforts to assure that you'll be experiencing \nthe first set of valuable improvements by the 3rd month of \nworking with us (or sooner). We then continue building up other \nimprovements on top of them.`, true)
+
+        } catch (error) {
+            console.log('animateWhatWeHelpWith', error);
+        }
+    }
+
+
+    // const animateOurProcesses = () => {
+    //     fixBottomPaddingForSections('#section-ekIK0EfwBp')
+
+    //     const heightDelay = window.innerHeight * 4;
+    //     const parentElement = handleCustomSticky('#section-ekIK0EfwBp', heightDelay)
+
+
+    //     const steps = document.querySelectorAll('.custom-stepper-wrapper .custom-stepper-container .custom-stepper .custom-step')
+    //     const container = document.querySelector('.custom-stepper-wrapper .custom-stepper-container')
+    //     const scrollableElement = document.querySelector('.custom-stepper-wrapper')
+    //     const wrapperWidth = scrollableElement.offsetWidth;
+
+    //     const headers = [
+    //         '#heading-D_Deu2fAZO',
+    //         '#heading-oldFebf24I',
+    //         '#heading-KRaKgg7KHd',
+    //         '#heading-1HBdujIoBr',
+    //         '#heading-TZVZ2AednD',
+    //         '#heading-Te-paZY0kP',
+    //         '#heading-_zHb6Sxtex'
+    //     ].map(header => document.querySelector(header))
+
+    //     const paragraphs = [
+    //         '#paragraph-teR91LSf_W',
+    //         '#paragraph-LqFoYek_nI',
+    //         '#paragraph-NewDfg1rKm',
+    //         '#paragraph-vT-R8PMI54',
+    //         '#paragraph-LFQVq9FZ8T',
+    //         '#paragraph-1nclZNm8EE',
+    //         '#paragraph-SVE56WC51Z'
+    //     ].map(paragraph => document.querySelector(paragraph))
+
+    //     const changeDisplays = (count = 0) => {
+    //         headers.forEach((header, index) => {
+    //             if (index === count - 1) {
+    //                 header.style.display = 'block'
+    //                 header.style.opacity = '1'
+    //             } else {
+    //                 header.style.display = 'none'
+    //                 header.style.opacity = '0'
+    //             }
+    //         })
+
+    //         paragraphs.forEach((paragraph, index) => {
+    //             if (index === count - 1) {
+    //                 paragraph.style.display = 'block'
+    //                 paragraph.style.opacity = '1'
+    //             } else {
+    //                 paragraph.style.display = 'none'
+    //                 paragraph.style.opacity = '0'
+    //             }
+    //         })
+
+    //         steps.forEach((step, index) => {
+    //             if (index === count - 1) {
+    //                 step.classList.add('active')
+    //             } else {
+    //                 step.classList.remove('active')
+    //             }
+    //         })
+    //     }
+
+    //     const scrollWrapper = (positiveDistance) => {
+    //         const determinant = ((positiveDistance * steps[0].offsetWidth * 6) / (heightDelay)) - steps[0].offsetWidth
+    //         container.style.transform = `translateX(-${determinant}px)`
+    //     }
+
+    //     const processTests = document.querySelector('#row-ADQPGi1sPe')
+    //     const processGeneralInfo = document.querySelector('#row-R8P-coMVmC')
+    //     const stepperArrow = document.querySelector('.custom-stepper-arrow')
+    //     const stepperArrowSmall = document.querySelector('.custom-stepper-arrow-small')
+    //     const handleZoomIn = () => {
+    //         processTests.style.display = 'block'
+    //         processGeneralInfo.style.display = 'none'
+    //         scrollableElement.classList.remove('small')
+    //         steps.forEach((step, index) => {
+    //             step.style = ""
+    //             const stepNumber = step.querySelector('.custom-step-number');
+    //             stepNumber.style = ''
+    //             stepNumber.classList.remove('small')
+    //             const stepNumberText = stepNumber.querySelector('h1')
+    //             stepNumberText.classList.remove('small')
+    //             const stepLabel = step.querySelector('.custom-step-label');
+    //             stepLabel.classList.remove('small')
+    //             stepNumber.classList.remove('small')
+    //         })
+    //         stepperArrow.style.display = 'block'
+    //         stepperArrowSmall.style.display = 'none'
+    //     }
+    //     const handleZoomOut = () => {
+    //         container.style.transform = `translateX(0px)`
+
+    //         processTests.style.display = 'none'
+    //         processGeneralInfo.style.display = 'block'
+    //         const widthForEachItem = wrapperWidth / 7
+    //         scrollableElement.classList.add('small')
+    //         steps.forEach((step, index) => {
+    //             if (index === 0) {
+    //                 step.classList.add('active')
+    //             } else {
+    //                 step.classList.remove('active')
+    //             }
+    //             step.style.width = `${widthForEachItem}px`
+    //             const stepNumber = step.querySelector('.custom-step-number');
+    //             const numberWidth = 40 * widthForEachItem / 100
+    //             stepNumber.style.width = `${numberWidth}px`
+    //             stepNumber.style.height = `${numberWidth}px`
+    //             stepNumber.classList.add('small')
+    //             const stepNumberText = stepNumber.querySelector('h1')
+    //             stepNumberText.classList.add('small')
+    //             const stepLabel = step.querySelector('.custom-step-label');
+    //             stepLabel.classList.add('small')
+    //             stepNumber.classList.add('small')
+    //         })
+    //         stepperArrow.style.display = 'none'
+    //         stepperArrowSmall.style.display = 'block'
+    //     }
+    //     handleZoomOut()
+
+    //     window.addEventListener('scroll', () => {
+    //         setTimeout(() => {
+    //             const scrollPosition = window.scrollY
+    //             const parentTopPosition = getElementFullOffsetTop(parentElement);
+    //             const parentDistanceToTop = parentTopPosition - scrollPosition;
+    //             const positiveDistance = parentDistanceToTop * -1
+
+
+    //             if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay) {
+    //                 let count = Math.floor((positiveDistance / heightDelay) * 8)
+    //                 changeButtonSubText('START YOUR TRANSFORMATION TODAY')
+    //                 if (count > 7) {
+    //                     count = 7
+    //                 }
+    //                 if (count < 0) {
+    //                     count = 0
+    //                 }
+    //                 if (count === 0) {
+    //                     handleZoomOut()
+    //                 } else {
+    //                     handleZoomIn()
+    //                     changeDisplays(count)
+    //                     scrollWrapper(positiveDistance)
+    //                 }
+    //             } else if (parentDistanceToTop <= 0 && positiveDistance > heightDelay + window.innerHeight/2 && positiveDistance <= heightDelay + window.innerHeight) {
+    //                 scrollToSection('#section-Pu__96wdWR')
+    //             }
+    //         }, 0)
+
+    //     })
+    // }
+
+    animateOurProcesses()
+
+    // =====================================
+    // END OUR PROCESSES
+    // =====================================
+
+
+
+
+
+
+    // =====================================
+    // START RESULTS WE GET
+    // =====================================
+
+    const animateResultsWeGet = () => {
+        try {
+            const floatingButtonSpaceToBottomScreen = fixBottomPaddingForSections('#section-Pu__96wdWR', false)
+            const sectionInner = document.querySelector('#section-Pu__96wdWR>.inner')
+            const wrapper = document.createElement('div')
+            wrapper.classList.add('Pu__96wdWR-scroll-wrapper')
+            const container = document.createElement('div')
+            container.classList.add('Pu__96wdWR-scroll-container')
+            wrapper.appendChild(container)
+            const listIDs = [
+                '#row-1vvhVUvfrt',
+                '#row-TofV-PmQ9v',
+                '#row-6fD-n-5gT1',
+                '#row-sOt2BXksB9',
+                '#row-HjVEF1Zc0t',
+                '#row-YU0qo44sQD '
+            ]
+            const listElements = listIDs.map(id => document.querySelector(id))
+            listElements.forEach((element, index) => {
+                container.appendChild(element)
+            })
+            sectionInner.append(wrapper)
+            const sectionHeight = sectionInner.offsetHeight;
+            const sectionTopPadding = parseInt(getComputedStyle(sectionInner).paddingTop)
+            const sectionBottomPadding = parseInt(getComputedStyle(sectionInner).paddingBottom)
+            const sectionInnerHeight = sectionHeight - sectionTopPadding - sectionBottomPadding
+            const title = document.querySelector('#row-lw7C8-dgr_')
+            const titleHeight = title.offsetHeight;
+            const freeHeight = sectionInnerHeight - titleHeight;
+            wrapper.style.height = `${freeHeight}px`
+
+            const containerHeight = container.offsetHeight;
+            const scrollShift = containerHeight - freeHeight + floatingButtonSpaceToBottomScreen
+
+
+            const useScrollOnly = scrollShift < 0
+
+            const heightDelay = useScrollOnly ? window.innerHeight / 2 : scrollShift;
+            const parentElement = handleCustomSticky('#section-Pu__96wdWR', heightDelay)
+
+            const changeDisplays = () => {
+
+                const scrollPosition = window.scrollY
+                const parentTopPosition = getElementFullOffsetTop(parentElement);
+                const parentDistanceToTop = parentTopPosition - scrollPosition;
+                const positiveDistance = parentDistanceToTop * -1
+
+                if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay && !useScrollOnly) {
+                    changeButtonSubText('START YOUR TRANSFORMATION TODAY')
+                } else if (parentDistanceToTop <= 0 && positiveDistance > heightDelay && positiveDistance <= heightDelay + window.innerHeight) {
+                    scrollToSection('#section-hYmwrwe-tQ')
+                }
+                const translateY = (() => {
+                    if (parentDistanceToTop > 0) {
+                        return 0
+                    }
+                    if (parentDistanceToTop < heightDelay * -1) {
+                        return heightDelay * -1
+                    }
+                    return parentDistanceToTop
+                })()
+                container.style.transform = `translateY(${translateY}px)`
+            }
+
+            window.addEventListener('scroll', () => {
+                setTimeout(() => {
+                    changeDisplays()
+                }, 0)
+            })
+            changeDisplays()
+
+        } catch (error) {
+            console.log('animateResultsWeGet', error);
+        }
+    }
+    animateResultsWeGet()
+
+    // =====================================
+    // END RESULTS WE GET
+    // =====================================
+
+
+
+
+
+    // =====================================
+    // START YES WE MEAN IT
+    // =====================================
+
+    const animateYesWeMeanIt = () => {
+        try {
+            const floatingButtonSpaceToBottomScreen = fixBottomPaddingForSections('#section-hYmwrwe-tQ', false)
+            const sectionInner = document.querySelector('#section-hYmwrwe-tQ>.inner')
+            const wrapper = document.createElement('div')
+            wrapper.classList.add('tQ-scroll-wrapper')
+            const container = document.createElement('div')
+            container.classList.add('tQ-scroll-container')
+            wrapper.appendChild(container)
+            const listIDs = [
+                '#row-sa42GmoliJ'
+            ]
+            const listElements = listIDs.map(id => document.querySelector(id))
+            listElements.forEach((element, index) => {
+                element.classList.add('top')
+                container.appendChild(element)
+            })
+            sectionInner.append(wrapper)
+            const sectionHeight = sectionInner.offsetHeight;
+            const sectionTopPadding = parseInt(getComputedStyle(sectionInner).paddingTop)
+            const sectionBottomPadding = parseInt(getComputedStyle(sectionInner).paddingBottom)
+            const sectionInnerHeight = sectionHeight - sectionTopPadding - sectionBottomPadding
+            const title = document.querySelector('#row-VQXRv-mx4p')
+            const titleHeight = title.offsetHeight;
+            const freeHeight = sectionInnerHeight - titleHeight;
+            wrapper.style.height = `${freeHeight}px`
+
+            const containerHeight = container.offsetHeight;
+            const scrollShift = containerHeight - freeHeight + floatingButtonSpaceToBottomScreen
+
+            const useScrollOnly = scrollShift < 0
+
+            const heightDelay = useScrollOnly ? window.innerHeight / 2 : scrollShift;
+            const parentElement = handleCustomSticky('#section-hYmwrwe-tQ', heightDelay)
+
+            const changeDisplays = () => {
+
+                const scrollPosition = window.scrollY
+                const parentTopPosition = getElementFullOffsetTop(parentElement);
+                const parentDistanceToTop = parentTopPosition - scrollPosition;
+                const positiveDistance = parentDistanceToTop * -1
+
+                if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay && !useScrollOnly) {
+                    changeButtonSubText('START YOUR TRANSFORMATION TODAY')
+                    container.style.transform = `translateY(${parentDistanceToTop}px)`
+                    const count = Math.floor(positiveDistance * 8 / heightDelay)
+                } else if (parentDistanceToTop <= 0 && positiveDistance > heightDelay && positiveDistance <= heightDelay + window.innerHeight) {
+                    scrollToSection('#section-sX4oEYBYhl')
+                }
+            }
+
+            window.addEventListener('scroll', () => {
+                setTimeout(() => {
+                    changeDisplays()
+                }, 0)
+            })
+            changeDisplays()
+
+        } catch (error) {
+            console.log('animateYesWeMeanIt', error);
+        }
+
+    }
+
+    animateYesWeMeanIt()
+
+    // =====================================
+    // END YES WE MEAN IT
+    // =====================================
+
+
+    // =====================================
+    // START GUARANTEE
+    // =====================================
+
+    const animateGuarantee = () => {
+        try {
+            const floatingButtonSpaceToBottomScreen = fixBottomPaddingForSections('#section-sX4oEYBYhl', false)
+
+            const sectionInner = document.querySelector('#section-sX4oEYBYhl>.inner')
+            const wrapper = document.createElement('div')
+            wrapper.classList.add('sX4oEYBYhl-scroll-wrapper')
+            const container = document.createElement('div')
+            container.classList.add('sX4oEYBYhl-scroll-container')
+            wrapper.appendChild(container)
+            const listIDs = [
+                '#row-Sk0mZAkn4t'
+            ]
+            const listElements = listIDs.map(id => document.querySelector(id))
+            listElements.forEach((element, index) => {
+                container.appendChild(element)
+            })
+            sectionInner.append(wrapper)
+            const sectionHeight = sectionInner.offsetHeight;
+            const sectionTopPadding = parseInt(getComputedStyle(sectionInner).paddingTop)
+            const sectionBottomPadding = parseInt(getComputedStyle(sectionInner).paddingBottom)
+            const sectionInnerHeight = sectionHeight - sectionTopPadding - sectionBottomPadding
+            const title = document.querySelector('#row-uvbsMyZfXJ')
+            const titleHeight = title.offsetHeight;
+            const freeHeight = sectionInnerHeight - titleHeight;
+            wrapper.style.height = `${freeHeight}px`
+
+            const containerHeight = container.offsetHeight;
+            const scrollShift = containerHeight - freeHeight + floatingButtonSpaceToBottomScreen
+
+
+            const useScrollOnly = scrollShift < 0
+
+            const heightDelay = useScrollOnly ? window.innerHeight / 2 : scrollShift;
+            const parentElement = handleCustomSticky('#section-sX4oEYBYhl', heightDelay)
+
+            const changeDisplays = () => {
+
+                const scrollPosition = window.scrollY
+                const parentTopPosition = getElementFullOffsetTop(parentElement);
+                const parentDistanceToTop = parentTopPosition - scrollPosition;
+                const positiveDistance = parentDistanceToTop * -1
+
+                if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay && !useScrollOnly) {
+                    changeButtonSubText('START YOUR TRANSFORMATION TODAY')
+                    container.style.transform = `translateY(${parentDistanceToTop}px)`
+                    const count = Math.floor(positiveDistance * 8 / heightDelay)
+                } else if (parentDistanceToTop <= 0 && positiveDistance > heightDelay && positiveDistance <= heightDelay + window.innerHeight) {
+                    scrollToSection('#section-4czTLbhIWg')
+                }
+            }
+
+            window.addEventListener('scroll', () => {
+                setTimeout(() => {
+                    changeDisplays()
+                }, 0)
+            })
+            changeDisplays()
+        } catch (error) {
+            console.log('animateGuarantee', error);
+        }
+
+    }
+
+    animateGuarantee()
+
+    // =====================================
+    // END  GUARANTEE
+    // =====================================
+
+
+
+
+
+
+
+    // =====================================
+    // START WILL THIS WORK FOR YOU
+    // =====================================
+
+
+
+    const animateWillThisWorkForYou = () => {
+        try {
+            const floatingButtonSpaceToBottomScreen = fixBottomPaddingForSections('#section-4czTLbhIWg', false)
+
+            const sectionInner = document.querySelector('#section-4czTLbhIWg>.inner')
+            const wrapper = document.createElement('div')
+            wrapper.classList.add('czTLbhIWg-scroll-wrapper')
+            const container = document.createElement('div')
+            container.classList.add('czTLbhIWg-scroll-container')
+            wrapper.appendChild(container)
+            const listIDs = [
+                '#row-z7WpDnDm8j',
+                '#row-DVEp-aWmIc',
+                '#row-Nc32sIrtak',
+                '#row-LBwZs2lVY0'
+            ]
+            const listElements = listIDs.map(id => document.querySelector(id))
+            listElements.forEach((element, index) => {
+                container.appendChild(element)
+            })
+            sectionInner.append(wrapper)
+            const sectionHeight = sectionInner.offsetHeight;
+            const sectionTopPadding = parseInt(getComputedStyle(sectionInner).paddingTop)
+            const sectionBottomPadding = parseInt(getComputedStyle(sectionInner).paddingBottom)
+            const sectionInnerHeight = sectionHeight - sectionTopPadding - sectionBottomPadding
+            const title = document.querySelector('#col-vSnnHVe6z8')
+            const titleHeight = title.offsetHeight;
+            const freeHeight = sectionInnerHeight - titleHeight;
+            wrapper.style.height = `${freeHeight}px`
+
+            const containerHeight = container.offsetHeight;
+            const scrollShift = containerHeight - freeHeight + floatingButtonSpaceToBottomScreen
+
+
+            const useScrollOnly = scrollShift < 0
+
+            const heightDelay = useScrollOnly ? window.innerHeight / 2 : scrollShift;
+            const parentElement = handleCustomSticky('#section-4czTLbhIWg', heightDelay)
+
+            const changeDisplays = () => {
+
+                const scrollPosition = window.scrollY
+                const parentTopPosition = getElementFullOffsetTop(parentElement);
+                const parentDistanceToTop = parentTopPosition - scrollPosition;
+                const positiveDistance = parentDistanceToTop * -1
+
+                if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay && !useScrollOnly) {
+                    changeButtonSubText('START YOUR TRANSFORMATION TODAY')
+                    container.style.transform = `translateY(${parentDistanceToTop}px)`
+                    const count = Math.floor(positiveDistance * 8 / heightDelay)
+                } else if (parentDistanceToTop <= 0 && positiveDistance > heightDelay && positiveDistance <= heightDelay + window.innerHeight) {
+                    scrollToSection('#section-WrgUhJoovE')
+                }
+            }
+
+            window.addEventListener('scroll', () => {
+                setTimeout(() => {
+                    changeDisplays()
+                }, 0)
+            })
+            changeDisplays()
+
+            createToolTip('#paragraph-x95_SsnE0c', `We can sometimes help businesses who are earlier in their growth journey. \nContact us to discuss this more.`)
+
+        } catch (error) {
+            console.log('animateWillThisWorkForYou', error);
+        }
+
+    }
+
+    animateWillThisWorkForYou()
+
+    // =====================================
+    // END WILL THIS WORK FOR YOU
+    // =====================================
+
+
+
+
+
+    // =====================================
+    // START WHAT IF YOUR SITUATION
+    // =====================================
+
+    const animateWhatIfYourSituation = () => {
+        try {
+            const floatingButtonSpaceToBottomScreen = fixBottomPaddingForSections('#section-WrgUhJoovE', false)
+            const sectionInner = document.querySelector('#section-WrgUhJoovE>.inner')
+            const wrapper = document.createElement('div')
+            wrapper.classList.add('WrgUhJoovE-scroll-wrapper')
+            const container = document.createElement('div')
+            container.classList.add('WrgUhJoovE-scroll-container')
+            wrapper.appendChild(container)
+            const listIDs = [
+                '#row-PvZ0BXSRBv',
+                '#row-E7uLV2pFXa',
+                '#row-esgUyWl1tC',
+            ]
+            const listElements = listIDs.map(id => document.querySelector(id))
+            listElements.forEach((element, index) => {
+                element.classList.add('top')
+                container.appendChild(element)
+            })
+            sectionInner.append(wrapper)
+            const sectionHeight = sectionInner.offsetHeight;
+            const sectionTopPadding = parseInt(getComputedStyle(sectionInner).paddingTop)
+            const sectionBottomPadding = parseInt(getComputedStyle(sectionInner).paddingBottom)
+            const sectionInnerHeight = sectionHeight - sectionBottomPadding - sectionTopPadding
+            const title = document.querySelector('#col-nUNLj5SpDo')
+            const titleHeight = title.offsetHeight;
+            const freeHeight = sectionInnerHeight - titleHeight;
+            wrapper.style.height = `${freeHeight}px`
+
+            const containerHeight = container.offsetHeight;
+            const scrollShift = containerHeight - freeHeight + floatingButtonSpaceToBottomScreen
+            const useScrollOnly = scrollShift < 0
+
+            const heightDelay = useScrollOnly ? window.innerHeight / 2 : scrollShift;
+            const parentElement = handleCustomSticky('#section-WrgUhJoovE', heightDelay)
+
+            const changeDisplays = () => {
+
+                const scrollPosition = window.scrollY
+                const parentTopPosition = getElementFullOffsetTop(parentElement);
+                const parentDistanceToTop = parentTopPosition - scrollPosition;
+                const positiveDistance = parentDistanceToTop * -1
+
+                if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay && !useScrollOnly) {
+                    changeButtonSubText('START YOUR TRANSFORMATION TODAY')
+                    container.style.transform = `translateY(${parentDistanceToTop}px)`
+                    const count = Math.floor(positiveDistance * 8 / heightDelay)
+                } else if (parentDistanceToTop <= 0 && positiveDistance > heightDelay && positiveDistance <= heightDelay + window.innerHeight) {
+                    scrollToSection('#section-1X7C4wa4u_')
+                }
+            }
+
+            window.addEventListener('scroll', () => {
+                setTimeout(() => {
+                    changeDisplays()
+                }, 0)
+            })
+            changeDisplays()
+
+        } catch (error) {
+            console.log('animateWhatIfYourSituation', error);
+        }
+    }
+
+
+    animateWhatIfYourSituation()
+
+    // =====================================
+    // END WHAT IF YOUR SITUATION
+    // =====================================
+
+
+
+    // =====================================
+    // START STILL NOT SURE
+    // =====================================
+
+    const animateStillNotSure = () => {
+        try {
+            const floatingButtonSpaceToBottomScreen = fixBottomPaddingForSections('#section-1X7C4wa4u_', false)
+            const sectionInner = document.querySelector('#section-1X7C4wa4u_>.inner')
+            const wrapper = document.createElement('div')
+            wrapper.classList.add('1X7C4wa4u_-scroll-wrapper')
+            const container = document.createElement('div')
+            container.classList.add('1X7C4wa4u_-scroll-container')
+            wrapper.appendChild(container)
+            const listIDs = [
+                '#row-SB2jXnrZbp',
+            ]
+            const listElements = listIDs.map(id => document.querySelector(id))
+            listElements.forEach((element, index) => {
+                element.classList.add('top')
+                container.appendChild(element)
+            })
+            sectionInner.append(wrapper)
+            const sectionHeight = sectionInner.offsetHeight;
+            const sectionTopPadding = parseInt(getComputedStyle(sectionInner).paddingTop)
+            const sectionBottomPadding = parseInt(getComputedStyle(sectionInner).paddingBottom)
+            const sectionInnerHeight = sectionHeight - sectionTopPadding - sectionBottomPadding
+            const title = document.querySelector('#col-nlLNGqSqmR')
+            const titleHeight = title.offsetHeight;
+            const freeHeight = sectionInnerHeight - titleHeight;
+            wrapper.style.height = `${freeHeight}px`
+
+            const containerHeight = container.offsetHeight;
+            const scrollShift = containerHeight - freeHeight + floatingButtonSpaceToBottomScreen
+
+            const useScrollOnly = scrollShift < 0
+
+            const heightDelay = useScrollOnly ? window.innerHeight / 2 : scrollShift;
+            const parentElement = handleCustomSticky('#section-1X7C4wa4u_', heightDelay)
+
+            const changeDisplays = () => {
+
+                const scrollPosition = window.scrollY
+                const parentTopPosition = getElementFullOffsetTop(parentElement);
+                const parentDistanceToTop = parentTopPosition - scrollPosition;
+                const positiveDistance = parentDistanceToTop * -1
+
+                if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay && !useScrollOnly) {
+                    changeButtonSubText('START YOUR TRANSFORMATION TODAY')
+                    container.style.transform = `translateY(${parentDistanceToTop}px)`
+                    const count = Math.floor(positiveDistance * 8 / heightDelay)
+                }
+            }
+
+            window.addEventListener('scroll', () => {
+                setTimeout(() => {
+                    changeDisplays()
+                }, 0)
+            })
+            changeDisplays()
+
+        } catch (error) {
+            console.log('animateWhatIfYourSituation', error);
+        }
+
+
+    }
+
+    animateStillNotSure()
+
+    // =====================================
+    // END STILL NOT SURE
+    // =====================================
+
+
+    // =====================================
+    // START FOOTER
+    // =====================================
+
+    const animateFooter = () => {
+        try {
+            const section = document.querySelector('#section-FCFlcMyWgg')
+            const button = document.querySelector('#floating-button')
+            const changeDisplays = () => {
+                const scrollPosition = window.scrollY
+                const topPosition = getElementFullOffsetTop(section);
+                const distanceToTop = topPosition - scrollPosition;
+
+                let partInScreen = window.innerHeight - distanceToTop
+                if (partInScreen < 0) {
+                    partInScreen = 0
+                }
+                button.style.transform = `translate(-50%, -${partInScreen}px)`
+            }
+
+            window.addEventListener('scroll', () => {
+                setTimeout(() => {
+                    changeDisplays()
+                }, 0)
+            })
+            changeDisplays()
+        } catch (error) {
+            console.log('animateFooter', error);
+        }
+
+
+    }
+
+    animateFooter()
+
+    // =====================================
+    // END FOOTER
+    // =====================================
+
+
+
+</script>
