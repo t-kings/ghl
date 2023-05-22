@@ -405,7 +405,11 @@
     const animatesBeforeAndAfter = () => {
         try {
             let layoutAlreadySet = false;
+            let forceScrollPositionTimeoutID;
+            let forceSnapTimeoutID;
             const setLayout = () => {
+                clearTimeout(forceScrollPositionTimeoutID)
+                clearTimeout(forceSnapTimeoutID)
                 fixBottomPaddingForSections('#section-6KNcZ1CMyo')
                 const rowIDs = [
                     '#row-1CvP7CZYAM',
@@ -476,6 +480,8 @@
 
 
                 const changeDisplays = (count = 0, positiveDistance) => {
+                    clearTimeout(forceScrollPositionTimeoutID)
+                    clearTimeout(forceSnapTimeoutID)
                     for (let index = 0; index < max; index++) {
                         const stackChild = stackChildren[index];
                         const dot = dots[index];
@@ -491,13 +497,13 @@
                                 translateY = translateY < 0 ? 0 : translateY
                                 if (translateY < 20 && isScrolledUpOrDown === 'down') {
                                     stackChild.style.transition = 'transform 0.3s'
-                                    setTimeout(() => {
+                                    forceSnapTimeoutID = setTimeout(() => {
                                         stackChild.style.transition = 'none'
                                     }, 300);
                                     translateY = 0
                                 } else if (translateY > 80 && isScrolledUpOrDown === 'up') {
                                     stackChild.style.transition = 'transform 0.3s'
-                                    setTimeout(() => {
+                                    forceSnapTimeoutID = setTimeout(() => {
                                         stackChild.style.transition = 'none'
                                     }, 300);
                                     translateY = 100
@@ -506,6 +512,24 @@
                                 // stackChild.classList.remove('hide')
                                 if (translateY < 50) {
                                     dot.classList.add('active')
+                                }
+                                if (translateY !== 0 && translateY !== 100) {
+                                    forceScrollPositionTimeoutID = setTimeout(() => {
+                                        if (isScrolledUpOrDown === 'down') {
+                                            stackChild.style.transition = 'transform 0.3s'
+                                            forceSnapTimeoutID = setTimeout(() => {
+                                                stackChild.style.transition = 'none'
+                                            }, 300);
+                                            stackChild.style.transform = `translateY(0%)`
+                                        } else {
+                                            stackChild.style.transition = 'transform 0.3s'
+                                            forceSnapTimeoutID = setTimeout(() => {
+                                                stackChild.style.transition = 'none'
+                                            }, 300);
+                                            stackChild.style.transform = `translateY(100%)`
+                                            dot.classList.remove('active')
+                                        }
+                                    }, 200);
                                 }
                             } else {
                                 stackChild.style.transform = 'translateY(0%)'
