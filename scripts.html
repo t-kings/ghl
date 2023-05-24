@@ -246,7 +246,7 @@
                 }, 0)
             }
 
-            const forLargeScreensAbove900 = () => {
+            const forLargeScreensAbove1024 = () => {
                 toggleNavBars();
                 window.addEventListener('scroll', scrollingEventHandlerForNavbar);
             }
@@ -267,7 +267,7 @@
 
 
 
-            const forSmallScreensBelow900 = () => {
+            const forSmallScreensBelow1024 = () => {
                 closeMobileNavbar();
                 openButton.addEventListener('click', openMobileNavbar)
                 closeButton.addEventListener('click', closeMobileNavbar)
@@ -278,10 +278,10 @@
             }
 
             const handleNavbar = () => {
-                if (window.innerWidth > 900) {
-                    forLargeScreensAbove900();
+                if (window.innerWidth > 1024) {
+                    forLargeScreensAbove1024();
                 } else {
-                    forSmallScreensBelow900();
+                    forSmallScreensBelow1024();
                 }
             }
 
@@ -343,7 +343,7 @@
                 clearTimeout(timeOutID)
                 const distanceOfButtonOriginalTopToScreenTop = getElementFullOffsetTop(originalButton);
                 const scrollPosition = window.scrollY
-                const distanceToTop = distanceOfButtonOriginalTopToScreenTop - scrollPosition - (window.innerHeight > 900 ? mainNavbar.offsetHeight : mobileNavbar.offsetHeight);
+                const distanceToTop = distanceOfButtonOriginalTopToScreenTop - scrollPosition - (window.innerHeight > 1024 ? mainNavbar.offsetHeight : mobileNavbar.offsetHeight);
                 const shouldShowNewButton = distanceToTop < 0;
                 if (shouldShowNewButton) {
                     button.classList.remove('hidden-opacity')
@@ -365,7 +365,7 @@
             }
 
             const handleHeader = () => {
-                if (window.innerWidth > 900) {
+                if (window.innerWidth > 1024) {
                     parent.appendChild(threeMonths)
                 } else {
                     sectionInner.insertBefore(threeMonths, parent)
@@ -542,7 +542,9 @@
                         }
                     }
                 }
-                changeDisplays();
+                if (!layoutAlreadySet) {
+                    changeDisplays();
+                }
 
 
                 const parentElement = handleCustomSticky('#section-6KNcZ1CMyo', heightDelay)
@@ -632,30 +634,30 @@
                     return !(scrollPosition > zeroScrollPosition && scrollPosition < half)
                 }
 
-
-                setInterval(() => {
-                    if (!isScrolling) {
-                        const scrollPosition = window.scrollY
-                        const parentTopPosition = getElementFullOffsetTop(parentElement);
-                        const parentDistanceToTop = parentTopPosition - scrollPosition;
-                        const positiveDistance = parentDistanceToTop * -1;
-                        if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay) {
-                            if (!Object.values(scrollPositionToIndex).includes(scrollPosition) && !isCrossedCount) {
-                                const [min, max] = getBoundingIndexes(scrollPosition)
-                                const count = isScrolledUpOrDown === 'up' ? min : max;
-                                if (count !== null) {
-                                    if (justEnteredFromAbove && count > 0) {
-                                        autoScroll(count - 1)
-                                        justEnteredFromAbove = false
-                                    } else {
-                                        autoScroll(count)
+                if (!layoutAlreadySet) {
+                    setInterval(() => {
+                        if (!isScrolling) {
+                            const scrollPosition = window.scrollY
+                            const parentTopPosition = getElementFullOffsetTop(parentElement);
+                            const parentDistanceToTop = parentTopPosition - scrollPosition;
+                            const positiveDistance = parentDistanceToTop * -1;
+                            if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay) {
+                                if (!Object.values(scrollPositionToIndex).includes(scrollPosition) && !isCrossedCount) {
+                                    const [min, max] = getBoundingIndexes(scrollPosition)
+                                    const count = isScrolledUpOrDown === 'up' ? min : max;
+                                    if (count !== null) {
+                                        if (justEnteredFromAbove && count > 0) {
+                                            autoScroll(count - 1)
+                                            justEnteredFromAbove = false
+                                        } else {
+                                            autoScroll(count)
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
-                }, 50);
-
+                    }, 50);
+                }
                 const scrollEventHandler = () => {
                     clearTimeout(isScrollingTimeOutID)
                     isScrolling = true

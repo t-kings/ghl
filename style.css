@@ -1059,7 +1059,7 @@ START BEFORE AND AFTER
 #paragraph-ayDYOF5Dng,
 #paragraph-BHHANl2Rrv,
 #paragraph-ATauF4mwFb {
-    margin-bottom: 5rem;
+    padding-bottom: 5rem;
 }
 
 #paragraph-uvnyjUUl0T p::after,
@@ -3869,215 +3869,6 @@ END WHAT WE HELP WITH
 
     /* 
         ================================
-        HEADER
-        ===============================
-    */
-
-
-    #row-Qz6qTvYcO8 {
-        padding: 0 1.6044rem;
-        padding-top: 2.5rem;
-    }
-
-    #heading-0uY3_Ge2fHm h1 {
-        font-size: 3rem !important;
-        line-height: 3.5rem !important;
-    }
-
-    #sub-heading-HsIWxDtYSBg h2 {
-        font-size: 2rem !important;
-        line-height: 1.3125rem !important;
-    }
-
-    #section-nMyY9vZJBI {
-        margin-top: 3.1875rem;
-    }
-
-    #row-NGGb0HSO4r {
-        padding: 0 2.5rem;
-    }
-
-    #col-g_cqYEoS72>.inner {
-        padding: 1.5rem 1rem 0.5rem !important;
-    }
-
-    #sub-heading-vCKNFwM36K h2,
-    #sub-heading-vCKNFwM36K h2 em {
-        line-height: 130% !important;
-        font-size: 1rem !important;
-    }
-
-    #heading-9V7pTJ84oK {
-        margin-top: 0.5rem;
-    }
-
-
-    #heading-9V7pTJ84oK h1 em,
-    #heading-9V7pTJ84oK h1 {
-        font-size: 1.25rem !important;
-    }
-
-    #bulletList-7oij-7GDoW ul {
-        padding: 0 0 0.75rem;
-        margin-top: 0.5rem;
-    }
-
-
-    #bulletList-7oij-7GDoW li {
-        margin-bottom: 0.5rem;
-        margin-left: 2.25rem;
-        padding-left: 0.5rem;
-    }
-
-
-    #bulletList-7oij-7GDoW li p {
-        line-height: 1.25rem;
-        font-weight: 700 !important;
-        font-size: 0.9375rem;
-    }
-
-    #col-LgfKh2o0lG {
-        padding-left: 1rem;
-    }
-
-
-    .preview-container #row-vdLrkiAk0X {
-        top: -1.5625rem;
-    }
-
-
-    #row-vdLrkiAk0X>.inner {
-        padding: 0.5rem 1.75rem;
-    }
-
-    #image-tcsHQYb0WG,
-    #image-tcsHQYb0WG .image-container div,
-    #image-tcsHQYb0WG picture,
-    #image-tcsHQYb0WG img {
-        width: 2.8125rem !important;
-    }
-
-
-    #heading-Jo_F59lFnh h1,
-    #heading-Jo_F59lFnh h1 em {
-        font-size: 1.125rem !important;
-    }
-
-    #paragraph-46VygKBn4Z p,
-    #paragraph-46VygKBn4Z p em {
-        font-size: 0.875rem !important;
-        line-height: 1.3125rem !important;
-    }
-
-    /* 
-        ================================
-        END HEADER
-        ===============================
-    */
-
-
-
-
-    /* 
-        ================================
-        START BEFORE AND AFTER
-        ===============================
-    */
-
-
-    #section-6KNcZ1CMyo {
-        padding: 3.125rem 2.5rem;
-        padding-bottom: 0px;
-    }
-
-    #section-6KNcZ1CMyo>.inner {
-        padding-top: 5.1875rem;
-    }
-
-
-    #col-8sAtGn5Vnd,
-    #col-vTXA7HyDEa,
-    #col-YfzoSu9lTi,
-    #col-3Z44I511b1 {
-        padding: 3.125rem 3.125rem 0px 3.125rem;
-    }
-
-    #col-I91-_Fvwvs,
-    #col-p_FvVa8H4T,
-    #col-N-dw0MOFpE,
-    #col-r3HyzCNQo8 {
-        padding: 3.125rem 3.125rem 0px 3.125rem;
-    }
-
-
-
-    #heading-iJlyjoyWCT h1,
-    #heading-iJlyjoyWCT h1 em,
-    #heading-G0zP13BwZr h1,
-    #heading-G0zP13BwZr h1 em,
-    #heading-1v25poYkt8 h1,
-    #heading-1v25poYkt8 h1 em,
-    #heading-lmp4cNhzGr h1,
-    #heading-lmp4cNhzGr h1 em,
-    #heading-wydnlTkb6o h1,
-    #heading-wydnlTkb6o h1 em,
-    #heading-7o4K4NgZux h1,
-    #heading-7o4K4NgZux h1 em,
-    #heading-g3zGodtzbs h1,
-    #heading-g3zGodtzbs h1 em,
-    #heading-andQpgOslw h1,
-    #heading-andQpgOslw h1 em {
-        font-size: 3rem !important;
-    }
-
-
-
-    #paragraph-uvnyjUUl0T p,
-    #paragraph-uvnyjUUl0T p em,
-    #paragraph-0m8jpAZjQ9 p,
-    #paragraph-0m8jpAZjQ9 p em,
-    #paragraph-FmrUs8eUE1 p,
-    #paragraph-FmrUs8eUE1 p em,
-    #paragraph-P_AjFgzB2- p,
-    #paragraph-P_AjFgzB2- p em,
-    #paragraph-Cu5KfS_e6c p,
-    #paragraph-Cu5KfS_e6c p em,
-    #paragraph-ayDYOF5Dng p,
-    #paragraph-ayDYOF5Dng p em,
-    #paragraph-BHHANl2Rrv p,
-    #paragraph-BHHANl2Rrv p em,
-    #paragraph-ATauF4mwFb p,
-    #paragraph-ATauF4mwFb p em {
-        font-size: 2.5rem !important;
-    }
-
-
-
-    #paragraph-uvnyjUUl0T,
-    #paragraph-0m8jpAZjQ9,
-    #paragraph-FmrUs8eUE1,
-    #paragraph-P_AjFgzB2-,
-    #paragraph-Cu5KfS_e6c,
-    #paragraph-ayDYOF5Dng,
-    #paragraph-BHHANl2Rrv,
-    #paragraph-ATauF4mwFb {
-        margin-bottom: 3.125rem;
-    }
-
-    /* 
-        ================================
-        END BEFORE AND AFTER
-        ===============================
-    */
-
-
-
-}
-
-@media screen and (min-width: 0px) and (max-width: 900px) {
-
-    /* 
-        ================================
         START NAVBAR GENERAL
         ===============================
     */
@@ -4120,10 +3911,12 @@ END WHAT WE HELP WITH
         margin-top: 1.4374rem;
     }
 
+
     #heading-0uY3_Ge2fHm h1 {
         font-size: 2rem !important;
         line-height: 2rem !important;
     }
+
 
     #sub-heading-HsIWxDtYSBg h2 {
         margin-top: 0.25rem;
@@ -4143,22 +3936,6 @@ END WHAT WE HELP WITH
 
     #row-NGGb0HSO4r>.inner {
         flex-direction: column-reverse;
-    }
-
-    #col-LgfKh2o0lG {
-        width: 100% !important;
-        min-width: 100% !important;
-        max-width: 100% !important;
-        padding: 0px;
-        padding-left: 0px !important;
-        padding-right: 0px;
-        margin-bottom: 1rem;
-    }
-
-    #col-LgfKh2o0lG>.inner {
-        padding: 0.7424rem 1rem 0.75rem;
-        box-shadow: 0px 36.898px 50.7347px rgba(218, 193, 106, 0.3);
-        border-radius: 1.5rem;
     }
 
 
@@ -4186,6 +3963,8 @@ END WHAT WE HELP WITH
         font-size: 1.125rem !important;
     }
 
+
+
     #heading-9V7pTJ84oK {
         margin-top: 0;
         padding-top: 1.25rem;
@@ -4200,6 +3979,7 @@ END WHAT WE HELP WITH
         line-height: 1.5rem !important;
     }
 
+
     #bulletList-7oij-7GDoW ul {
         padding: 0 0 0.75rem;
         margin-top: 0.5rem;
@@ -4209,6 +3989,7 @@ END WHAT WE HELP WITH
 
 
     #bulletList-7oij-7GDoW li {
+        margin-bottom: 0.5rem;
         margin-left: 2rem;
         padding-left: 0.75rem;
     }
@@ -4216,6 +3997,25 @@ END WHAT WE HELP WITH
 
     #bulletList-7oij-7GDoW li p {
         font-size: 1rem !important;
+        line-height: 1.25rem;
+        font-weight: 700 !important;
+    }
+
+
+    #col-LgfKh2o0lG {
+        width: 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+        padding: 0px;
+        padding-left: 0px !important;
+        padding-right: 0px;
+        margin-bottom: 1rem;
+    }
+
+    #col-LgfKh2o0lG>.inner {
+        padding: 0.7424rem 1rem 0.75rem;
+        box-shadow: 0px 36.898px 50.7347px rgba(218, 193, 106, 0.3);
+        border-radius: 1.5rem;
     }
 
 
@@ -4236,12 +4036,18 @@ END WHAT WE HELP WITH
         box-shadow: 0px 0.929155px 0.464578px rgba(0, 0, 0, 0.25);
         border-radius: 0px 0px 0.5rem 0.5rem;
         width: 100%;
-    }
-
-    #row-vdLrkiAk0X>.inner {
         justify-content: center;
         flex-direction: row;
     }
+
+
+    #image-tcsHQYb0WG,
+    #image-tcsHQYb0WG .image-container div,
+    #image-tcsHQYb0WG picture,
+    #image-tcsHQYb0WG img {
+        width: 2.8125rem !important;
+    }
+
 
     #image-tcsHQYb0WG,
     #heading-Jo_F59lFnh {
@@ -4251,6 +4057,19 @@ END WHAT WE HELP WITH
     #image-PqMlcOqYMi {
         display: flex;
     }
+
+
+    #heading-Jo_F59lFnh h1,
+    #heading-Jo_F59lFnh h1 em {
+        font-size: 1.125rem !important;
+    }
+
+    #paragraph-46VygKBn4Z p,
+    #paragraph-46VygKBn4Z p em {
+        font-size: 0.875rem !important;
+        line-height: 1.3125rem !important;
+    }
+
 
     #image-PqMlcOqYMi,
     #image-PqMlcOqYMi picture,
@@ -4305,11 +4124,14 @@ END WHAT WE HELP WITH
         top: -2.5rem;
     }
 
+
     /* 
         ================================
         END HEADER
         ===============================
     */
+
+
 
     /* 
         ================================
@@ -4340,6 +4162,7 @@ END WHAT WE HELP WITH
 
 
 
+
     /* 
         ================================
         START BEFORE AND AFTER
@@ -4347,13 +4170,27 @@ END WHAT WE HELP WITH
     */
 
 
+
+
     #section-6KNcZ1CMyo {
-        padding: 2.6875rem 2.5rem;
+        padding: 2.6875rem 0px;
         padding-bottom: 0px;
     }
 
     #section-6KNcZ1CMyo>.inner {
+        padding: 0px 2.5rem;
         padding-top: 4.8125rem;
+    }
+
+    #row-1CvP7CZYAM>.inner,
+    #row-jIpu4rvCzI>.inner,
+    #row-zh6mu-2hP1>.inner,
+    #row-xq5TdFlW8B>.inner {
+        display: flex;
+        justify-content: flex-start;
+        align-items: stretch;
+        flex-direction: column !important;
+        flex-flow: nowrap;
     }
 
 
@@ -4361,14 +4198,20 @@ END WHAT WE HELP WITH
     #col-vTXA7HyDEa,
     #col-YfzoSu9lTi,
     #col-3Z44I511b1 {
-        padding: 3.125rem 3.125rem 0px 3.125rem;
+        padding: 3.75rem 2.5rem 0px 2.5rem;
+        width: 100% !important;
+        border-radius: 6px 6px 0px 0px;
     }
+
+
 
     #col-I91-_Fvwvs,
     #col-p_FvVa8H4T,
     #col-N-dw0MOFpE,
     #col-r3HyzCNQo8 {
-        padding: 3.125rem 3.125rem 0px 3.125rem;
+        padding: 3.75rem 2.5rem 0px 2.5rem;
+        width: 100% !important;
+        border-radius: 0px 0px 6px 6px;
     }
 
 
@@ -4410,7 +4253,8 @@ END WHAT WE HELP WITH
     #paragraph-BHHANl2Rrv p em,
     #paragraph-ATauF4mwFb p,
     #paragraph-ATauF4mwFb p em {
-        font-size: 2.5rem !important;
+        font-weight: 600 !important;
+        font-size: 2rem !important;
     }
 
 
@@ -4423,13 +4267,55 @@ END WHAT WE HELP WITH
     #paragraph-ayDYOF5Dng,
     #paragraph-BHHANl2Rrv,
     #paragraph-ATauF4mwFb {
-        margin-bottom: 3.125rem;
+        padding-bottom: 3.75rem;
     }
+
+    #row-LFrZaCm2w7 {
+        transform: translateX(0);
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    #col-vVEf2kCcgf>.inner>div {
+        width: 1.5rem;
+        height: 1.5rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .stack-container {
+        max-width: 41.5rem;
+    }
+
+
+    #row-VuK7-jcaDP {
+        top: -2.6875rem;
+        left: 0rem;
+    }
+
+    #row-vcbc45k1pP {
+        top: -2.6875rem;
+        right: 0rem;
+    }
+
+    #image-Oo_7VMLyXc,
+    #col-y_OUUElmdy,
+    #row-VuK7-jcaDP,
+    #image-8tqoKHKKwv,
+    #col-ZWXcZd4i0q,
+    #row-vcbc45k1pP {
+        width: 6.9375rem !important;
+        padding: 0px;
+        margin: 0px;
+    }
+
+
 
     /* 
         ================================
         END BEFORE AND AFTER
         ===============================
     */
+
+
 
 }
