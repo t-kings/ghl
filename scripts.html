@@ -469,7 +469,7 @@
 
                 const stackChildren = formCube()
 
-                const heightDelay = stackChildren[0].offsetHeight * 2;
+                const heightDelay = stackChildren[0].offsetHeight * 6
 
                 const buttonSubTexts = [
                     'EMPOWER YOUR OPERATIONS TODAY',
@@ -480,11 +480,11 @@
 
 
                 const changeDisplays = (count = 0, positiveDistance) => {
-                    clearTimeout(forceScrollPositionTimeoutID)
                     clearTimeout(forceSnapTimeoutID)
                     for (let index = 0; index < max; index++) {
                         const stackChild = stackChildren[index];
                         const dot = dots[index];
+                        stackChild.style.transition = 'transform 0.3s'
                         if (count > index || index === 0) {
                             stackChild.style.transform = 'translateY(0)'
                             dot.classList.add('active')
@@ -494,43 +494,43 @@
                                 const remainder = actualCount - count;
                                 const remainderInPercentage = remainder * 100;
                                 let translateY = 100 - remainderInPercentage;
-                                translateY = translateY < 0 ? 0 : translateY
-                                if (translateY < 20 && isScrolledUpOrDown === 'down') {
-                                    stackChild.style.transition = 'transform 0.3s'
-                                    forceSnapTimeoutID = setTimeout(() => {
-                                        stackChild.style.transition = 'none'
-                                    }, 300);
-                                    translateY = 0
-                                } else if (translateY > 80 && isScrolledUpOrDown === 'up') {
-                                    stackChild.style.transition = 'transform 0.3s'
-                                    forceSnapTimeoutID = setTimeout(() => {
-                                        stackChild.style.transition = 'none'
-                                    }, 300);
-                                    translateY = 100
-                                }
+                                // translateY = translateY < 0 ? 0 : translateY
+                                // if (translateY < 20 && isScrolledUpOrDown === 'down') {
+                                //     stackChild.style.transition = 'transform 0.3s'
+                                //     forceSnapTimeoutID = setTimeout(() => {
+                                //         stackChild.style.transition = 'none'
+                                //     }, 300);
+                                //     translateY = 0
+                                // } else if (translateY > 80 && isScrolledUpOrDown === 'up') {
+                                //     stackChild.style.transition = 'transform 0.3s'
+                                //     forceSnapTimeoutID = setTimeout(() => {
+                                //         stackChild.style.transition = 'none'
+                                //     }, 300);
+                                //     translateY = 100
+                                // }
                                 stackChild.style.transform = `translateY(${translateY}%)`
                                 // stackChild.classList.remove('hide')
                                 if (translateY < 50) {
                                     dot.classList.add('active')
                                 }
-                                if (translateY !== 0 && translateY !== 100) {
-                                    forceScrollPositionTimeoutID = setTimeout(() => {
-                                        if (isScrolledUpOrDown === 'down') {
-                                            stackChild.style.transition = 'transform 0.3s'
-                                            forceSnapTimeoutID = setTimeout(() => {
-                                                stackChild.style.transition = 'none'
-                                            }, 300);
-                                            stackChild.style.transform = `translateY(0%)`
-                                        } else {
-                                            stackChild.style.transition = 'transform 0.3s'
-                                            forceSnapTimeoutID = setTimeout(() => {
-                                                stackChild.style.transition = 'none'
-                                            }, 300);
-                                            stackChild.style.transform = `translateY(100%)`
-                                            dot.classList.remove('active')
-                                        }
-                                    }, 200);
-                                }
+                                // if (translateY !== 0 && translateY !== 100) {
+                                //     forceScrollPositionTimeoutID = setTimeout(() => {
+                                //         if (isScrolledUpOrDown === 'down') {
+                                //             stackChild.style.transition = 'transform 0.3s'
+                                //             forceSnapTimeoutID = setTimeout(() => {
+                                //                 stackChild.style.transition = 'none'
+                                //             }, 300);
+                                //             stackChild.style.transform = `translateY(0%)`
+                                //         } else {
+                                //             stackChild.style.transition = 'transform 0.3s'
+                                //             forceSnapTimeoutID = setTimeout(() => {
+                                //                 stackChild.style.transition = 'none'
+                                //             }, 300);
+                                //             stackChild.style.transform = `translateY(100%)`
+                                //             dot.classList.remove('active')
+                                //         }
+                                //     }, 200);
+                                // }
                             } else {
                                 stackChild.style.transform = 'translateY(0%)'
                                 dot.classList.add('active')
@@ -547,19 +547,47 @@
 
                 const parentElement = handleCustomSticky('#section-6KNcZ1CMyo', heightDelay)
 
+                let isScrolling = false;
+                let isScrollingTimeOutID;
+                let previousCount = 0
+                const scrollPositionToIndex = {}
+                let isCrossedCount = false;
+                let justEnteredFromAbove = false;
+                let isPresentlyAbove = false
+
+                const logTheScrollPositionsOfTheseIndex = () => {
+                    for (let index = 0; index < 4; index++) {
+                        const positiveDistance = ((index) * heightDelay) / 4
+                        const parentDistanceToTop = positiveDistance * -1;
+                        const parentTopPosition = getElementFullOffsetTop(parentElement);
+                        const scrollPosition = parentTopPosition - parentDistanceToTop;
+                        scrollPositionToIndex[index] = scrollPosition
+                    }
+                }
+                logTheScrollPositionsOfTheseIndex()
+
+
+                const autoScroll = (index) => {
+                    const scrollPosition = scrollPositionToIndex[index];
+                    const behavior = 'instant'
+                    // if ((scrollPosition === undefined || scrollPosition === null) && index > Object.values(scrollPositionToIndex).length - 1) {
+                    //     scrollPosition = scrollPositionToIndex[Object.values(scrollPositionToIndex).length - 1] + (scrollPositionToIndex[Object.values(scrollPositionToIndex).length - 1] - scrollPositionToIndex[Object.values(scrollPositionToIndex).length - 2]) + (window.innerHeight / 3)
+                    //     behavior = 'smooth'
+                    // }
+                    if (scrollPosition) {
+                        window.scrollTo({
+                            top: scrollPosition,
+                            left: 0,
+                            behavior
+                        })
+                    }
+                }
+
 
                 const handleDotsEventListeners = () => {
                     dots.forEach((dot, index) => {
                         dot.addEventListener('click', () => {
-                            const positiveDistance = ((index + 1) * heightDelay) / 4
-                            const parentDistanceToTop = positiveDistance * -1;
-                            const parentTopPosition = getElementFullOffsetTop(parentElement);
-                            const scrollPosition = parentTopPosition - parentDistanceToTop;
-                            window.scrollTo({
-                                top: scrollPosition - 1,
-                                left: 0,
-                                behavior: 'instant'
-                            })
+                            autoScroll(index)
                         })
                     })
                 }
@@ -568,31 +596,106 @@
                     handleDotsEventListeners()
                 }
 
+                const getCountFromScrollPosition = (scrollPosition) => {
+                    for (let index = 0; index < 4; index++) {
+                        const min = Object.values(scrollPositionToIndex)[index]
+                        const max = Object.values(scrollPositionToIndex)[index + 1];
+                        if (!max) {
+                            return index
+                        }
+                        if (scrollPosition >= min && scrollPosition < max) {
+                            return index
+                        }
+                    }
+                    return null
+                }
+
+                const getBoundingIndexes = (scrollPosition) => {
+                    for (let index = 0; index < 4; index++) {
+                        const min = Object.values(scrollPositionToIndex)[index]
+                        const max = Object.values(scrollPositionToIndex)[index + 1];
+                        if (!max) {
+                            return [index, index + 1]
+                        }
+                        if (scrollPosition >= min && scrollPosition < max) {
+                            return [index, index + 1]
+                        }
+                    }
+                    return [null, null]
+                }
+
+                const getIsNotHalfPastZero = (scrollPosition) => {
+                    const zeroScrollPosition = scrollPositionToIndex[0]
+                    const oneThScrollPosition = scrollPositionToIndex[1]
+                    const difference = oneThScrollPosition - zeroScrollPosition;
+                    const half = difference / 2
+                    return !(scrollPosition > zeroScrollPosition && scrollPosition < half)
+                }
+
+
+                setInterval(() => {
+                    if (!isScrolling) {
+                        const scrollPosition = window.scrollY
+                        const parentTopPosition = getElementFullOffsetTop(parentElement);
+                        const parentDistanceToTop = parentTopPosition - scrollPosition;
+                        const positiveDistance = parentDistanceToTop * -1;
+                        if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay) {
+                            if (!Object.values(scrollPositionToIndex).includes(scrollPosition) && !isCrossedCount) {
+                                const [min, max] = getBoundingIndexes(scrollPosition)
+                                const count = isScrolledUpOrDown === 'up' ? min : max;
+                                if (count !== null) {
+                                    if (justEnteredFromAbove && count > 0) {
+                                        autoScroll(count - 1)
+                                        justEnteredFromAbove = false
+                                    } else {
+                                        autoScroll(count)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }, 50);
+
                 const scrollEventHandler = () => {
+                    clearTimeout(isScrollingTimeOutID)
+                    isScrolling = true
+                    isScrollingTimeOutID = setTimeout(() => {
+                        isScrolling = false
+                        if (isPresentlyAbove) {
+                            justEnteredFromAbove = true
+                            isPresentlyAbove = false
+                        } else {
+                            justEnteredFromAbove = false
+                        }
+                    }, 200)
                     const scrollPosition = window.scrollY
                     const parentTopPosition = getElementFullOffsetTop(parentElement);
                     const parentDistanceToTop = parentTopPosition - scrollPosition;
                     const positiveDistance = parentDistanceToTop * -1
-                    let changeButtonText = false
+                    let changeButtonText = false;
                     if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay) {
-                        // changeButtonSubText('EMPOWER YOUR OPERATIONS TODAY')
-                        changeButtonText = true
+                        const count = getCountFromScrollPosition(scrollPosition)
+                        if (count !== null) {
+                            changeDisplays(count)
+                            changeButtonSubText(buttonSubTexts[count])
+                            if (previousCount !== count) {
+                                previousCount = count;
+                                isCrossedCount = true
+                            } else {
+                                isCrossedCount = false
+                            }
+                        }
+
                     } else if (parentDistanceToTop <= 0 && positiveDistance > heightDelay + window.innerHeight / 2 && positiveDistance <= heightDelay + window.innerHeight) {
                         scrollToSection('#section-atl9fSO8P-')
+                        isPresentlyAbove = false
+                    } else if (parentDistanceToTop > 0) {
+                        isPresentlyAbove = true
                     }
-                    let count = Math.floor((positiveDistance / heightDelay) * 4)
-                    if (count > 3) {
-                        count = 3
-                    }
-                    if (count < 0) {
-                        count = 0
-                    }
-                    if (changeButtonText) {
-                        changeButtonSubText(buttonSubTexts[count])
-                    }
-                    changeDisplays(count, positiveDistance)
                 }
                 scrollEventHandler()
+
+
 
                 if (!layoutAlreadySet) {
                     window.addEventListener('scroll', () => {
