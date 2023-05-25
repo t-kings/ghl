@@ -559,7 +559,7 @@
 
                 const logTheScrollPositionsOfTheseIndex = () => {
                     for (let index = 0; index < 4; index++) {
-                        const positiveDistance = ((index) * heightDelay) / 4
+                        const positiveDistance = ((index + 1) * heightDelay) / 4
                         const parentDistanceToTop = positiveDistance * -1;
                         const parentTopPosition = getElementFullOffsetTop(parentElement);
                         const scrollPosition = parentTopPosition - parentDistanceToTop;
@@ -600,12 +600,12 @@
 
                 const getCountFromScrollPosition = (scrollPosition) => {
                     for (let index = 0; index < 4; index++) {
-                        const min = Object.values(scrollPositionToIndex)[index]
-                        const max = Object.values(scrollPositionToIndex)[index + 1];
-                        if (!max) {
+                        const min = Object.values(scrollPositionToIndex)[index - 1]
+                        const max = Object.values(scrollPositionToIndex)[index];
+                        if (index === 0 && scrollPosition <= max) {
                             return index
                         }
-                        if (scrollPosition >= min && scrollPosition < max) {
+                        if (scrollPosition > min && scrollPosition <= max) {
                             return index
                         }
                     }
@@ -614,13 +614,13 @@
 
                 const getBoundingIndexes = (scrollPosition) => {
                     for (let index = 0; index < 4; index++) {
-                        const min = Object.values(scrollPositionToIndex)[index]
-                        const max = Object.values(scrollPositionToIndex)[index + 1];
-                        if (!max) {
-                            return [index, index + 1]
+                        const min = Object.values(scrollPositionToIndex)[index - 1]
+                        const max = Object.values(scrollPositionToIndex)[index];
+                        if (index === 0 && scrollPosition <= max) {
+                            return [null, index]
                         }
-                        if (scrollPosition >= min && scrollPosition < max) {
-                            return [index, index + 1]
+                        if (scrollPosition > min && scrollPosition <= max) {
+                            return [index - 1, index]
                         }
                     }
                     return [null, null]
@@ -646,12 +646,12 @@
                                     const [min, max] = getBoundingIndexes(scrollPosition)
                                     const count = isScrolledUpOrDown === 'up' ? min : max;
                                     if (count !== null) {
-                                        if (justEnteredFromAbove && count > 0) {
-                                            autoScroll(count - 1)
-                                            justEnteredFromAbove = false
-                                        } else {
-                                            autoScroll(count)
-                                        }
+                                        // if (justEnteredFromAbove && count > 0) {
+                                        //     autoScroll(count - 1)
+                                        //     justEnteredFromAbove = false
+                                        // } else {
+                                        autoScroll(count)
+                                        // }
                                     }
                                 }
                             }
@@ -741,6 +741,25 @@
     // START WHAT CLIENTS ARE SAYING
     // =====================================
     const animateWhatClientsAreSaying = () => {
+
+        const row2 = document.querySelector('#row-tmycXeuNQX>.inner')
+        const row2Text = document.querySelector('#col-399RP8XBRP')
+        const row2Image = document.querySelector('#col-0ERYCGV8NK')
+        const row2Name = document.querySelector('#col-e86Yg1YLDe')
+
+        const changeSecondRow = () => {
+            if (window.innerHeight > 1024) {
+                row2.appendChild(row2Text)
+                row2.appendChild(row2Image)
+                row2.appendChild(row2Name)
+            } else {
+                row2.appendChild(row2Image)
+                row2.appendChild(row2Name)
+                row2.appendChild(row2Text)
+            }
+        }
+
+        changeSecondRow()
 
         const section = document.querySelector('#section-atl9fSO8P-')
         fixBottomPaddingForSections('#section-atl9fSO8P-')
@@ -1192,6 +1211,12 @@
                 const row = rows[rowCount];
                 const { imageContainer, listID, images: imageIDs, id: rowID, imageContainerColumn, position } = row
                 const listUl = document.querySelector(listID);
+                const rowInner = document.querySelector(`${rowID}>.inner`)
+                const height = rowInner.offsetHeight - listUl.offsetHeight
+                if (window.innerWidth <= 1024) {
+                    imageContainerColumn.style = `height:${height}px !important;`
+                    imageContainer.style.height = `height:${height}px !important;`
+                }
                 const list = listUl.querySelectorAll("li");
                 const images = imageIDs.map(image => document.querySelector(image))
                 const imageContainerHeight = imageContainer.offsetHeight
@@ -1200,27 +1225,34 @@
                 const imageContainerLeftPadding = parseInt(getComputedStyle(imageContainer).paddingLeft)
                 const imageContainerBottomPadding = parseInt(getComputedStyle(imageContainer).paddingBottom)
                 const imageContainerRightPadding = parseInt(getComputedStyle(imageContainer).paddingRight)
-                const imageContainerInnerHeight = imageContainerHeight - imageContainerBottomPadding - imageContainerTopPadding;
+                const imageContainerInnerHeight = window.innerWidth <= 1024 ? height : imageContainerHeight - imageContainerBottomPadding - imageContainerTopPadding;
                 const imageContainerInnerWidth = imageContainerWidth - imageContainerLeftPadding - imageContainerRightPadding;
 
                 const isEven = count % 2 === 0;
-                const rowInner = document.querySelector(`${rowID}>.inner`)
                 const isImageColumnFirstChild = position === 'left'
 
                 const shouldReverse = (!isImageColumnFirstChild && isEven) || (isImageColumnFirstChild && !isEven)
 
-                if (shouldReverse) {
-                    rowInner.style.flexDirection = 'row'
+                if (window.innerWidth > 1024) {
+                    if (shouldReverse) {
+                        rowInner.style.flexDirection = 'row'
+                    } else {
+                        rowInner.style.flexDirection = 'row-reverse'
+                    }
                 } else {
-                    rowInner.style.flexDirection = 'row-reverse'
+                    console.log(isImageColumnFirstChild);
+                    if (isImageColumnFirstChild) {
+                        rowInner.style.flexDirection = 'column-reverse'
+                    } else {
+                        rowInner.style.flexDirection = 'row'
+                    }
                 }
-
                 if ((isImageColumnFirstChild && isEven) || (!isImageColumnFirstChild && isEven)) {
-                    imageContainerColumn.style.paddingLeft = '60px'
+                    imageContainerColumn.style.paddingLeft = window.innerWidth > 1024 ? '60px' : "0px"
                     imageContainerColumn.style.paddingRight = '0px'
                 } else {
                     imageContainerColumn.style.paddingLeft = '0px'
-                    imageContainerColumn.style.paddingRight = '60px'
+                    imageContainerColumn.style.paddingRight = window.innerWidth > 1024 ? '60px' : "0px"
                 }
 
 
@@ -2111,62 +2143,92 @@
 
     const animateWhatIfYourSituation = () => {
         try {
-            const floatingButtonSpaceToBottomScreen = fixBottomPaddingForSections('#section-WrgUhJoovE', false)
-            const sectionInner = document.querySelector('#section-WrgUhJoovE>.inner')
-            const wrapper = document.createElement('div')
-            wrapper.classList.add('WrgUhJoovE-scroll-wrapper')
-            const container = document.createElement('div')
-            container.classList.add('WrgUhJoovE-scroll-container')
-            wrapper.appendChild(container)
-            const listIDs = [
-                '#row-PvZ0BXSRBv',
-                '#row-E7uLV2pFXa',
-                '#row-esgUyWl1tC',
-            ]
-            const listElements = listIDs.map(id => document.querySelector(id))
-            listElements.forEach((element, index) => {
-                element.classList.add('top')
-                container.appendChild(element)
-            })
-            sectionInner.append(wrapper)
-            const sectionHeight = sectionInner.offsetHeight;
-            const sectionTopPadding = parseInt(getComputedStyle(sectionInner).paddingTop)
-            const sectionBottomPadding = parseInt(getComputedStyle(sectionInner).paddingBottom)
-            const sectionInnerHeight = sectionHeight - sectionBottomPadding - sectionTopPadding
-            const title = document.querySelector('#col-nUNLj5SpDo')
-            const titleHeight = title.offsetHeight;
-            const freeHeight = sectionInnerHeight - titleHeight;
-            wrapper.style.height = `${freeHeight}px`
-
-            const containerHeight = container.offsetHeight;
-            const scrollShift = containerHeight - freeHeight + floatingButtonSpaceToBottomScreen
-            const useScrollOnly = scrollShift < 0
-
-            const heightDelay = useScrollOnly ? window.innerHeight / 2 : scrollShift;
-            const parentElement = handleCustomSticky('#section-WrgUhJoovE', heightDelay)
-
-            const changeDisplays = () => {
-
-                const scrollPosition = window.scrollY
-                const parentTopPosition = getElementFullOffsetTop(parentElement);
-                const parentDistanceToTop = parentTopPosition - scrollPosition;
-                const positiveDistance = parentDistanceToTop * -1
-
-                if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay && !useScrollOnly) {
-                    changeButtonSubText('START YOUR TRANSFORMATION TODAY')
-                    container.style.transform = `translateY(${parentDistanceToTop}px)`
-                    const count = Math.floor(positiveDistance * 8 / heightDelay)
-                } else if (parentDistanceToTop <= 0 && positiveDistance > heightDelay && positiveDistance <= heightDelay + window.innerHeight) {
-                    scrollToSection('#section-1X7C4wa4u_')
+            let layoutIsSet = false
+            const handleYourSituation = () => {
+                const floatingButtonSpaceToBottomScreen = fixBottomPaddingForSections('#section-WrgUhJoovE', false)
+                const sectionInner = document.querySelector('#section-WrgUhJoovE>.inner')
+                let wrapper = document.querySelector('#WrgUhJoovE-scroll-wrapper')
+                if (!wrapper) {
+                    wrapper = document.createElement('div')
+                    wrapper.setAttribute('id', 'WrgUhJoovE-scroll-wrapper')
                 }
+                wrapper.classList.add('WrgUhJoovE-scroll-wrapper')
+                let container = document.querySelector('#WrgUhJoovE-scroll-container')
+                if (!container) {
+                    container = document.createElement('div')
+                    container.setAttribute('id', 'WrgUhJoovE-scroll-container')
+                }
+                if (!layoutIsSet) {
+                    container.classList.add('WrgUhJoovE-scroll-container')
+                    wrapper.appendChild(container)
+                }
+                const listIDs = [
+                    '#row-PvZ0BXSRBv',
+                    '#row-E7uLV2pFXa',
+                    '#row-esgUyWl1tC',
+                ]
+                const listElements = listIDs.map(id => document.querySelector(id))
+                if (!layoutIsSet) {
+                    listElements.forEach((element, index) => {
+                        element.classList.add('top')
+                        container.appendChild(element)
+                    })
+                    sectionInner.append(wrapper)
+                }
+                const sectionHeight = sectionInner.offsetHeight;
+                const sectionTopPadding = parseInt(getComputedStyle(sectionInner).paddingTop)
+                const sectionBottomPadding = parseInt(getComputedStyle(sectionInner).paddingBottom)
+                const sectionInnerHeight = sectionHeight - sectionBottomPadding - sectionTopPadding
+                const title = document.querySelector('#col-nUNLj5SpDo')
+                const titleHeight = title.offsetHeight;
+                const freeHeight = sectionInnerHeight - titleHeight;
+                wrapper.style.height = `${freeHeight}px`
+
+                const containerHeight = container.offsetHeight;
+                const scrollShift = containerHeight - freeHeight + floatingButtonSpaceToBottomScreen
+                const useScrollOnly = scrollShift < 0
+
+                const heightDelay = useScrollOnly ? window.innerHeight / 2 : scrollShift;
+                const parentElement = handleCustomSticky('#section-WrgUhJoovE', heightDelay)
+
+                const changeDisplays = () => {
+
+                    const scrollPosition = window.scrollY
+                    const parentTopPosition = getElementFullOffsetTop(parentElement);
+                    const parentDistanceToTop = parentTopPosition - scrollPosition;
+                    const positiveDistance = parentDistanceToTop * -1
+
+                    if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay && !useScrollOnly) {
+                        changeButtonSubText('START YOUR TRANSFORMATION TODAY')
+                        container.style.transform = `translateY(${parentDistanceToTop}px)`
+                        const count = Math.floor(positiveDistance * 8 / heightDelay)
+                    } else if (parentDistanceToTop <= 0 && positiveDistance > heightDelay && positiveDistance <= heightDelay + window.innerHeight) {
+                        scrollToSection('#section-1X7C4wa4u_')
+                    }
+                }
+
+                if (!layoutIsSet) {
+                    window.addEventListener('scroll', () => {
+                        setTimeout(() => {
+                            changeDisplays()
+                        }, 0)
+                    })
+                }
+                changeDisplays()
+                layoutIsSet = true
             }
 
-            window.addEventListener('scroll', () => {
-                setTimeout(() => {
-                    changeDisplays()
-                }, 0)
-            })
-            changeDisplays()
+            let resizeTimeout;
+
+            const handleWindowResize = () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    handleYourSituation()
+                }, 1000);
+            }
+            window.addEventListener('resize', handleWindowResize);
+
+            handleYourSituation()
 
         } catch (error) {
             console.log('animateWhatIfYourSituation', error);
@@ -2188,60 +2250,100 @@
 
     const animateStillNotSure = () => {
         try {
-            const floatingButtonSpaceToBottomScreen = fixBottomPaddingForSections('#section-1X7C4wa4u_', false)
-            const sectionInner = document.querySelector('#section-1X7C4wa4u_>.inner')
-            const wrapper = document.createElement('div')
-            wrapper.classList.add('1X7C4wa4u_-scroll-wrapper')
-            const container = document.createElement('div')
-            container.classList.add('1X7C4wa4u_-scroll-container')
-            wrapper.appendChild(container)
-            const listIDs = [
-                '#row-SB2jXnrZbp',
-            ]
-            const listElements = listIDs.map(id => document.querySelector(id))
-            listElements.forEach((element, index) => {
-                element.classList.add('top')
-                container.appendChild(element)
-            })
-            sectionInner.append(wrapper)
-            const sectionHeight = sectionInner.offsetHeight;
-            const sectionTopPadding = parseInt(getComputedStyle(sectionInner).paddingTop)
-            const sectionBottomPadding = parseInt(getComputedStyle(sectionInner).paddingBottom)
-            const sectionInnerHeight = sectionHeight - sectionTopPadding - sectionBottomPadding
-            const title = document.querySelector('#col-nlLNGqSqmR')
-            const titleHeight = title.offsetHeight;
-            const freeHeight = sectionInnerHeight - titleHeight;
-            wrapper.style.height = `${freeHeight}px`
 
-            const containerHeight = container.offsetHeight;
-            const scrollShift = containerHeight - freeHeight + floatingButtonSpaceToBottomScreen
+            let layoutIsSet = false
 
-            const useScrollOnly = scrollShift < 0
-
-            const heightDelay = useScrollOnly ? window.innerHeight / 2 : scrollShift;
-            const parentElement = handleCustomSticky('#section-1X7C4wa4u_', heightDelay)
-
-            const changeDisplays = () => {
-
-                const scrollPosition = window.scrollY
-                const parentTopPosition = getElementFullOffsetTop(parentElement);
-                const parentDistanceToTop = parentTopPosition - scrollPosition;
-                const positiveDistance = parentDistanceToTop * -1
-
-                if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay && !useScrollOnly) {
-                    changeButtonSubText('START YOUR TRANSFORMATION TODAY')
-                    container.style.transform = `translateY(${parentDistanceToTop}px)`
-                    const count = Math.floor(positiveDistance * 8 / heightDelay)
+            const handleStillNotSure = () => {
+                console.log('cal;led');
+                const floatingButtonSpaceToBottomScreen = fixBottomPaddingForSections('#section-1X7C4wa4u_', false)
+                const sectionInner = document.querySelector('#section-1X7C4wa4u_>.inner')
+                let wrapper = document.querySelector('#X7C4wa4u_sc')
+                if (!wrapper) {
+                    wrapper = document.createElement('div')
+                    wrapper.setAttribute('id', 'X7C4wa4u_sc')
                 }
+                if (!layoutIsSet) {
+                    wrapper.classList.add('1X7C4wa4u_-scroll-wrapper')
+                }
+                let container = document.querySelector('#X7C4wa4u_-scroll-container')
+                if (!container) {
+                    container = document.createElement('div')
+                    container.setAttribute('id', 'X7C4wa4u_-scroll-container')
+                }
+
+                if (!layoutIsSet) {
+                    container.classList.add('1X7C4wa4u_-scroll-container')
+                    wrapper.appendChild(container)
+                }
+                const listIDs = [
+                    '#row-SB2jXnrZbp',
+                ]
+                const listElements = listIDs.map(id => document.querySelector(id))
+                if (!layoutIsSet) {
+                    listElements.forEach((element, index) => {
+                        element.classList.add('top')
+                        container.appendChild(element)
+                    })
+                    sectionInner.append(wrapper)
+                }
+                const sectionHeight = sectionInner.offsetHeight;
+                const sectionTopPadding = parseInt(getComputedStyle(sectionInner).paddingTop)
+                const sectionBottomPadding = parseInt(getComputedStyle(sectionInner).paddingBottom)
+                const sectionInnerHeight = sectionHeight - sectionTopPadding - sectionBottomPadding
+                const title = document.querySelector('#col-nlLNGqSqmR')
+                const titleHeight = title.offsetHeight;
+                const freeHeight = sectionInnerHeight - titleHeight;
+                wrapper.style.height = `${freeHeight}px`
+
+                const containerHeight = container.offsetHeight;
+                const scrollShift = containerHeight - freeHeight + floatingButtonSpaceToBottomScreen
+
+                const useScrollOnly = scrollShift < 0
+
+                const heightDelay = useScrollOnly ? window.innerHeight / 2 : scrollShift;
+                const parentElement = handleCustomSticky('#section-1X7C4wa4u_', heightDelay)
+
+
+                const changeDisplays = () => {
+                    const scrollPosition = window.scrollY
+                    const parentTopPosition = getElementFullOffsetTop(parentElement);
+                    const parentDistanceToTop = parentTopPosition - scrollPosition;
+                    const positiveDistance = parentDistanceToTop * -1
+                    if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay && !useScrollOnly) {
+                        changeButtonSubText('START YOUR TRANSFORMATION TODAY')
+                        container.style.transform = `translateY(${parentDistanceToTop}px)`
+                        const count = Math.floor(positiveDistance * 8 / heightDelay)
+                    }
+                }
+
+
+
+
+                const handleScroll = () => {
+                    setTimeout(() => {
+                        changeDisplays()
+                    }, 0)
+                }
+
+
+                if (!layoutIsSet) {
+                    window.addEventListener('scroll', handleScroll)
+                }
+                changeDisplays()
+                layoutIsSet = true
             }
 
-            window.addEventListener('scroll', () => {
-                setTimeout(() => {
-                    changeDisplays()
-                }, 0)
-            })
-            changeDisplays()
+            let resizeTimeout;
 
+            const handleWindowResize = () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    handleStillNotSure()
+                }, 1000);
+            }
+            window.addEventListener('resize', handleWindowResize);
+
+            handleStillNotSure()
         } catch (error) {
             console.log('animateWhatIfYourSituation', error);
         }
@@ -2262,6 +2364,7 @@
 
     const animateFooter = () => {
         try {
+
             const section = document.querySelector('#section-FCFlcMyWgg')
             const button = document.querySelector('#floating-button')
             const changeDisplays = () => {
@@ -2276,12 +2379,29 @@
                 button.style.transform = `translate(-50%, -${partInScreen}px)`
             }
 
-            window.addEventListener('scroll', () => {
+            const scrollEventHandler = () => {
                 setTimeout(() => {
                     changeDisplays()
                 }, 0)
-            })
-            changeDisplays()
+            }
+
+            const handleFooter = () => {
+                window.addEventListener('scroll', scrollEventHandler)
+                changeDisplays()
+            }
+
+
+            let resizeTimeout;
+
+            const handleWindowResize = () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    window.removeEventListener('scroll', scrollEventHandler);
+                    handleFooter()
+                }, 1000);
+            }
+            handleFooter()
+            window.addEventListener('resize', handleWindowResize);
         } catch (error) {
             console.log('animateFooter', error);
         }

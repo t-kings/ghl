@@ -1138,8 +1138,8 @@ START CLIENTS SAYING
     height: 100%;
     padding-right: 0px !important;
     padding-left: 0px !important;
-    padding-top: 118px !important;
-    padding-bottom: 60px !important;
+    padding-top: 7.375rem !important;
+    padding-bottom: 0px !important;
     display: flex;
     justify-content: flex-start;
     align-items: stretch;
@@ -1190,10 +1190,11 @@ START CLIENTS SAYING
     z-index: 2;
 }
 
-#heading-Kkk7jgB_GW h1 {
+#heading-Kkk7jgB_GW h1,
+#heading-Kkk7jgB_GW h1 em {
     font-weight: 700 !important;
-    line-height: 143%;
-    color: #151A4F;
+    line-height: 143% !important;
+    color: #151A4F !important;
 }
 
 #row-1V9rp1nZ4o,
@@ -1218,9 +1219,9 @@ START CLIENTS SAYING
 }
 
 #col-7vLwe12moZ {
-    width: auto;
-    min-width: auto;
-    max-width: auto;
+    width: fit-content;
+    min-width: fit-content;
+    max-width: fit-content;
     padding: 0;
     margin: 0;
 }
@@ -1230,7 +1231,7 @@ START CLIENTS SAYING
     border-radius: 8px 0px 0px 8px !important;
     position: relative;
     overflow: hidden;
-    padding: 44px 22px 44px 22px !important;
+    padding: 2.75rem 1.375rem 2.75rem 1.375rem !important;
     width: 100%;
 }
 
@@ -1253,6 +1254,7 @@ START CLIENTS SAYING
 #col-7vLwe12moZ>.inner {
     background: #FFFFFF;
     padding: 40px 80px 40px 0px !important;
+    width: fit-content;
 }
 
 #image-z3OwAmbvct,
@@ -1268,14 +1270,26 @@ START CLIENTS SAYING
     object-fit: contain;
 }
 
+
+
 #heading-CKI1uvEak5 h1,
+#heading-CKI1uvEak5 h1 em,
+#heading-CKI1uvEak5 h1 strong,
 #heading-_QYgoF53rg h1,
+#heading-_QYgoF53rg h1 em,
+#heading-_QYgoF53rg h1 strong,
 #heading-hmVZeeMULA h1,
+#heading-hmVZeeMULA h1 em,
+#heading-hmVZeeMULA h1 strong,
 #heading-2dRcUmQaPH h1,
-#heading-8DTqrw8fKC h1 {
+#heading-2dRcUmQaPH h1 em,
+#heading-2dRcUmQaPH h1 strong,
+#heading-8DTqrw8fKC h1,
+#heading-8DTqrw8fKC h1 em,
+#heading-8DTqrw8fKC h1 strong {
     font-weight: 700 !important;
-    font-size: 40px;
-    line-height: 143%;
+    font-size: 2.5rem !important;
+    line-height: 143% !important;
     color: #353966 !important;
 }
 
@@ -1299,15 +1313,16 @@ START CLIENTS SAYING
 #paragraph-Jio4WczUsB p,
 #paragraph-vDg5zTtO1z p {
     font-weight: 400 !important;
-    font-size: 18px !important;
-    line-height: 143%;
+    font-size: 1.125rem !important;
+    line-height: 143% !important;
 }
 
 #paragraph-Jio4WczUsB p strong,
 #paragraph-vDg5zTtO1z p strong {
     font-weight: 600 !important;
     color: rgba(21, 26, 79, 1) !important;
-    font-family: Montserrat;
+    font-family: Montserrat !important;
+    font-size: 1.125rem !important;
 }
 
 #col-3_TUHlhjO3 {
@@ -1320,18 +1335,19 @@ START CLIENTS SAYING
 #col-3_TUHlhjO3>.inner {
     background: #FFFBED;
     border-radius: 0px 8px 8px 0px !important;
-    padding: 40px 65px 40px 40px !important;
+    padding: 2.5rem 4.0625rem 2.5rem 2.5rem !important;
 }
 
 #paragraph-NOyy9npp0k {
-    padding: 8px 8px 8px 0px;
+    padding: 0.5rem 0.5rem 0.5rem 0.5rem;
 }
 
-#paragraph-NOyy9npp0k p {
+#paragraph-NOyy9npp0k p,
+#paragraph-NOyy9npp0k p em {
     font-weight: 600 !important;
-    line-height: 153%;
-    font-size: 20px;
-    color: #2C2C32;
+    line-height: 153% !important;
+    font-size: 1.25rem !important;
+    color: #2C2C32 !important;
 }
 
 #image-R6f8SUUnKz {
@@ -1347,8 +1363,8 @@ START CLIENTS SAYING
 
 #image-wb3rwJDqHt {
     position: absolute;
-    top: 40px;
-    right: 27px;
+    top: 2.5rem;
+    right: 1.6875rem;
 }
 
 #image-wb3rwJDqHt picture,
@@ -1358,17 +1374,17 @@ START CLIENTS SAYING
 
 div#button-qEuegzKTs6,
 div#button-ylwne1poij {
-    margin: 0px 27px 24px 0px;
+    margin: 0px 1.6875rem 1.5rem 0px;
     right: 0;
     bottom: 0;
     position: absolute;
 }
 
 #button-qEuegzKTs6 button {
-    padding: 8px 16px;
+    padding: 0.5rem 1rem;
     font-weight: 600 !important;
-    font-size: 12px;
-    line-height: 16px;
+    font-size: 0.75rem;
+    line-height: 1rem;
     letter-spacing: 0.46px;
     text-transform: capitalize;
     color: #151A4F;
@@ -1391,9 +1407,9 @@ div#button-ylwne1poij {
 
 #col-0ERYCGV8NK {
     padding: 0px;
-    width: auto;
-    min-width: auto;
-    max-width: auto;
+    width: fit-content;
+    min-width: fit-content;
+    max-width: fit-content;
 }
 
 #col-0ERYCGV8NK>.inner {
@@ -1402,6 +1418,7 @@ div#button-ylwne1poij {
     border-radius: 0px 0px 0px 0px !important;
     position: relative;
     overflow: hidden;
+    width: fit-content;
 }
 
 #image-CVOq4e6Fmg {
@@ -1437,10 +1454,11 @@ div#button-ylwne1poij {
     padding: 8px 8px 8px 0px;
 }
 
-#paragraph-mAWi_26t_l p {
+#paragraph-mAWi_26t_l p,
+#paragraph-mAWi_26t_l p em {
     font-weight: 600 !important;
-    line-height: 153%;
-    color: #2C2C32;
+    line-height: 153% !important;
+    color: #2C2C32 !important;
 }
 
 #button-ylwne1poij button {
@@ -1676,10 +1694,13 @@ START WHAT WE HELP WITH
     margin: 0px;
 }
 
-#heading-JIcr-SGsHb h1 {
+
+#heading-JIcr-SGsHb h1,
+#heading-JIcr-SGsHb h1 em,
+#heading-JIcr-SGsHb h1 strong {
     font-weight: 700 !important;
-    line-height: 143%;
-    color: #151A4F;
+    line-height: 143% !important;
+    color: #151A4F !important;
 }
 
 #row-Bvp97zRHYJ,
@@ -1778,17 +1799,33 @@ START WHAT WE HELP WITH
 }
 
 #paragraph-DxVutvoFU1 p,
+#paragraph-DxVutvoFU1 p em,
+#paragraph-DxVutvoFU1 p strong,
 #paragraph-quYJbxXruD p,
+#paragraph-quYJbxXruD p em,
+#paragraph-quYJbxXruD p strong,
 #paragraph-phqQ7YclGk p,
+#paragraph-phqQ7YclGk p em,
+#paragraph-phqQ7YclGk p strong,
 #paragraph-2lIu0WN9Ta p,
+#paragraph-2lIu0WN9Ta p em,
+#paragraph-2lIu0WN9Ta p strong,
 #paragraph-O8m3JZGTAY p,
+#paragraph-O8m3JZGTAY p em,
+#paragraph-O8m3JZGTAY p strong,
 #paragraph-fw5CWeltJQ p,
+#paragraph-fw5CWeltJQ p em,
+#paragraph-fw5CWeltJQ p strong,
 #paragraph-VuzOyNHTuW p,
-#paragraph-iVUkWGh2Tx p {
+#paragraph-VuzOyNHTuW p em,
+#paragraph-VuzOyNHTuW p strong,
+#paragraph-iVUkWGh2Tx p,
+#paragraph-iVUkWGh2Tx p em,
+#paragraph-iVUkWGh2Tx p strong {
     font-weight: 600 !important;
-    color: #334155;
-    font-size: 24px;
-    line-height: 29px;
+    color: #334155 !important;
+    font-size: 24px !important;
+    line-height: 29px !important;
 }
 
 #row-Bvp97zRHYJ:hover #paragraph-DxVutvoFU1 p,
@@ -1896,13 +1933,29 @@ END WHAT WE HELP WITH
 }
 
 #heading-U-7HzzV9Kz h1,
+#heading-U-7HzzV9Kz h1 em,
+#heading-U-7HzzV9Kz h1 strong,
 #heading-2Bb_Kql0Ms h1,
+#heading-2Bb_Kql0Ms h1 em,
+#heading-2Bb_Kql0Ms h1 strong,
 #heading-9LAlbsiiyH h1,
+#heading-9LAlbsiiyH h1 em,
+#heading-9LAlbsiiyH h1 strong,
 #heading-ulF13TRq4f h1,
+#heading-ulF13TRq4f h1 em,
+#heading-ulF13TRq4f h1 strong,
 #heading-Pw-En_-4n8 h1,
+#heading-Pw-En_-4n8 h1 em,
+#heading-Pw-En_-4n8 h1 strong,
 #heading-c-vLNWdAfv h1,
+#heading-c-vLNWdAfv h1 em,
+#heading-c-vLNWdAfv h1 strong,
 #heading-o62Ax4zawF h1,
-#heading-_0jiEAyZTv h1 {
+#heading-o62Ax4zawF h1 em,
+#heading-o62Ax4zawF h1 strong,
+#heading-_0jiEAyZTv h1,
+#heading-_0jiEAyZTv h1 em,
+#heading-_0jiEAyZTv h1 strong {
     font-weight: 700 !important;
     font-size: 40px;
     line-height: 143%;
@@ -2180,9 +2233,6 @@ END WHAT WE HELP WITH
 /* ======================================== */
 /* START CASE STUDIES */
 /* ======================================== */
-
-
-
 
 
 #section-AsM28PkJVo {
@@ -4316,6 +4366,1024 @@ END WHAT WE HELP WITH
         ===============================
     */
 
+
+
+    /* 
+        ================================
+        START CLIENTS SAYING
+        ===============================
+    */
+
+
+    #section-atl9fSO8P->.inner {
+        padding-top: 4.5rem !important;
+    }
+
+
+    #heading-Kkk7jgB_GW h1,
+    #heading-Kkk7jgB_GW h1 em {
+        font-weight: 700 !important;
+        line-height: 143% !important;
+        font-size: 2rem !important;
+    }
+
+    #row-1V9rp1nZ4o,
+    #row-tmycXeuNQX {
+        padding: 0px 2.5rem;
+        max-width: 35rem;
+        margin: 0px auto;
+    }
+
+
+    #row-1V9rp1nZ4o>.inner,
+    #row-tmycXeuNQX>.inner {
+        flex-wrap: wrap;
+    }
+
+
+    #col-3_TUHlhjO3 {
+        width: 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+    }
+
+
+    #col-rgE7-4ipKw>.inner {
+        border-radius: 8px 0px 0px 0px !important;
+        padding: 1rem 0.6838rem 1rem 0.6875rem !important;
+    }
+
+
+    #col-7vLwe12moZ>.inner {
+        padding: 1rem 2rem 1rem 0rem !important;
+        align-items: flex-end;
+        border-radius: 0px 8px 0px 0px !important;
+    }
+
+
+    #heading-CKI1uvEak5 h1,
+    #heading-CKI1uvEak5 h1 em,
+    #heading-CKI1uvEak5 h1 strong,
+    #heading-_QYgoF53rg h1,
+    #heading-_QYgoF53rg h1 em,
+    #heading-_QYgoF53rg h1 strong,
+    #heading-hmVZeeMULA h1,
+    #heading-hmVZeeMULA h1 em,
+    #heading-hmVZeeMULA h1 strong,
+    #heading-2dRcUmQaPH h1,
+    #heading-2dRcUmQaPH h1 em,
+    #heading-2dRcUmQaPH h1 strong,
+    #heading-8DTqrw8fKC h1,
+    #heading-8DTqrw8fKC h1 em,
+    #heading-8DTqrw8fKC h1 strong {
+        font-size: 1.5rem !important;
+    }
+
+
+
+    #paragraph-Jio4WczUsB p,
+    #paragraph-vDg5zTtO1z p {
+        font-size: 0.625rem !important;
+    }
+
+    #paragraph-Jio4WczUsB p strong,
+    #paragraph-vDg5zTtO1z p strong {
+        font-size: 1rem !important;
+    }
+
+    #col-3_TUHlhjO3>.inner {
+        background: #FFFBED;
+        border-radius: 0px 0px 8px 8px !important;
+        padding: 1rem 1.5rem 2rem 1.5rem !important;
+    }
+
+    #paragraph-NOyy9npp0k {
+        padding: 0.25rem 0.25rem 0.75rem 0px;
+    }
+
+    #paragraph-NOyy9npp0k p,
+    #paragraph-NOyy9npp0k p em {
+        font-weight: 500 !important;
+        font-size: 1rem !important;
+    }
+
+
+    #image-wb3rwJDqHt {
+        top: 1rem;
+        right: 0.625rem;
+    }
+
+    #image-R6f8SUUnKz {
+        top: 1rem;
+        right: 0.625rem;
+    }
+
+
+    div#button-qEuegzKTs6,
+    div#button-ylwne1poij {
+        margin: 0px 0.625rem 0.5rem 0px;
+    }
+
+    #button-qEuegzKTs6 button {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.625rem;
+    }
+
+
+    #col-399RP8XBRP {
+        padding: 0px;
+        width: 100%;
+        min-width: 100%;
+        max-width: 100%;
+    }
+
+    #col-399RP8XBRP>.inner {
+        border-radius: 0px 0px 8px 8px !important;
+        padding: 1rem 1.5rem 2rem 1.5rem !important;
+    }
+
+
+
+
+
+    #col-0ERYCGV8NK>.inner {
+        padding: 1rem 0.6838rem 1rem 2rem !important;
+        border-radius: 8px 0px 0px 0px !important;
+    }
+
+
+    #col-e86Yg1YLDe>.inner {
+        padding: 1rem 3.0625rem 1rem 0rem !important;
+        border-radius: 0px 8px 0px 0px !important;
+    }
+
+
+
+
+
+    #paragraph-mAWi_26t_l {
+        padding: 0.5rem 0.5rem 0.75rem 0px;
+    }
+
+    #paragraph-mAWi_26t_l p,
+    #paragraph-mAWi_26t_l p em {
+        font-weight: 500 !important;
+        font-size: 1rem !important;
+    }
+
+    #button-ylwne1poij button {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.625rem;
+    }
+
+    #section-So8xMo_otR {
+        z-index: 101;
+    }
+
+
+    #row-zNpAvepKag,
+    #row-vF190QfavZ {
+        padding: 0px 3.425rem;
+    }
+
+
+    #col-0SV8GWTGxu,
+    #col-jni5Jtlj7x {
+        max-width: 39.1375rem;
+    }
+
+
+
+    .stack-child-2 {
+        padding-top: 90px;
+        padding-bottom: 90px;
+    }
+
+    .stack-child-2:last-child {
+        padding-top: 0px;
+        padding-bottom: 90px;
+    }
+
+    .stack-child-2:last-child.go-up {
+        padding-top: 90px;
+    }
+
+
+
+    /* 
+        ================================
+        END CLIENTS SAYING
+        ===============================
+    */
+
+
+
+
+    /* 
+        ================================
+        START WHAT WE HELP WITH
+        ===============================
+    */
+
+
+    #section-hCHffR5p7p {
+        padding: 0px 2.5rem;
+        padding-top: 2.375rem;
+    }
+
+    #section-hCHffR5p7p>.inner {
+        padding: 0px;
+        padding-top: 2rem;
+    }
+
+    #row-MzQJelebRk {
+        left: -5rem;
+        top: -2.375rem;
+    }
+
+    #row-hofm8K__9W {
+        right: -2.8rem;
+        top: -2.375rem;
+    }
+
+
+    #heading-JIcr-SGsHb h1,
+    #heading-JIcr-SGsHb h1 em,
+    #heading-JIcr-SGsHb h1 strong {
+        font-size: 2rem !important;
+    }
+
+    #row-Bvp97zRHYJ,
+    #row-Y7I-2mbyFK,
+    #row-gZNPgHJslL,
+    #row-T5DwNzna9_,
+    #row-Ufh4vUrvFE,
+    #row-WVWYWhIo9B,
+    #row-wKfqCubkdc,
+    #row-QDRnuzpj2n,
+    #row-GCv5t3UwQG {
+        max-width: 41.5rem;
+    }
+
+
+    #col-W1pQ6k6oik,
+    #col-At0QXhPHbo,
+    #col-h-R1dOBJ5O,
+    #col-KQP4nzQV0_,
+    #col-wJHoLBw67G,
+    #col-tSfCMIrsNF,
+    #col-qjtuZDkNNg,
+    #col-RrELq2Fn9N,
+    #col-W1pQ6k6oik>.inner,
+    #col-At0QXhPHbo>.inner,
+    #col-h-R1dOBJ5O>.inner,
+    #col-KQP4nzQV0_>.inner,
+    #col-wJHoLBw67G>.inner,
+    #col-tSfCMIrsNF>.inner,
+    #col-qjtuZDkNNg>.inner,
+    #col-RrELq2Fn9N>.inner {
+        width: fit-content;
+    }
+
+    #paragraph-DxVutvoFU1 p,
+    #paragraph-DxVutvoFU1 p em,
+    #paragraph-DxVutvoFU1 p strong,
+    #paragraph-quYJbxXruD p,
+    #paragraph-quYJbxXruD p em,
+    #paragraph-quYJbxXruD p strong,
+    #paragraph-phqQ7YclGk p,
+    #paragraph-phqQ7YclGk p em,
+    #paragraph-phqQ7YclGk p strong,
+    #paragraph-2lIu0WN9Ta p,
+    #paragraph-2lIu0WN9Ta p em,
+    #paragraph-2lIu0WN9Ta p strong,
+    #paragraph-O8m3JZGTAY p,
+    #paragraph-O8m3JZGTAY p em,
+    #paragraph-O8m3JZGTAY p strong,
+    #paragraph-fw5CWeltJQ p,
+    #paragraph-fw5CWeltJQ p em,
+    #paragraph-fw5CWeltJQ p strong,
+    #paragraph-VuzOyNHTuW p,
+    #paragraph-VuzOyNHTuW p em,
+    #paragraph-VuzOyNHTuW p strong,
+    #paragraph-iVUkWGh2Tx p,
+    #paragraph-iVUkWGh2Tx p em,
+    #paragraph-iVUkWGh2Tx p strong {
+        font-size: 1.25rem !important;
+        line-height: 1.5rem !important;
+    }
+
+
+    .scroll-wrapper {
+        padding-top: 3.0625rem;
+    }
+
+    .scroll-container {
+        padding-bottom: 10rem;
+    }
+
+    .scroll-container>div {
+        width: 100% !important;
+        max-width: 41.5rem !important;
+    }
+
+
+    /* 
+        ================================
+        END WHAT WE HELP WITH
+        ===============================
+    */
+
+
+
+
+    /* ======================================== */
+    /* START WE HELP WITH */
+    /* ======================================== */
+
+
+
+    #section-T-iFKIxbuE {
+        padding: 0px 2.5rem;
+        padding-top: 1.75rem;
+    }
+
+    #section-T-iFKIxbuE>.inner {
+        padding-top: 3.25rem;
+    }
+
+
+    #row-l_WGsn8kby,
+    #row-7a78h_weEH {
+        position: absolute;
+        top: -3.5rem;
+    }
+
+    #row-l_WGsn8kby {
+        left: -3.75rem;
+    }
+
+    #row-7a78h_weEH {
+        right: -3.75rem;
+    }
+
+    #heading-U-7HzzV9Kz,
+    #heading-2Bb_Kql0Ms,
+    #heading-9LAlbsiiyH,
+    #heading-ulF13TRq4f,
+    #heading-Pw-En_-4n8,
+    #heading-c-vLNWdAfv,
+    #heading-o62Ax4zawF,
+    #heading-_0jiEAyZTv {
+        padding-bottom: 5rem;
+    }
+
+
+    #heading-U-7HzzV9Kz h1,
+    #heading-U-7HzzV9Kz h1 em,
+    #heading-U-7HzzV9Kz h1 strong,
+    #heading-2Bb_Kql0Ms h1,
+    #heading-2Bb_Kql0Ms h1 em,
+    #heading-2Bb_Kql0Ms h1 strong,
+    #heading-9LAlbsiiyH h1,
+    #heading-9LAlbsiiyH h1 em,
+    #heading-9LAlbsiiyH h1 strong,
+    #heading-ulF13TRq4f h1,
+    #heading-ulF13TRq4f h1 em,
+    #heading-ulF13TRq4f h1 strong,
+    #heading-Pw-En_-4n8 h1,
+    #heading-Pw-En_-4n8 h1 em,
+    #heading-Pw-En_-4n8 h1 strong,
+    #heading-c-vLNWdAfv h1,
+    #heading-c-vLNWdAfv h1 em,
+    #heading-c-vLNWdAfv h1 strong,
+    #heading-o62Ax4zawF h1,
+    #heading-o62Ax4zawF h1 em,
+    #heading-o62Ax4zawF h1 strong,
+    #heading-_0jiEAyZTv h1,
+    #heading-_0jiEAyZTv h1 em,
+    #heading-_0jiEAyZTv h1 strong {
+        font-size: 2rem !important;
+    }
+
+    #row-Brgw50LPQh,
+    #row-pvApn6POnF,
+    #row-N6C_yhn5rl,
+    #row-2OwwgPS_DD,
+    #row-36_TQuQvyo,
+    #row-knxVbqtY7j,
+    #row-IaWSNnf8P5 {
+        border: 2px solid #151A4F !important;
+        padding: 1rem 1.5rem;
+        padding-left: 3.75rem;
+        border-radius: 8px !important;
+    }
+
+
+    #row-tOxrkkh1iv {
+        padding: 1rem 1.5rem;
+        padding-left: 3.75rem;
+    }
+
+    #row-Brgw50LPQh>.inner,
+    #row-pvApn6POnF>.inner,
+    #row-N6C_yhn5rl>.inner,
+    #row-2OwwgPS_DD>.inner,
+    #row-36_TQuQvyo>.inner,
+    #row-knxVbqtY7j>.inner,
+    #row-IaWSNnf8P5>.inner,
+    #row-tOxrkkh1iv>.inner {
+        flex-wrap: wrap;
+    }
+
+
+    .iFKIxbuE-scroll-wrapper {
+        padding-top: 0rem;
+    }
+
+
+    #col-qFR1S0W5x1,
+    #col-mE46d_fMlu,
+    #col-DIEcPqrNqY,
+    #col-kQ-YFxhCtm,
+    #col-VXIbnds0lX,
+    #col-nt7jtfr9G_,
+    #col-ctosS5YgAI {
+        width: 100%;
+        min-width: 100%;
+        max-width: 100%;
+    }
+
+    #col-qFR1S0W5x1>.inner,
+    #col-mE46d_fMlu>.inner,
+    #col-DIEcPqrNqY>.inner,
+    #col-kQ-YFxhCtm>.inner,
+    #col-VXIbnds0lX>.inner,
+    #col-nt7jtfr9G_>.inner,
+    #col-ctosS5YgAI>.inner {
+        padding: 0px 0px;
+    }
+
+    #col-fYR_2excmf>.inner {
+        padding: 0px 0px;
+    }
+
+
+    #bulletList-RP5elIIvE-,
+    #bulletList-MwXvIgjbK8,
+    #bulletList-_pnaXn5KcZ,
+    #bulletList-mHrMcwQp22,
+    #bulletList-f6zVxaksDO,
+    #bulletList-Oq2hpyEiKQ,
+    #bulletList-MriHatdPOu {
+        padding-bottom: 1.25rem;
+    }
+
+
+    #bulletList-RP5elIIvE- li p,
+    #bulletList-MwXvIgjbK8 li p,
+    #bulletList-_pnaXn5KcZ li p,
+    #bulletList-mHrMcwQp22 li p,
+    #bulletList-f6zVxaksDO li p,
+    #bulletList-Oq2hpyEiKQ li p,
+    #bulletList-MriHatdPOu li p {
+        font-weight: 900 !important;
+        font-size: 1.5rem !important;
+        line-height: 2rem !important;
+    }
+
+    .custom-ul-list-icon {
+        width: 2rem;
+        height: 2rem;
+        margin-right: 0.625rem;
+    }
+
+
+
+    #col-XVler0NN0t,
+    #col-o2hYJleQbL,
+    #col-nyUME684Ft,
+    #col-PgooDPirQH {
+        padding-left: 0px;
+    }
+
+    #col-xkTS7A__iz,
+    #col-zD_SAZY4AT,
+    #col-mlKGc0P_48 {
+        padding-right: 0px;
+    }
+
+    #col-XVler0NN0t>.inner,
+    #col-xkTS7A__iz>.inner,
+    #col-o2hYJleQbL>.inner,
+    #col-zD_SAZY4AT>.inner,
+    #col-nyUME684Ft>.inner,
+    #col-mlKGc0P_48>.inner,
+    #col-PgooDPirQH>.inner {
+        padding: 0px 0px;
+        align-items: center !important;
+        justify-content: flex-start !important;
+    }
+
+    #paragraph-9eCoQ6eHva {
+        padding: 4rem;
+        max-width: 43.5rem;
+        margin: 0px auto;
+    }
+
+    #paragraph-9eCoQ6eHva p {
+        font-weight: 700 !important;
+    }
+
+    .help-row-dots {
+        left: 1rem;
+    }
+
+
+    /* ======================================== */
+    /* END WE HELP WITH */
+    /* ======================================== */
+
+
+
+    /* ======================================== */
+    /* START CASE STUDIES */
+    /* ======================================== */
+
+
+
+    #section-AsM28PkJVo>.inner {
+        position: relative;
+        height: 100%;
+        padding: 4.3125rem 2.5rem 0px 2.5rem;
+        display: block;
+    }
+
+
+    #heading-CSxwCWL3Ur h1 em,
+    #heading-CSxwCWL3Ur h1 strong,
+    #heading-CSxwCWL3Ur h1 {
+        font-weight: 700 !important;
+        font-size: 2rem !important;
+    }
+
+    #row-iXa0b7T3L5,
+    #row-Sq8tYfucrW {
+        max-width: 41.5rem;
+    }
+
+    #row-iXa0b7T3L5>.inner,
+    #row-Sq8tYfucrW>.inner {
+        flex-wrap: wrap;
+        padding: 0.875rem;
+    }
+
+    #col-jotGhQ3eW5 {
+        width: 100%;
+        max-width: 100%;
+        min-width: 100%;
+    }
+
+
+    #col-jotGhQ3eW5>.inner,
+    #col-ZAZAUWdop3>.inner {
+        flex-flow: row wrap;
+        justify-content: flex-start;
+        padding: 0px;
+        align-items: center;
+    }
+
+    #col-HoiznIQcY- {
+        width: 100%;
+        max-width: 100%;
+        min-width: 100%;
+    }
+
+    #heading-JRDzBZBWJ2 {
+        width: 100%;
+    }
+
+    #heading-F8lvbdZfjo h1,
+    #heading-F8lvbdZfjo h1 em,
+    #heading-F8lvbdZfjo h1 strong,
+    #heading-J_H0Il3pfV h1 em,
+    #heading-J_H0Il3pfV h1 strong,
+    #heading-J_H0Il3pfV h1 {
+        font-weight: 600 !important;
+        font-size: 1.5rem !important;
+        color: #353966 !important;
+        text-align: center !important;
+    }
+
+
+    #heading-JRDzBZBWJ2 h1,
+    #heading-gX1dKVVXEi h1 {
+        font-weight: 600 !important;
+        font-size: 1rem !important;
+        text-align: left !important;
+    }
+
+    #heading-JRDzBZBWJ2 h1 strong,
+    #heading-gX1dKVVXEi h1 strong {
+        font-weight: 600 !important;
+        font-size: 1rem !important;
+        text-align: left !important;
+    }
+
+
+    #bulletList-1E-tVCvQYj {
+        padding-left: 0px;
+    }
+
+    #col-3t27tEA0_L {
+        width: 100%;
+        max-width: 100%;
+        min-width: 100%;
+    }
+
+
+
+    #col-ZAZAUWdop3 {
+        width: 100%;
+        min-width: 100%;
+        max-width: 100%;
+    }
+
+
+
+    /* ======================================== */
+    /* END CASE STUDIES */
+    /* ======================================== */
+
+
+
+
+    /* ======================================== */
+    /* START OUR PROCESS */
+    /* ======================================== */
+
+
+
+
+    #section-ekIK0EfwBp {
+        padding: 0px 2.5rem;
+        padding-top: 4.1875rem;
+    }
+
+    #section-ekIK0EfwBp>.inner {
+        padding: 2rem 0px;
+        padding-bottom: 0;
+    }
+
+
+    #heading-ASgNC-Dr6x h1 em,
+    #heading-ASgNC-Dr6x h1 strong,
+    #heading-ASgNC-Dr6x h1 {
+        font-size: 2rem !important;
+    }
+
+
+    #heading-D_Deu2fAZO h1,
+    #heading-oldFebf24I h1,
+    #heading-KRaKgg7KHd h1,
+    #heading-1HBdujIoBr h1,
+    #heading-TZVZ2AednD h1,
+    #heading-Te-paZY0kP h1,
+    #heading-_zHb6Sxtex h1 {
+        font-size: 1.5rem !important;
+    }
+
+    #heading-D_Deu2fAZO.active h1,
+    #heading-oldFebf24I.active h1,
+    #heading-KRaKgg7KHd.active h1,
+    #heading-1HBdujIoBr.active h1,
+    #heading-TZVZ2AednD.active h1,
+    #heading-Te-paZY0kP.active h1,
+    #heading-_zHb6Sxtex.active h1 {
+        font-size: 2rem !important;
+    }
+
+
+
+    #paragraph-KlM11iwF8H p,
+    #paragraph-teR91LSf_W p,
+    #paragraph-LqFoYek_nI p,
+    #paragraph-NewDfg1rKm p,
+    #paragraph-vT-R8PMI54 p,
+    #paragraph-LFQVq9FZ8T p,
+    #paragraph-1nclZNm8EE p,
+    #paragraph-SVE56WC51Z p {
+        font-size: 1.25rem !important;
+    }
+
+
+
+    /* ======================================== */
+    /* END OUR PROCESS*/
+    /* ======================================== */
+
+
+
+
+
+
+    /* ======================================== */
+    /* START  RESULTS YOU GET  */
+    /* ======================================== */
+
+
+
+
+    #section-Pu__96wdWR {
+        padding: 0px 2.5rem;
+        padding-top: 5.1875rem;
+    }
+
+    #section-Pu__96wdWR>.inner {
+        padding-top: 3.5625rem;
+    }
+
+    #heading-64g7qt6dLz h1 em,
+    #heading-64g7qt6dLz h1 strong,
+    #heading-64g7qt6dLz h1 {
+        font-weight: 700 !important;
+        font-size: 2rem !important;
+        line-height: 143% !important;
+        color: #151A4F !important;
+    }
+
+    #row-1vvhVUvfrt,
+    #row-TofV-PmQ9v,
+    #row-6fD-n-5gT1,
+    #row-sOt2BXksB9,
+    #row-HjVEF1Zc0t,
+    #row-YU0qo44sQD {
+        max-width: 40.25rem;
+        padding: 1.25rem;
+    }
+
+    #row-TofV-PmQ9v,
+    #row-6fD-n-5gT1,
+    #row-sOt2BXksB9,
+    #row-HjVEF1Zc0t,
+    #row-YU0qo44sQD {
+        margin-top: -1.25rem;
+    }
+
+    #row-1vvhVUvfrt>.inner,
+    #row-TofV-PmQ9v>.inner,
+    #row-6fD-n-5gT1>.inner,
+    #row-sOt2BXksB9>.inner,
+    #row-HjVEF1Zc0t>.inner,
+    #row-YU0qo44sQD>.inner {
+        padding: 0.625rem;
+    }
+
+    #row-1vvhVUvfrt {
+        margin-top: 1.25rem;
+    }
+
+
+    #col-w9Evhn7c_M,
+    #col-IKxl1Up3ci,
+    #col-sNfkfplffa,
+    #col-fVAHPYnXuY,
+    #col-CXhsJjN4nG,
+    #col-ocU5hvcSLh {
+        padding-left: 0.75rem;
+    }
+
+    #paragraph-d4dPWnw8ZQ p,
+    #paragraph-yR0GloioMX p,
+    #paragraph-gJkIDbitRu p,
+    #paragraph-d8anWTxC4D p,
+    #paragraph-13ozLsGuEv p,
+    #paragraph-SfGgSTRFpq p {
+        font-weight: 700 !important;
+        line-height: 1.25rem !important;
+        color: #313A9A !important;
+    }
+
+    #paragraph-d4dPWnw8ZQ p strong em,
+    #paragraph-yR0GloioMX p strong em,
+    #paragraph-gJkIDbitRu p strong em,
+    #paragraph-d8anWTxC4D p strong em,
+    #paragraph-13ozLsGuEv p strong em,
+    #paragraph-SfGgSTRFpq p strong em {
+        color: rgba(238, 38, 82, 1) !important;
+    }
+
+
+    /* ======================================== */
+    /* END RESULTS YOU GET */
+    /* ======================================== */
+
+
+
+    /* ======================================== */
+    /* START  YES WE REALLY MEAN IT*/
+    /* ======================================== */
+
+
+
+
+    #section-hYmwrwe-tQ {
+        padding: 0px 2.5rem;
+        padding-top: 5.1875rem;
+    }
+
+    #heading-t1rjluWzXl h1 {
+        font-weight: 700 !important;
+        font-size: 2rem !important;
+        line-height: 143% !important;
+        color: #151A4F !important;
+    }
+
+
+
+    #paragraph-c3nY8bG0mi p,
+    #paragraph-EFj0oFP7Po p,
+    #paragraph-_WNTDgSG5k p {
+        font-weight: 600 !important;
+        line-height: 150% !important;
+        font-size: 1.5rem !important;
+    }
+
+
+
+    #section-sX4oEYBYhl {
+        padding: 6.25rem 2.5rem;
+    }
+
+    #row-uvbsMyZfXJ {
+        padding-bottom: 4.375rem;
+    }
+
+    #heading-P6UOcddGCR h1 {
+        font-weight: 500 !important;
+        font-size: 2rem !important;
+        line-height: 143% !important;
+    }
+
+    #row-Sk0mZAkn4t {
+        max-width: 100%;
+    }
+
+    #row-Sk0mZAkn4t>.inner {
+        flex-flow: column nowrap;
+        align-items: center;
+    }
+
+
+
+    #paragraph-UxzMUmG79S p {
+        font-size: 1.25rem !important;
+        line-height: 156% !important;
+        text-align: center;
+    }
+
+    #col-v_kB3DBIAW {
+        padding-left: 0px;
+        width: 100%;
+    }
+
+
+    /* ======================================== */
+    /* END  YES WE REALLY MEAN IT*/
+    /* ======================================== */
+
+
+
+    /* ======================================== */
+    /* START WILL THIS WORK*/
+    /* ======================================== */
+
+
+    #section-4czTLbhIWg>.inner,
+    #section-WrgUhJoovE>.inner,
+    #section-1X7C4wa4u_>.inner {
+        padding: 6.25rem 2.5rem;
+    }
+
+
+    #col-vSnnHVe6z8 {
+        padding-bottom: 2.5rem;
+    }
+
+    #heading-IIaWJXEEmB h1,
+    #heading-IIaWJXEEmB h1 em,
+    #heading-IIaWJXEEmB h1 strong,
+    #heading-zDzJf_w4Go h1,
+    #heading-zDzJf_w4Go h1 em,
+    #heading-zDzJf_w4Go h1 strong,
+    #heading-ezb1TDUJs4 h1 em,
+    #heading-ezb1TDUJs4 h1 strong,
+    #heading-ezb1TDUJs4 h1 {
+        font-weight: 700 !important;
+        font-size: 2rem !important;
+        line-height: 143% !important;
+        color: #151A4F !important;
+    }
+
+    #heading-P-eSSYgrTV,
+    #heading-8o9S19UP5g {
+        padding: 0.625rem 2.5rem;
+    }
+
+    #heading-P-eSSYgrTV h1,
+    #heading-8o9S19UP5g h1 {
+        font-size: 1.5rem !important;
+        line-height: 100% !important;
+        color: #151A4F !important;
+    }
+
+
+    #paragraph-qouJUtWv3j p,
+    #paragraph-x95_SsnE0c p,
+    #paragraph-jpA-fuAKnc p,
+    #paragraph-_Lw8RHpMdf p,
+    #paragraph-8KWd6jy1xL p,
+    #paragraph-dRKUAA7TI0 p,
+    #paragraph-q9W3cdNzeC p {
+        font-size: 1rem !important;
+        line-height: 150% !important;
+        color: #334155 !important;
+    }
+
+    #row-SB2jXnrZbp {
+        margin-top: 3.75rem;
+        padding: 2.5rem;
+    }
+
+    #paragraph-NXhUNxn-q1 p {
+        font-weight: 900 !important;
+        font-size: 1.5rem !important;
+        line-height: 150% !important;
+    }
+
+    #paragraph-qeEA6oK-Zq p {
+        font-weight: 600 !important;
+        font-size: 1.25rem !important;
+        line-height: 150% !important;
+    }
+
+    #paragraph-qeEA6oK-Zq {
+        margin-top: 1.5rem;
+    }
+
+    #row-z7WpDnDm8j,
+    #row-DVEp-aWmIc,
+    #row-Nc32sIrtak,
+    #row-LBwZs2lVY0,
+    #row-E7uLV2pFXa,
+    #row-esgUyWl1tC,
+    #row-PvZ0BXSRBv {
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 40.25rem;
+    }
+
+    .custom-tool-tip-content p,
+    #paragraph-LFQVq9FZ8T .custom-tool-tip-content p {
+        font-size: 0.8rem !important;
+        line-height: 150% !important;
+    }
+
+
+    /* ======================================== */
+    /* END  WILL THIS WORK- */
+    /* ======================================== */
+
+
+
+    /* ======================================== */
+    /* START  FOOTER */
+    /* ======================================== */
+
+
+
+
+    #section-FCFlcMyWgg {
+        padding: 2rem 2.5rem;
+    }
+
+
+    #row-_qd7ghzcBc {
+        max-width: 40.25rem;
+    }
+
+    #paragraph-JiuHAO3JvX p {
+        font-weight: 700 !important;
+        font-size: 0.75rem !important;
+        line-height: 100% !important;
+    }
+
+
+
+
+    /* ======================================== */
+    /* END  FOOTER */
+    /* ======================================== */
 
 
 }
