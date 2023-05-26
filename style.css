@@ -4390,8 +4390,9 @@ END WHAT WE HELP WITH
     #row-1V9rp1nZ4o,
     #row-tmycXeuNQX {
         padding: 0px 2.5rem;
-        max-width: 35rem;
+        max-width: 46.5rem !important;
         margin: 0px auto;
+        width: 100% !important;
     }
 
 
@@ -5010,6 +5011,11 @@ END WHAT WE HELP WITH
     }
 
 
+
+    .AsM28PkJVo-stack-child {
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+    }
 
     /* ======================================== */
     /* END CASE STUDIES */
