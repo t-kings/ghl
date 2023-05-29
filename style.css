@@ -5851,13 +5851,25 @@ END WHAT WE HELP WITH
 
     .AsM28PkJVo-stack-child {
         overflow-x: visible !important;
-        padding: 0px 2.5rem !important;
+        padding: 1.5rem 2.5rem !important;
     }
 
     #row-iXa0b7T3L5,
     #row-Sq8tYfucrW {
         margin-left: auto !important;
         margin-right: auto !important;
+    }
+
+    #col-3t27tEA0_L {
+        order: 1 !important;
+    }
+
+    #col-ZAZAUWdop3 {
+        order: 2 !important;
+    }
+
+    #col-Gzlpzx2OYj {
+        order: 3 !important;
     }
 
     /* ======================================== */
@@ -6274,7 +6286,7 @@ END WHAT WE HELP WITH
     }
 
     .AsM28PkJVo-stack-child {
-        padding: 0px 1rem !important;
+        padding: 1rem 1rem !important;
     }
 
     #col-jotGhQ3eW5>.inner {
