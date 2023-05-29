@@ -277,11 +277,20 @@
                 })
             }
 
+            const logoImage = document.querySelector('#nav-menu-5tdLVoJjnG img')
+
             const handleNavbar = () => {
-                if (window.innerWidth > 1024) {
+                if (document.documentElement.clientWidth > 1024) {
                     forLargeScreensAbove1024();
                 } else {
                     forSmallScreensBelow1024();
+                }
+
+                if (document.documentElement.clientWidth > 500) {
+                    logoImage.style.width = '160px';
+                } else {
+                    logoImage.style.width = '100px';
+
                 }
             }
 
@@ -343,7 +352,7 @@
                 clearTimeout(timeOutID)
                 const distanceOfButtonOriginalTopToScreenTop = getElementFullOffsetTop(originalButton);
                 const scrollPosition = window.scrollY
-                const distanceToTop = distanceOfButtonOriginalTopToScreenTop - scrollPosition - (window.innerHeight > 1024 ? mainNavbar.offsetHeight : mobileNavbar.offsetHeight);
+                const distanceToTop = distanceOfButtonOriginalTopToScreenTop - scrollPosition - (document.documentElement.clientWidth > 1024 ? mainNavbar.offsetHeight : mobileNavbar.offsetHeight);
                 const shouldShowNewButton = distanceToTop < 0;
                 if (shouldShowNewButton) {
                     button.classList.remove('hidden-opacity')
@@ -365,7 +374,7 @@
             }
 
             const handleHeader = () => {
-                if (window.innerWidth > 1024) {
+                if (document.documentElement.clientWidth > 1024) {
                     parent.appendChild(threeMonths)
                 } else {
                     sectionInner.insertBefore(threeMonths, parent)
@@ -749,7 +758,7 @@
                 const row2Name = document.querySelector('#col-e86Yg1YLDe')
 
                 const changeSecondRow = () => {
-                    if (window.innerHeight > 1024) {
+                    if (document.documentElement.clientWidth > 1024) {
                         row2.appendChild(row2Text)
                         row2.appendChild(row2Image)
                         row2.appendChild(row2Name)

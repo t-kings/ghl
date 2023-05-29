@@ -227,9 +227,9 @@ START NAVBAR GENERAL
 }
 
 #nav-menu-5tdLVoJjnG .branding {
-    max-width: 10rem;
-    min-width: 10rem;
-    width: 10rem !important;
+    max-width: fit-content;
+    min-width: fit-content;
+    width: fit-content !important;
 }
 
 #nav-menu-yzY5pJBAvp .branding .title,
@@ -438,6 +438,7 @@ START FLOATING BUTTON
     color: #FFFFFF !important;
     z-index: 102 !important;
     font-family: 'Roboto' !important;
+    white-space: nowrap;
 }
 
 .floating-button .sub-heading-button {
@@ -3324,7 +3325,6 @@ END WHAT WE HELP WITH
 }
 
 #section-sX4oEYBYhl {
-    background: #FFFFFF;
     padding: 138px 60px;
     height: 100vh;
     background: #070C40;
@@ -4551,6 +4551,7 @@ END WHAT WE HELP WITH
     #col-0SV8GWTGxu,
     #col-jni5Jtlj7x {
         max-width: 39.1375rem;
+        padding: 19.8473px !important;
     }
 
 
@@ -4594,7 +4595,7 @@ END WHAT WE HELP WITH
 
     #section-hCHffR5p7p>.inner {
         padding: 0px;
-        padding-top: 2rem;
+        padding-top: 2rem !important;
     }
 
     #row-MzQJelebRk {
@@ -5017,6 +5018,17 @@ END WHAT WE HELP WITH
         padding-bottom: 1.5rem;
     }
 
+    .AsM28PkJVo-stack-child::after {
+        display: none !important;
+        height: 0 !important;
+    }
+
+
+    #row-iXa0b7T3L5>.inner,
+    #row-Sq8tYfucrW>.inner {
+        padding-top: 0px !important;
+    }
+
     /* ======================================== */
     /* END CASE STUDIES */
     /* ======================================== */
@@ -5218,7 +5230,7 @@ END WHAT WE HELP WITH
 
 
     #section-sX4oEYBYhl {
-        padding: 6.25rem 2.5rem;
+        padding: 6.25rem 2.5rem !important;
     }
 
     #row-uvbsMyZfXJ {
@@ -5392,4 +5404,988 @@ END WHAT WE HELP WITH
     /* ======================================== */
 
 
+}
+
+
+
+@media screen and (min-width: 0px) and (max-width: 767px) {
+
+
+    /* 
+        ================================
+        START GENERAL
+        ===============================
+    */
+
+    .section-width>.inner {
+        max-width: 100% !important;
+        padding: 0px 2.5rem !important;
+    }
+
+    /* 
+        ================================
+        END GENERAL
+        ===============================
+    */
+
+
+
+
+    /* 
+        ================================
+        START BEFORE AND AFTER
+        ===============================
+    */
+
+
+
+    #section-6KNcZ1CMyo>.inner {
+        padding: 0px 2.5rem !important;
+        padding-top: 2.8125rem !important;
+    }
+
+    #col-8sAtGn5Vnd,
+    #col-vTXA7HyDEa,
+    #col-YfzoSu9lTi,
+    #col-3Z44I511b1 {
+        padding: 3.75rem 2.5rem 0px 2.5rem !important;
+    }
+
+
+
+    #col-I91-_Fvwvs,
+    #col-p_FvVa8H4T,
+    #col-N-dw0MOFpE,
+    #col-r3HyzCNQo8 {
+        padding: 3.75rem 2.5rem 0px 2.5rem !important;
+    }
+
+    #col-vVEf2kCcgf>.inner {
+        width: fit-content !important;
+    }
+
+
+    /* 
+        ================================
+        END BEFORE AND AFTER
+        ===============================
+    */
+
+
+
+    /* 
+        ================================
+        START CLIENTS SAYING
+        ===============================
+    */
+
+
+    #section-atl9fSO8P->.inner {
+        padding-top: 4.5rem !important;
+    }
+
+
+    #row-1V9rp1nZ4o,
+    #row-tmycXeuNQX {
+        padding: 0px 2.5rem !important;
+        margin: 0px auto !important;
+    }
+
+
+    #row-1V9rp1nZ4o>.inner,
+    #row-tmycXeuNQX>.inner {
+        flex-wrap: wrap;
+        flex-direction: row !important;
+    }
+
+    #col-rgE7-4ipKw,
+    #col-e86Yg1YLDe {
+        width: fit-content !important;
+        flex: 1 !important;
+    }
+
+
+
+    #col-0SV8GWTGxu,
+    #col-jni5Jtlj7x {
+        max-width: 39.1375rem;
+        padding: 19.8473px !important;
+    }
+
+
+
+    /* 
+        ================================
+        END CLIENTS SAYING
+        ===============================
+    */
+
+
+
+
+    /* 
+        ================================
+        START WHAT WE HELP WITH
+        ===============================
+    */
+
+    #section-hCHffR5p7p>.inner {
+        padding-top: 2rem !important;
+    }
+
+    #row-Bvp97zRHYJ>.inner,
+    #row-Y7I-2mbyFK>.inner,
+    #row-gZNPgHJslL>.inner,
+    #row-T5DwNzna9_>.inner,
+    #row-Ufh4vUrvFE>.inner,
+    #row-WVWYWhIo9B>.inner,
+    #row-wKfqCubkdc>.inner,
+    #row-QDRnuzpj2n>.inner,
+    #row-GCv5t3UwQG>.inner {
+        flex-direction: row !important;
+    }
+
+    #col-W1pQ6k6oik,
+    #col-At0QXhPHbo,
+    #col-h-R1dOBJ5O,
+    #col-KQP4nzQV0_,
+    #col-wJHoLBw67G,
+    #col-tSfCMIrsNF,
+    #col-qjtuZDkNNg,
+    #col-RrELq2Fn9N,
+    #col-W1pQ6k6oik>.inner,
+    #col-At0QXhPHbo>.inner,
+    #col-h-R1dOBJ5O>.inner,
+    #col-KQP4nzQV0_>.inner,
+    #col-wJHoLBw67G>.inner,
+    #col-tSfCMIrsNF>.inner,
+    #col-qjtuZDkNNg>.inner,
+    #col-RrELq2Fn9N>.inner {
+        width: fit-content !important;
+    }
+
+
+    #col-W1pQ6k6oik,
+    #col-At0QXhPHbo,
+    #col-h-R1dOBJ5O,
+    #col-KQP4nzQV0_,
+    #col-wJHoLBw67G,
+    #col-tSfCMIrsNF,
+    #col-qjtuZDkNNg,
+    #col-RrELq2Fn9N {
+        padding-right: 1rem !important;
+    }
+
+
+    /* 
+        ================================
+        END WHAT WE HELP WITH
+        ===============================
+    */
+
+
+
+
+    /* ======================================== */
+    /* START WE HELP WITH */
+    /* ======================================== */
+
+
+
+    #section-T-iFKIxbuE>.inner {
+        padding-top: 3.25rem !important;
+    }
+
+
+
+    /* ======================================== */
+    /* END WE HELP WITH */
+    /* ======================================== */
+
+
+
+
+    /* ======================================== */
+    /* START OUR PROCESS */
+    /* ======================================== */
+
+
+
+
+    #section-ekIK0EfwBp {
+        padding: 0px 2.5rem !important;
+        padding-top: 4.1875rem !important;
+    }
+
+    #section-ekIK0EfwBp>.inner {
+        padding: 2rem 0px !important;
+        padding-bottom: 0 !important;
+    }
+
+    #row-v401wbCKdd>.inner,
+    #row-XKNabX21ox>.inner,
+    #row-ZF69tc7Sx4>.inner,
+    #row-yiza6zSG8x>.inner,
+    #row--OmxzUELMI>.inner,
+    #row-5UEM-s-KLA>.inner,
+    #row-Gpeq01kKzr>.inner,
+    #row-uWqd6b8pbn>.inner {
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+    }
+
+
+
+    #col-PsmXwuJCSI,
+    #col-JPHpZp-SP8,
+    #col-g5FvOV3cCk,
+    #col-UCGzlYAGwp,
+    #col-478g1ll7OQ,
+    #col-mC2hnVSGzF,
+    #col-IzQ12g19YN,
+    #col-1nDuHbYrmo {
+        padding-left: 2rem !important;
+    }
+
+    /* ======================================== */
+    /* END OUR PROCESS*/
+    /* ======================================== */
+
+
+
+
+
+
+    /* ======================================== */
+    /* START  RESULTS YOU GET  */
+    /* ======================================== */
+
+
+
+
+    #section-Pu__96wdWR {
+        padding: 0px 0px !important;
+        padding-top: 5.1875rem !important;
+    }
+
+    #section-Pu__96wdWR>.inner {
+        padding-top: 3.5625rem !important;
+    }
+
+
+    #row-1vvhVUvfrt,
+    #row-TofV-PmQ9v,
+    #row-6fD-n-5gT1,
+    #row-sOt2BXksB9,
+    #row-HjVEF1Zc0t,
+    #row-YU0qo44sQD {
+        max-width: 40.25rem;
+        padding: 1.25rem !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    #row-TofV-PmQ9v,
+    #row-6fD-n-5gT1,
+    #row-sOt2BXksB9,
+    #row-HjVEF1Zc0t,
+    #row-YU0qo44sQD {
+        margin-top: -1.25rem !important;
+    }
+
+    #row-1vvhVUvfrt>.inner,
+    #row-TofV-PmQ9v>.inner,
+    #row-6fD-n-5gT1>.inner,
+    #row-sOt2BXksB9>.inner,
+    #row-HjVEF1Zc0t>.inner,
+    #row-YU0qo44sQD>.inner {
+        padding: 0.625rem !important;
+        flex-direction: row;
+        flex-wrap: nowrap !important;
+    }
+
+    #row-1vvhVUvfrt {
+        margin-top: 1.25rem !important;
+    }
+
+
+    #col-w9Evhn7c_M,
+    #col-IKxl1Up3ci,
+    #col-sNfkfplffa,
+    #col-fVAHPYnXuY,
+    #col-CXhsJjN4nG,
+    #col-ocU5hvcSLh {
+        padding-left: 0.75rem !important;
+    }
+
+    .Pu__96wdWR-scroll-wrapper {
+        overflow-x: visible !important;
+        overflow-y: hidden !important;
+    }
+
+    .Pu__96wdWR-scroll-container {
+        padding: 3rem 0px !important;
+    }
+
+    /* ======================================== */
+    /* END RESULTS YOU GET */
+    /* ======================================== */
+
+
+
+    /* ======================================== */
+    /* START  YES WE REALLY MEAN IT*/
+    /* ======================================== */
+
+
+
+    #row-sa42GmoliJ>.inner {
+        flex-direction: row;
+        flex-wrap: nowrap !important;
+    }
+
+
+    #section-sX4oEYBYhl {
+        padding: 6.25rem 2.5rem !important;
+    }
+
+
+    /* ======================================== */
+    /* END  YES WE REALLY MEAN IT*/
+    /* ======================================== */
+
+
+
+    /* ======================================== */
+    /* START WILL THIS WORK*/
+    /* ======================================== */
+
+
+    #section-4czTLbhIWg>.inner,
+    #section-WrgUhJoovE>.inner,
+    #section-1X7C4wa4u_>.inner {
+        padding: 6.25rem 0px !important;
+    }
+
+
+    #col-vSnnHVe6z8 {
+        padding-bottom: 2.5rem !important;
+    }
+
+
+    #row-SB2jXnrZbp {
+        margin-top: 3.75rem !important;
+        padding: 2.5rem !important;
+        margin-right: auto !important;
+        margin-right: left !important;
+    }
+
+    #row-z7WpDnDm8j,
+    #row-DVEp-aWmIc,
+    #row-Nc32sIrtak,
+    #row-LBwZs2lVY0,
+    #row-E7uLV2pFXa,
+    #row-esgUyWl1tC,
+    #row-PvZ0BXSRBv {
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    #row-z7WpDnDm8j>.inner,
+    #row-DVEp-aWmIc>.inner,
+    #row-Nc32sIrtak>.inner,
+    #row-LBwZs2lVY0>.inner,
+    #row-E7uLV2pFXa>.inner,
+    #row-esgUyWl1tC>.inner,
+    #row-PvZ0BXSRBv>.inner {
+        flex-direction: row;
+        flex-wrap: nowrap;
+    }
+
+    #col-s3yK1cr6zI,
+    #col-zLIcXMnCGi,
+    #col-g4KgEzLuED,
+    #col-YcTY6O5Cap,
+    #col-WYzDCnwcZg,
+    #col-KkDAoe7UIs,
+    #col-hVnKs7o7Bb {
+        width: fit-content !important;
+        max-width: fit-content !important;
+        min-width: fit-content !important;
+        padding-right: 1.25rem !important;
+    }
+
+
+    /* ======================================== */
+    /* END  WILL THIS WORK- */
+    /* ======================================== */
+
+
+
+    /* ======================================== */
+    /* START  FOOTER */
+    /* ======================================== */
+
+    #row-_qd7ghzcBc {
+        margin: 0px auto !important;
+    }
+
+    /* ======================================== */
+    /* END  FOOTER */
+    /* ======================================== */
+
+
+
+
+    /* ======================================== */
+    /* START CASE STUDIES */
+    /* ======================================== */
+
+
+
+    #section-AsM28PkJVo>.inner {
+        padding: 4.3125rem 0px 0px 0px !important;
+    }
+
+
+    .AsM28PkJVo-scroll-wrapper {
+        overflow-x: visible !important;
+    }
+
+    .AsM28PkJVo-stack-child {
+        overflow-x: visible !important;
+        padding: 0px 2.5rem !important;
+    }
+
+    #row-iXa0b7T3L5,
+    #row-Sq8tYfucrW {
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    /* ======================================== */
+    /* END CASE STUDIES */
+    /* ======================================== */
+
+
+
+
+
+}
+
+
+
+@media screen and (min-width: 0px) and (max-width: 550px) {
+
+
+    /* 
+        ================================
+        START GENERAL
+        ===============================
+    */
+
+    .section-width>.inner {
+        padding: 0px 1rem !important;
+    }
+
+
+
+
+    /* 
+        ================================
+        END GENERAL
+        ===============================
+    */
+
+
+    /* 
+        ================================
+        NAVBAR
+        ===============================
+    */
+
+
+    #button-X1pwHzIMP5 button {
+        padding: 0.4375rem 0.875rem !important;
+        font-size: 0.5rem;
+    }
+
+    /* 
+        ================================
+        HEADER
+        ===============================
+    */
+
+
+    #row-Qz6qTvYcO8 {
+        padding: 0 1rem !important;
+        padding-top: 2.5rem !important;
+        margin-top: 1.4374rem !important;
+    }
+
+
+    #heading-0uY3_Ge2fHm h1 {
+        font-size: 1.5rem !important;
+    }
+
+
+    #sub-heading-HsIWxDtYSBg h2 {
+        font-size: 0.875rem !important;
+    }
+
+    #section-nMyY9vZJBI {
+        margin-top: 1rem !important;
+        padding: 0px !important;
+        padding-bottom: 3.75rem !important;
+    }
+
+    #row-NGGb0HSO4r {
+        padding: 0 1rem !important;
+    }
+
+
+
+    #sub-heading-vCKNFwM36K h2,
+    #sub-heading-vCKNFwM36K h2 em {
+        font-size: 0.75rem !important;
+    }
+
+
+
+    #heading-9V7pTJ84oK {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+        padding-left: 0 !important;
+        padding-bottom: 0 !important;
+    }
+
+
+    #heading-9V7pTJ84oK h1 em,
+    #heading-9V7pTJ84oK h1 {
+        font-size: 1.25rem !important;
+    }
+
+
+    #bulletList-7oij-7GDoW ul {
+        padding: 0 0 0.75rem !important;
+        margin-top: 0.75rem !important;
+        padding-left: 0.75rem !important;
+        padding-bottom: 0;
+    }
+
+
+    #bulletList-7oij-7GDoW li {
+        margin-bottom: 0.75rem !important;
+        margin-left: 2rem !important;
+        padding-left: 0.75rem !important;
+    }
+
+    #bulletList-7oij-7GDoW li p {
+        font-size: 0.875rem !important;
+        line-height: 1.125rem;
+    }
+
+
+    #col-LgfKh2o0lG {
+        margin-bottom: 1rem !important;
+    }
+
+    #col-LgfKh2o0lG>.inner {
+        padding: 0.7424rem 1rem 0.75rem !important;
+    }
+
+
+
+    #row-vdLrkiAk0X {
+        padding: 0rem 1rem !important;
+    }
+
+
+    #row-vdLrkiAk0X>.inner {
+        padding: 0.75rem 1rem !important;
+    }
+
+
+    #heading-Jo_F59lFnh h1,
+    #heading-Jo_F59lFnh h1 em {
+        font-size: 1.125rem !important;
+    }
+
+    #paragraph-46VygKBn4Z p,
+    #paragraph-46VygKBn4Z p em {
+        font-size: 0.875rem !important;
+        line-height: 1.3125rem !important;
+    }
+
+
+    #image-PqMlcOqYMi,
+    #image-PqMlcOqYMi picture,
+    #image-PqMlcOqYMi img {
+        width: 2.125rem !important;
+    }
+
+    #col-uy5bNodL6C {
+        padding-left: 1rem !important;
+    }
+
+
+
+    #button-nqR07-BPrY button {
+        padding: 1rem 2rem !important;
+        font-weight: 600 !important;
+        font-size: 1rem !important;
+    }
+
+    #button-trKZL2dkwB button {
+        padding: 1rem 2rem;
+        font-size: 0.875rem !important;
+        font-size: 0.75rem;
+    }
+
+
+    #heading-3Al-HvuE07 h1,
+    #heading-3Al-HvuE07 h1 em {
+        font-size: 1rem !important;
+    }
+
+    /* 
+        ================================
+        END HEADER
+        ===============================
+    */
+
+
+    /* 
+        ================================
+        START FLOATING BUTTON
+        ===============================
+    */
+
+    .floating-button {
+        bottom: 1rem;
+    }
+
+
+
+    /* 
+        ================================
+        END FLOATING BUTTON
+        ===============================
+    */
+
+
+    /* 
+        ================================
+        START BEFORE AND AFTER
+        ===============================
+    */
+
+
+
+
+
+    #section-6KNcZ1CMyo>.inner {
+        padding: 0px 1rem !important;
+        padding-top: 2rem !important;
+    }
+
+
+
+    #col-8sAtGn5Vnd,
+    #col-vTXA7HyDEa,
+    #col-YfzoSu9lTi,
+    #col-3Z44I511b1 {
+        padding: 2rem 2.5rem 0px 2.5rem !important;
+    }
+
+
+
+    #col-I91-_Fvwvs,
+    #col-p_FvVa8H4T,
+    #col-N-dw0MOFpE,
+    #col-r3HyzCNQo8 {
+        padding: 2rem 2.5rem 0px 2.5rem !important;
+    }
+
+
+
+    #heading-iJlyjoyWCT h1,
+    #heading-iJlyjoyWCT h1 em,
+    #heading-G0zP13BwZr h1,
+    #heading-G0zP13BwZr h1 em,
+    #heading-1v25poYkt8 h1,
+    #heading-1v25poYkt8 h1 em,
+    #heading-lmp4cNhzGr h1,
+    #heading-lmp4cNhzGr h1 em,
+    #heading-wydnlTkb6o h1,
+    #heading-wydnlTkb6o h1 em,
+    #heading-7o4K4NgZux h1,
+    #heading-7o4K4NgZux h1 em,
+    #heading-g3zGodtzbs h1,
+    #heading-g3zGodtzbs h1 em,
+    #heading-andQpgOslw h1,
+    #heading-andQpgOslw h1 em {
+        font-size: 2.5rem !important;
+    }
+
+
+
+    #paragraph-uvnyjUUl0T p,
+    #paragraph-uvnyjUUl0T p em,
+    #paragraph-0m8jpAZjQ9 p,
+    #paragraph-0m8jpAZjQ9 p em,
+    #paragraph-FmrUs8eUE1 p,
+    #paragraph-FmrUs8eUE1 p em,
+    #paragraph-P_AjFgzB2- p,
+    #paragraph-P_AjFgzB2- p em,
+    #paragraph-Cu5KfS_e6c p,
+    #paragraph-Cu5KfS_e6c p em,
+    #paragraph-ayDYOF5Dng p,
+    #paragraph-ayDYOF5Dng p em,
+    #paragraph-BHHANl2Rrv p,
+    #paragraph-BHHANl2Rrv p em,
+    #paragraph-ATauF4mwFb p,
+    #paragraph-ATauF4mwFb p em {
+        font-size: 1.75rem !important;
+    }
+
+
+
+    #paragraph-uvnyjUUl0T,
+    #paragraph-0m8jpAZjQ9,
+    #paragraph-FmrUs8eUE1,
+    #paragraph-P_AjFgzB2-,
+    #paragraph-Cu5KfS_e6c,
+    #paragraph-ayDYOF5Dng,
+    #paragraph-BHHANl2Rrv,
+    #paragraph-ATauF4mwFb {
+        padding-bottom: 2rem;
+    }
+
+    #row-LFrZaCm2w7 {
+        transform: translateX(-20%);
+        width: fit-content !important;
+    }
+
+    .help-row-dots {
+        left: 0.2rem;
+    }
+
+
+    /* 
+        ================================
+        END BEFORE AND AFTER
+        ===============================
+    */
+
+    /* 
+        ================================
+        START CLIENTS SAYING
+        ===============================
+    */
+
+
+    #section-atl9fSO8P->.inner {
+        padding-top: 4.5rem !important;
+    }
+
+    #heading-Kkk7jgB_GW h1,
+    #heading-Kkk7jgB_GW h1 em {
+        font-size: 1.5rem !important;
+    }
+
+
+    #row-1V9rp1nZ4o,
+    #row-tmycXeuNQX {
+        padding: 0px 1rem !important;
+    }
+
+    /* 
+        ================================
+        END CLIENTS SAYING
+        ===============================
+    */
+
+
+
+
+
+    /* 
+        ================================
+        START WHAT WE HELP WITH
+        ===============================
+    */
+
+    #heading-JIcr-SGsHb h1,
+    #heading-JIcr-SGsHb h1 em {
+        font-size: 1.5rem !important;
+    }
+
+    /* 
+        ================================
+        END WHAT WE HELP WITH
+        ===============================
+    */
+
+
+
+
+    #heading-U-7HzzV9Kz h1,
+    #heading-U-7HzzV9Kz h1 em,
+    #heading-U-7HzzV9Kz h1 strong,
+    #heading-2Bb_Kql0Ms h1,
+    #heading-2Bb_Kql0Ms h1 em,
+    #heading-2Bb_Kql0Ms h1 strong,
+    #heading-9LAlbsiiyH h1,
+    #heading-9LAlbsiiyH h1 em,
+    #heading-9LAlbsiiyH h1 strong,
+    #heading-ulF13TRq4f h1,
+    #heading-ulF13TRq4f h1 em,
+    #heading-ulF13TRq4f h1 strong,
+    #heading-Pw-En_-4n8 h1,
+    #heading-Pw-En_-4n8 h1 em,
+    #heading-Pw-En_-4n8 h1 strong,
+    #heading-c-vLNWdAfv h1,
+    #heading-c-vLNWdAfv h1 em,
+    #heading-c-vLNWdAfv h1 strong,
+    #heading-o62Ax4zawF h1,
+    #heading-o62Ax4zawF h1 em,
+    #heading-o62Ax4zawF h1 strong,
+    #heading-_0jiEAyZTv h1,
+    #heading-_0jiEAyZTv h1 em,
+    #heading-_0jiEAyZTv h1 strong {
+        font-size: 1.5rem !important;
+    }
+
+    #bulletList-RP5elIIvE- li p,
+    #bulletList-MwXvIgjbK8 li p,
+    #bulletList-_pnaXn5KcZ li p,
+    #bulletList-mHrMcwQp22 li p,
+    #bulletList-f6zVxaksDO li p,
+    #bulletList-Oq2hpyEiKQ li p,
+    #bulletList-MriHatdPOu li p {
+        font-size: 1rem !important;
+        line-height: 1.25rem !important;
+    }
+
+    #paragraph-9eCoQ6eHva {
+        padding: 2rem 0px !important;
+    }
+
+    #paragraph-9eCoQ6eHva p {
+        font-size: 1.25rem !important;
+    }
+
+    .AsM28PkJVo-stack-child {
+        padding: 0px 1rem !important;
+    }
+
+    #col-jotGhQ3eW5>.inner {
+        flex-flow: row nowrap !important;
+    }
+
+    #heading-J_H0Il3pfV *,
+    #heading-gX1dKVVXEi * {
+        text-align: left !important;
+
+    }
+
+    #col-3t27tEA0_L {
+        order: 1 !important;
+    }
+
+    #col-ZAZAUWdop3 {
+        order: 2 !important;
+    }
+
+    #col-Gzlpzx2OYj {
+        order: 3 !important;
+    }
+
+    #heading-gVGhmDi6sf,
+    #heading-Bqa4MiWPAa,
+    #heading-x8Xq8MxvXU,
+    #heading-Q9b2Nrl2gj,
+    #heading-nKbrnFliH4,
+    #heading-OtFCgUFZ52,
+    #heading-V127dU-abJ {
+        width: 3rem !important;
+        height: 3rem !important;
+    }
+
+    #heading-gVGhmDi6sf h1,
+    #heading-Bqa4MiWPAa h1,
+    #heading-x8Xq8MxvXU h1,
+    #heading-Q9b2Nrl2gj h1,
+    #heading-nKbrnFliH4 h1,
+    #heading-OtFCgUFZ52 h1,
+    #heading-V127dU-abJ h1 {
+        font-size: 2.5rem !important;
+        line-height: 130% !important;
+    }
+
+    #heading-D_Deu2fAZO,
+    #heading-oldFebf24I,
+    #heading-KRaKgg7KHd,
+    #heading-1HBdujIoBr,
+    #heading-TZVZ2AednD,
+    #heading-Te-paZY0kP,
+    #heading-_zHb6Sxtex {
+        height: 3rem !important;
+    }
+
+
+    #heading-D_Deu2fAZO h1,
+    #heading-oldFebf24I h1,
+    #heading-KRaKgg7KHd h1,
+    #heading-1HBdujIoBr h1,
+    #heading-TZVZ2AednD h1,
+    #heading-Te-paZY0kP h1,
+    #heading-_zHb6Sxtex h1 {
+        font-size: 1.75rem !important;
+    }
+
+}
+
+
+@media screen and (min-width: 0px) and (max-width: 480px) {
+
+
+
+    /* 
+        ================================
+        NAVBAR
+        ===============================
+    */
+
+
+    #button-X1pwHzIMP5 button {
+        padding: 0.4375rem 0.875rem !important;
+        font-size: 0.5rem !important;
+    }
+
+    #button-X1pwHzIMP5 button .main-heading-button {
+        font-size: 0.5rem !important;
+    }
+
+    #button-nqR07-BPrY .main-heading-button {
+        font-size: 1rem !important;
+    }
+
+    #button-trKZL2dkwB .main-heading-button {
+        font-size: 0.75rem !important;
+    }
+
+    /* 
+        ================================
+        HEADER
+        ===============================
+    */
+
+    #button-qEuegzKTs6 .main-heading-button,
+    #button-ylwne1poij .main-heading-button,
+    #button-ylwne1poij .button-icon-start,
+    #button-qEuegzKTs6 .button-icon-start {
+        font-size: 0.625rem !important;
+    }
 }
