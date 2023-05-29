@@ -7,6 +7,33 @@
     // =====================================
 
 
+    const getShouldUseTouchAnimations = () => {
+
+        const isDesktopOrLaptop = () => {
+            return false
+            const platform = navigator.platform.toLowerCase();
+            const desktopPlatforms = ['win', 'mac', 'linux'];
+            return desktopPlatforms.some(function (keyword) {
+                return platform.indexOf(keyword) !== -1;
+            });
+        }
+
+
+        const isTouchDevice = 'ontouchstart' in window ||
+            navigator.maxTouchPoints > 0 ||
+            navigator.msMaxTouchPoints > 0;
+
+        const userAgent = navigator.userAgent.toLowerCase();
+        const mobileKeywords = ['mobile', 'android', 'iphone', 'ipad', 'ipod', 'blackberry', 'windows phone'];
+        const isMobile = mobileKeywords.some(function (keyword) {
+            return userAgent.indexOf(keyword) !== -1;
+        });
+        return isTouchDevice && isMobile && !isDesktopOrLaptop();
+
+    }
+
+
+
     let isScrolledUpOrDown = 'down'
     const getIsScrolledUpOrDown = () => {
         let previousScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
@@ -64,22 +91,24 @@
     let presentScrollingTo;
     const scrollToSection = (bottomSectionID, topSectionID) => {
         try {
-            if (isScrolledUpOrDown === 'down') {
-                if (presentScrollingTo !== bottomSectionID) {
-                    presentScrollingTo = bottomSectionID;
-                    let parentElement = document.querySelector(`${bottomSectionID}-parent`)
-                    if (!parentElement) {
-                        parentElement = document.querySelector(bottomSectionID)
+            if (!getShouldUseTouchAnimations()) {
+                if (isScrolledUpOrDown === 'down') {
+                    if (presentScrollingTo !== bottomSectionID) {
+                        presentScrollingTo = bottomSectionID;
+                        let parentElement = document.querySelector(`${bottomSectionID}-parent`)
+                        if (!parentElement) {
+                            parentElement = document.querySelector(bottomSectionID)
+                        }
+                        const parentTopPosition = getElementFullOffsetTop(parentElement);
+                        window.scrollTo({
+                            left: 0,
+                            top: parentTopPosition,
+                            behavior: 'smooth'
+                        })
+                        setTimeout(() => {
+                            presentScrollingTo = ''
+                        }, 1000)
                     }
-                    const parentTopPosition = getElementFullOffsetTop(parentElement);
-                    window.scrollTo({
-                        left: 0,
-                        top: parentTopPosition,
-                        behavior: 'smooth'
-                    })
-                    setTimeout(() => {
-                        presentScrollingTo = ''
-                    }, 1000)
                 }
             }
         } catch (error) {
@@ -88,20 +117,39 @@
     }
 
 
+    let floatingButtonHeight = 0;
+    const sectionBottomPaddingIntervals = []
+
+
+
     const fixBottomPaddingForSections = (sectionID, applyPadding = true) => {
-        const section = document.querySelector(sectionID)
-        const originalButton = document.querySelector('#button-nqR07-BPrY button')
-        const originalButtonOffsetHeight = originalButton.offsetHeight
-        const originalButtonTopPadding = parseInt(getComputedStyle(originalButton).paddingTop)
-        const originalButtonBottomPadding = parseInt(getComputedStyle(originalButton).paddingBottom)
-        const originalButtonInnerHeight = originalButtonOffsetHeight - originalButtonTopPadding - originalButtonBottomPadding;
-        const floatingButtonInnerHeight = originalButtonInnerHeight * 2 // has sub header
-        const floatingButtonOffsetHeight = floatingButtonInnerHeight + originalButtonTopPadding + originalButtonBottomPadding;
-        const floatingButtonSpaceToBottomScreen = floatingButtonOffsetHeight + 60;
-        if (applyPadding) {
-            section.style.paddingBottom = `${floatingButtonSpaceToBottomScreen}px`
+        if (applyPadding && !sectionBottomPaddingIntervals.includes(sectionID)) {
+            const section = document.querySelector(sectionID)
+            setInterval(() => {
+                const paddingBottom = parseInt(getComputedStyle(section).paddingBottom)
+                if (paddingBottom !== parseInt(floatingButtonHeight)) {
+                    section.style.paddingBottom = `${floatingButtonHeight}px`
+                }
+            }, 1000);
+            sectionBottomPaddingIntervals.push(sectionID)
         }
-        return floatingButtonSpaceToBottomScreen
+        return parseInt(floatingButtonHeight)
+    }
+
+    let navBarHeight = 0;
+    const sectionTopPaddingIntervals = []
+    const fixTopPaddingForSections = (sectionID, applyPadding = true) => {
+        if (applyPadding && !sectionTopPaddingIntervals.includes(sectionID)) {
+            const section = document.querySelector(sectionID)
+            setInterval(() => {
+                const paddingTop = parseInt(getComputedStyle(section).paddingTop)
+                if (paddingTop !== parseInt(navBarHeight)) {
+                    section.style.paddingTop = `${navBarHeight}px`
+                }
+            }, 1000);
+            sectionTopPaddingIntervals.push(sectionID)
+        }
+        return parseInt(navBarHeight)
     }
 
 
@@ -160,7 +208,7 @@
             }
         }
 
-        if (!handleCustomStickyListeners.includes(handleCustomStickyListeners)) {
+        if (!handleCustomStickyListeners.includes(sectionID)) {
             window.addEventListener("scroll", scrollEventListener);
             handleCustomStickyListeners.push(sectionID)
         }
@@ -174,31 +222,36 @@
     }
 
 
+    const paragraphAddedTooltipsTo = []
     const createToolTip = (paragraphID, contentText, useTop = false) => {
-        const paragraphWithTooltip = document.querySelector(`${paragraphID} u`)
-        paragraphWithTooltip.classList.add('custom-tool-tip')
-        const tooltipContent = document.createElement('div')
-        tooltipContent.classList.add('custom-tool-tip-content')
-        const caret = document.createElement('div')
-        caret.classList.add('custom-tool-tip-caret')
-        const content = document.createElement('p')
-        content.innerHTML = contentText
-        paragraphWithTooltip.appendChild(tooltipContent)
 
-        if (useTop) {
-            caret.innerHTML = `<svg width="20" height="10" viewBox="0 0 20 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+        if (!paragraphAddedTooltipsTo.includes(paragraphID)) {
+            const paragraphWithTooltip = document.querySelector(`${paragraphID} u`)
+            paragraphWithTooltip.classList.add('custom-tool-tip')
+            const tooltipContent = document.createElement('div')
+            tooltipContent.classList.add('custom-tool-tip-content')
+            const caret = document.createElement('div')
+            caret.classList.add('custom-tool-tip-caret')
+            const content = document.createElement('p')
+            content.innerHTML = contentText
+            paragraphWithTooltip.appendChild(tooltipContent)
+
+            if (useTop) {
+                caret.innerHTML = `<svg width="20" height="10" viewBox="0 0 20 10" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M9.29289 9.29289C9.68342 9.68342 10.3166 9.68342 10.7071 9.29289L20 1.90735e-06L0 1.90735e-06L9.29289 9.29289Z" fill="#151A4F"/>
 </svg>
 `
-            tooltipContent.appendChild(content)
-            tooltipContent.appendChild(caret)
-        } else {
-            caret.innerHTML = `<svg width="20" height="10" viewBox="0 0 20 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                tooltipContent.appendChild(content)
+                tooltipContent.appendChild(caret)
+            } else {
+                caret.innerHTML = `<svg width="20" height="10" viewBox="0 0 20 10" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M10.7071 0.707108C10.3166 0.316584 9.68342 0.316583 9.29289 0.707108L8.74228e-07 10L20 10L10.7071 0.707108Z" fill="#151A4F"/>
 </svg>
 `
-            tooltipContent.appendChild(caret)
-            tooltipContent.appendChild(content)
+                tooltipContent.appendChild(caret)
+                tooltipContent.appendChild(content)
+            }
+            paragraphAddedTooltipsTo.push(paragraphID)
         }
 
     }
@@ -233,6 +286,7 @@
                         return inner2.offsetHeight * 1
                     }
                     navBar1.parentNode.style.marginTop = `${getActiveContainerHeight()}px`
+                    navBarHeight = getActiveContainerHeight();
                     const isScrolled = scrollPosition >= getActiveContainerHeight();
                     hideOrShowElement(navBar1, inner1, isScrolled)
                     hideOrShowElement(navBar2, inner2, !isScrolled)
@@ -240,6 +294,7 @@
                     //
                 }
             }
+
             const scrollingEventHandlerForNavbar = () => {
                 setTimeout(() => {
                     toggleNavBars()
@@ -272,6 +327,7 @@
                 openButton.addEventListener('click', openMobileNavbar)
                 closeButton.addEventListener('click', closeMobileNavbar)
                 header.style.marginTop = `${mobileNavParent.offsetHeight}px`
+                navBarHeight = parseInt(mobileNavParent.offsetHeight);
                 mobileNavAnchors.forEach(mobileNavAnchor => {
                     mobileNavAnchor.addEventListener('click', closeMobileNavbar)
                 })
@@ -347,6 +403,8 @@
 
 
 
+
+
             let timeOutID;
             const handleStickyButton = () => {
                 clearTimeout(timeOutID)
@@ -357,6 +415,7 @@
                 if (shouldShowNewButton) {
                     button.classList.remove('hidden-opacity')
                     button.classList.remove('hidden')
+                    floatingButtonHeight = parseInt(button.offsetHeight) + parseInt(getComputedStyle(button).bottom)
                     alreadyShown = true
                 } else {
                     button.classList.add('hidden-opacity')
@@ -416,36 +475,46 @@
             let layoutAlreadySet = false;
             let forceScrollPositionTimeoutID;
             let forceSnapTimeoutID;
+            fixBottomPaddingForSections('#section-6KNcZ1CMyo')
+            fixTopPaddingForSections('#section-6KNcZ1CMyo')
+            const rowIDs = [
+                '#row-1CvP7CZYAM',
+                '#row-jIpu4rvCzI',
+                '#row-zh6mu-2hP1',
+                '#row-xq5TdFlW8B'
+            ]
+            const rows = rowIDs.map(id => document.querySelector(id))
+            const dots = document.querySelectorAll('#col-vVEf2kCcgf>.inner>div')
+            const max = rowIDs.length;
+
+            const getMaxHeightOfAllRows = () => {
+                let maxHeightOfRows = 0;
+                for (let index = 0; index < max; index++) {
+                    const row = rows[index];
+                    row.style.height = "auto"
+                    row.style.display = "block"
+                    maxHeightOfRows = maxHeightOfRows < row.offsetHeight ? row.offsetHeight : maxHeightOfRows
+                    row.style.height = "100%"
+                }
+                return maxHeightOfRows
+            }
+
+            const containerID = 'before-after-stack-container';
+            let container;
+            const buttonSubTexts = [
+                'EMPOWER YOUR OPERATIONS TODAY',
+                'STREAMLINE YOUR BUSINESS TODAY',
+                'FIX OPERATIONAL ERRORS TODAY',
+                'UNLOCK YOUR FULL BUSINESS POTENTIAL'
+            ]
+
             const setLayout = () => {
                 clearTimeout(forceScrollPositionTimeoutID)
                 clearTimeout(forceSnapTimeoutID)
-                fixBottomPaddingForSections('#section-6KNcZ1CMyo')
-                const rowIDs = [
-                    '#row-1CvP7CZYAM',
-                    '#row-jIpu4rvCzI',
-                    '#row-zh6mu-2hP1',
-                    '#row-xq5TdFlW8B'
-                ]
-                const rows = rowIDs.map(id => document.querySelector(id))
-                const max = rowIDs.length;
-                const dots = document.querySelectorAll('#col-vVEf2kCcgf>.inner>div')
-
-
-                const getMaxHeightOfAllRows = () => {
-                    let maxHeightOfRows = 0;
-                    for (let index = 0; index < max; index++) {
-                        const row = rows[index];
-                        row.style.height = "auto"
-                        row.style.display = "block"
-                        maxHeightOfRows = maxHeightOfRows < row.offsetHeight ? row.offsetHeight : maxHeightOfRows
-                        row.style.height = "100%"
-                    }
-                    return maxHeightOfRows
-                }
-                const containerID = 'before-after-stack-container'
                 const containerHeight = getMaxHeightOfAllRows();
-                let container;
+
                 const formCube = () => {
+
                     if (!layoutAlreadySet) {
                         container = document.createElement('div');
                         container.classList.add('stack-container');
@@ -453,16 +522,18 @@
                     } else {
                         container = document.querySelector(`#${containerID}`)
                     }
+
                     container.style.height = `${containerHeight}px`;
 
                     if (!layoutAlreadySet) {
                         rows[0].parentNode.appendChild(container);
                     }
+
                     return rows.map((row, index) => {
                         let stackChild = document.querySelector(`#stack-child-${index}`)
                         if (!stackChild) {
-                            stackChild = document.createElement('div')
-                            stackChild.setAttribute('id', `stack-child-${index}`)
+                            stackChild = document.createElement('div');
+                            stackChild.setAttribute('id', `stack-child-${index}`);
                             stackChild.classList.add('stack-child')
                             row.classList.add('stack-main-row')
                             const cols = row.querySelectorAll(`#${row.id}>.inner>div`)
@@ -478,85 +549,14 @@
                 }
 
 
-                const stackChildren = formCube()
+                const stackChildren = formCube();
 
-                const heightDelay = stackChildren[0].offsetHeight * 6
-
-                const buttonSubTexts = [
-                    'EMPOWER YOUR OPERATIONS TODAY',
-                    'STREAMLINE YOUR BUSINESS TODAY',
-                    'FIX OPERATIONAL ERRORS TODAY',
-                    'UNLOCK YOUR FULL BUSINESS POTENTIAL'
-                ]
+                const shouldUseTouchAnimations = getShouldUseTouchAnimations()
 
 
-                const changeDisplays = (count = 0, positiveDistance) => {
-                    clearTimeout(forceSnapTimeoutID)
-                    for (let index = 0; index < max; index++) {
-                        const stackChild = stackChildren[index];
-                        const dot = dots[index];
-                        stackChild.style.transition = 'transform 0.3s'
-                        if (count > index || index === 0) {
-                            stackChild.style.transform = 'translateY(0)'
-                            dot.classList.add('active')
-                        } else if (count === index) {
-                            if (positiveDistance) {
-                                const actualCount = (positiveDistance / heightDelay) * 4
-                                const remainder = actualCount - count;
-                                const remainderInPercentage = remainder * 100;
-                                let translateY = 100 - remainderInPercentage;
-                                // translateY = translateY < 0 ? 0 : translateY
-                                // if (translateY < 20 && isScrolledUpOrDown === 'down') {
-                                //     stackChild.style.transition = 'transform 0.3s'
-                                //     forceSnapTimeoutID = setTimeout(() => {
-                                //         stackChild.style.transition = 'none'
-                                //     }, 300);
-                                //     translateY = 0
-                                // } else if (translateY > 80 && isScrolledUpOrDown === 'up') {
-                                //     stackChild.style.transition = 'transform 0.3s'
-                                //     forceSnapTimeoutID = setTimeout(() => {
-                                //         stackChild.style.transition = 'none'
-                                //     }, 300);
-                                //     translateY = 100
-                                // }
-                                stackChild.style.transform = `translateY(${translateY}%)`
-                                // stackChild.classList.remove('hide')
-                                if (translateY < 50) {
-                                    dot.classList.add('active')
-                                }
-                                // if (translateY !== 0 && translateY !== 100) {
-                                //     forceScrollPositionTimeoutID = setTimeout(() => {
-                                //         if (isScrolledUpOrDown === 'down') {
-                                //             stackChild.style.transition = 'transform 0.3s'
-                                //             forceSnapTimeoutID = setTimeout(() => {
-                                //                 stackChild.style.transition = 'none'
-                                //             }, 300);
-                                //             stackChild.style.transform = `translateY(0%)`
-                                //         } else {
-                                //             stackChild.style.transition = 'transform 0.3s'
-                                //             forceSnapTimeoutID = setTimeout(() => {
-                                //                 stackChild.style.transition = 'none'
-                                //             }, 300);
-                                //             stackChild.style.transform = `translateY(100%)`
-                                //             dot.classList.remove('active')
-                                //         }
-                                //     }, 200);
-                                // }
-                            } else {
-                                stackChild.style.transform = 'translateY(0%)'
-                                dot.classList.add('active')
-                            }
-                        } else {
-                            stackChild.style.transform = 'translateY(100%)'
-                            // stackChild.classList.add('hide')
-                            dot.classList.remove('active')
-                        }
-                    }
-                }
-                changeDisplays();
-
-
+                const heightDelay = shouldUseTouchAnimations ? max * containerHeight : stackChildren[0].offsetHeight * 6;
                 const parentElement = handleCustomSticky('#section-6KNcZ1CMyo', heightDelay)
+
 
                 let isScrolling = false;
                 let isScrollingTimeOutID;
@@ -564,7 +564,52 @@
                 const scrollPositionToIndex = {}
                 let isCrossedCount = false;
                 let justEnteredFromAbove = false;
-                let isPresentlyAbove = false
+                let isPresentlyAbove = false;
+
+
+                const changeDisplays = (count = 0, scrollPosition = 0) => {
+                    clearTimeout(forceSnapTimeoutID)
+                    if (shouldUseTouchAnimations) {
+                        for (let index = 0; index < max; index++) {
+                            const stackChild = stackChildren[index];
+                            const dot = dots[index];
+                            stackChild.style.transition = 'none'
+                            if (count > index || index === 0) {
+                                stackChild.style.transform = 'translateY(0)'
+                                dot.classList.add('active')
+                            } else if (count === index) {
+                                const countScrollPosition = scrollPositionToIndex[count]
+                                const remainder = countScrollPosition - scrollPosition;
+                                const maxRemainder = countScrollPosition - scrollPositionToIndex[count - 1]
+                                const remainderInPercentage = (remainder / maxRemainder) * 100;
+                                let translateY = remainderInPercentage
+                                stackChild.style.transform = `translateY(${translateY}%)`
+                                if (translateY < 50) {
+                                    dot.classList.add('active')
+                                }
+                            } else {
+                                stackChild.style.transform = 'translateY(100%)'
+                                dot.classList.remove('active')
+                            }
+                        }
+
+                    } else {
+                        for (let index = 0; index < max; index++) {
+                            const stackChild = stackChildren[index];
+                            const dot = dots[index];
+                            stackChild.style.transition = 'transform 0.3s'
+                            if (count >= index || index === 0) {
+                                stackChild.style.transform = 'translateY(0)'
+                                dot.classList.add('active')
+                            } else {
+                                stackChild.style.transform = 'translateY(100%)'
+                                dot.classList.remove('active')
+                            }
+                        }
+                    }
+
+                }
+                changeDisplays();
 
                 const logTheScrollPositionsOfTheseIndex = () => {
                     for (let index = 0; index < 4; index++) {
@@ -577,13 +622,8 @@
                 }
                 logTheScrollPositionsOfTheseIndex()
 
-                const autoScroll = (index) => {
+                const autoScroll = (index, behavior = shouldUseTouchAnimations ? 'smooth' : 'instant') => {
                     const scrollPosition = scrollPositionToIndex[index];
-                    const behavior = 'instant'
-                    // if ((scrollPosition === undefined || scrollPosition === null) && index > Object.values(scrollPositionToIndex).length - 1) {
-                    //     scrollPosition = scrollPositionToIndex[Object.values(scrollPositionToIndex).length - 1] + (scrollPositionToIndex[Object.values(scrollPositionToIndex).length - 1] - scrollPositionToIndex[Object.values(scrollPositionToIndex).length - 2]) + (window.innerHeight / 3)
-                    //     behavior = 'smooth'
-                    // }
                     if (scrollPosition) {
                         window.scrollTo({
                             top: scrollPosition,
@@ -664,7 +704,7 @@
                                 }
                             }
                         }
-                    }, 50);
+                    }, shouldUseTouchAnimations ? 500 : 50);
                 }
                 const scrollEventHandler = () => {
                     clearTimeout(isScrollingTimeOutID)
@@ -686,7 +726,7 @@
                     if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay) {
                         const count = getCountFromScrollPosition(scrollPosition)
                         if (count !== null) {
-                            changeDisplays(count)
+                            changeDisplays(count, scrollPosition)
                             changeButtonSubText(buttonSubTexts[count])
                             if (previousCount !== count) {
                                 previousCount = count;
@@ -749,324 +789,358 @@
     // =====================================
     const animateWhatClientsAreSaying = () => {
         try {
+            let layoutIsSet = false;
+            const row2 = document.querySelector('#row-tmycXeuNQX>.inner')
+            const row2Text = document.querySelector('#col-399RP8XBRP')
+            const row2Image = document.querySelector('#col-0ERYCGV8NK')
+            const row2Name = document.querySelector('#col-e86Yg1YLDe')
+            const section = document.querySelector('#section-atl9fSO8P-')
+            const sectionInner = document.querySelector('#section-atl9fSO8P->.inner')
+            fixBottomPaddingForSections('#section-atl9fSO8P-', false)
+            fixTopPaddingForSections('#section-atl9fSO8P-')
+            const title = document.querySelector('#row-Olo6JNyBqa')
+            let previousFreeHeight = 0;
+            let previousWidth = 0;
+            const containerID = 'what-saying-after-stack-container';
 
-            let layoutIsSet = false
-            const handleClientsAreSaying = () => {
-                const row2 = document.querySelector('#row-tmycXeuNQX>.inner')
-                const row2Text = document.querySelector('#col-399RP8XBRP')
-                const row2Image = document.querySelector('#col-0ERYCGV8NK')
-                const row2Name = document.querySelector('#col-e86Yg1YLDe')
 
-                const changeSecondRow = () => {
-                    if (document.documentElement.clientWidth > 1024) {
-                        row2.appendChild(row2Text)
-                        row2.appendChild(row2Image)
-                        row2.appendChild(row2Name)
-                    } else {
-                        row2.appendChild(row2Image)
-                        row2.appendChild(row2Name)
-                        row2.appendChild(row2Text)
-                    }
+            const changeSecondRow = () => {
+                if (document.documentElement.clientWidth > 1024) {
+                    row2.appendChild(row2Text)
+                    row2.appendChild(row2Image)
+                    row2.appendChild(row2Name)
+                } else {
+                    row2.appendChild(row2Image)
+                    row2.appendChild(row2Name)
+                    row2.appendChild(row2Text)
                 }
+            }
 
+            let overflownContainerHeight;
+            let heightDelay;
+            let shouldUseTouchAnimations;
+            let useAnyAnimation;
+
+            const scrollPositionToIndex = {}
+            let isCrossedCount = false;
+            let isScrolling = false;
+            let isScrollingTimeOutID;
+            let previousCount = 0;
+            let previousFloatingButtonHeight;
+
+            const handleClientsAreSaying = () => {
                 changeSecondRow()
-
-
-
-                const section = document.querySelector('#section-atl9fSO8P-')
-                fixBottomPaddingForSections('#section-atl9fSO8P-')
-                const sectionHeight = section.offsetHeight;
-                const sectionTopPadding = parseInt(getComputedStyle(section).paddingTop)
-                const sectionBottomPadding = parseInt(getComputedStyle(section).paddingBottom)
-                const sectionInnerHeight = sectionHeight - sectionBottomPadding - sectionTopPadding
-                const title = document.querySelector('#row-Olo6JNyBqa')
+                const sectionInnerOffsetHeight = sectionInner.offsetHeight;
+                const sectionInnerTopPadding = parseInt(getComputedStyle(sectionInner).paddingTop)
+                const sectionInnerBottomPadding = parseInt(getComputedStyle(sectionInner).paddingBottom)
+                const sectionInnerHeight = sectionInnerOffsetHeight - sectionInnerTopPadding - sectionInnerBottomPadding
                 const titleHeight = title.offsetHeight;
                 const freeHeight = sectionInnerHeight - titleHeight;
-                let wrapper = document.querySelector('#atl9fSO8P-scroll-wrapper')
-                if (!wrapper) {
-                    wrapper = document.createElement('div')
-                    wrapper.setAttribute('id', 'atl9fSO8P-scroll-wrapper')
-                }
-                wrapper.classList.add('atl9fSO8P-scroll-wrapper');
-                wrapper.style.height = `${freeHeight - 90}px`
-
-                const containerID = 'what-saying-after-stack-container'
-
-                let container = document.querySelector(`#${containerID}`)
-                if (!container) {
-                    container = document.createElement('div')
-                    container.setAttribute('id', containerID);
-                }
-
-                container.classList.add('stack-container-2');
-
-                if (!layoutIsSet) {
-                    wrapper.appendChild(container);
-                }
-                const rowIDs = ['#row-1V9rp1nZ4o', '#row-tmycXeuNQX'];
-                const rows = rowIDs.map(id => document.querySelector(id))
-                if (!layoutIsSet) {
-                    rows[0].parentNode.appendChild(wrapper)
-                }
-
-                const stackChildren = rows.map((row, index) => {
-                    let stackChild = document.querySelector(`#stack-child-2-${index}`)
-                    if (!stackChild) {
-                        stackChild = document.createElement('div')
-                        stackChild.setAttribute('id', `stack-child-2-${index}`)
-                        stackChild.appendChild(row)
-                        container.appendChild(stackChild)
+                if (freeHeight !== previousFreeHeight || document.documentElement.clientWidth !== previousWidth || previousFloatingButtonHeight !== floatingButtonHeight) {
+                    previousFreeHeight = freeHeight;
+                    previousFloatingButtonHeight = floatingButtonHeight
+                    previousWidth = document.documentElement.clientWidth
+                    let wrapper = document.querySelector('#atl9fSO8P-scroll-wrapper')
+                    if (!wrapper) {
+                        wrapper = document.createElement('div')
+                        wrapper.setAttribute('id', 'atl9fSO8P-scroll-wrapper')
                     }
-                    stackChild.classList.add('stack-child-2')
-                    return stackChild
-                })
+                    wrapper.classList.add('atl9fSO8P-scroll-wrapper');
+                    wrapper.style.height = `${freeHeight}px`
 
-                const heightDelay = window.innerHeight;
-                const parentElement = handleCustomSticky('#section-atl9fSO8P-', heightDelay)
-
-
-                stackChildren[0].classList.remove('cover')
-                stackChildren[1].classList.add('cover')
-
-
-                const scrollPositionToIndex = {}
-                let isCrossedCount = false;
-                let isScrolling = false;
-                let isScrollingTimeOutID;
-                let previousCount = 0
-
-                const logTheScrollPositionsOfTheseIndex = () => {
-                    for (let index = 0; index < 2; index++) {
-                        const positiveDistance = ((index + 1) * heightDelay) / 2
-                        const parentDistanceToTop = positiveDistance * -1;
-                        const parentTopPosition = getElementFullOffsetTop(parentElement);
-                        const scrollPosition = parentTopPosition - parentDistanceToTop;
-                        scrollPositionToIndex[index] = scrollPosition
+                    let container = document.querySelector(`#${containerID}`)
+                    if (!container) {
+                        container = document.createElement('div')
+                        container.setAttribute('id', containerID);
                     }
-                }
 
+                    container.classList.add('stack-container-2');
 
-                const getCountFromScrollPosition = (scrollPosition) => {
-                    for (let index = 0; index < 2; index++) {
-                        const min = Object.values(scrollPositionToIndex)[index - 1]
-                        const max = Object.values(scrollPositionToIndex)[index];
-                        if (index === 0 && scrollPosition <= max) {
-                            return index
+                    if (!layoutIsSet) {
+                        wrapper.appendChild(container);
+                    }
+                    const rowIDs = ['#row-1V9rp1nZ4o', '#row-tmycXeuNQX'];
+                    const rows = rowIDs.map(id => document.querySelector(id))
+                    if (!layoutIsSet) {
+                        rows[0].parentNode.appendChild(wrapper)
+                    }
+
+                    const stackChildren = rows.map((row, index) => {
+                        let stackChild = document.querySelector(`#stack-child-2-${index}`)
+                        if (!stackChild) {
+                            stackChild = document.createElement('div')
+                            stackChild.setAttribute('id', `stack-child-2-${index}`)
+                            stackChild.appendChild(row)
+                            container.appendChild(stackChild)
                         }
-                        if (scrollPosition > min && scrollPosition <= max) {
-                            return index
-                        }
-                    }
-                    return null
-                }
+                        stackChild.classList.add('stack-child-2')
+                        return stackChild
+                    })
 
-
-                const autoScroll = (index) => {
-                    const scrollPosition = scrollPositionToIndex[index];
-                    const behavior = 'instant'
-                    if (scrollPosition) {
-                        window.scrollTo({
-                            top: scrollPosition,
-                            left: 0,
-                            behavior
+                    overflownContainerHeight = container.offsetHeight - freeHeight + floatingButtonHeight
+                    useAnyAnimation = overflownContainerHeight > 0
+                    if (useAnyAnimation) {
+                        stackChildren[0].classList.remove('cover')
+                        stackChildren[1].classList.add('cover')
+                    } else {
+                        container.style.transform = `translateY(0px)`
+                        stackChildren.forEach((stackChild) => {
+                            stackChild.classList.remove('go-up')
+                            stackChild.classList.remove('cover')
                         })
                     }
-                }
 
-                const getBoundingIndexes = (scrollPosition) => {
-                    for (let index = 0; index < 2; index++) {
-                        const min = Object.values(scrollPositionToIndex)[index - 1]
-                        const max = Object.values(scrollPositionToIndex)[index];
-                        if (index === 0 && scrollPosition <= max) {
-                            return [null, index]
-                        }
-                        if (scrollPosition > min && scrollPosition <= max) {
-                            return [index - 1, index]
+                    shouldUseTouchAnimations = getShouldUseTouchAnimations()
+
+                    if (useAnyAnimation && shouldUseTouchAnimations) {
+                        heightDelay = overflownContainerHeight + floatingButtonHeight;
+                    } else if (useAnyAnimation) {
+                        heightDelay = stackChildren[0].offsetHeight * 2
+                    } else {
+                        heightDelay = 10
+                    }
+
+                    const parentElement = handleCustomSticky('#section-atl9fSO8P-', heightDelay)
+
+
+
+
+
+                    const logTheScrollPositionsOfTheseIndex = () => {
+                        for (let index = 0; index < 2; index++) {
+                            const positiveDistance = ((index + 1) * heightDelay) / 2
+                            const parentDistanceToTop = positiveDistance * -1;
+                            const parentTopPosition = getElementFullOffsetTop(parentElement);
+                            const scrollPosition = parentTopPosition - parentDistanceToTop;
+                            scrollPositionToIndex[index] = scrollPosition
                         }
                     }
-                    return [null, null]
-                }
+                    logTheScrollPositionsOfTheseIndex()
 
-                if (!layoutIsSet) {
-                    setInterval(() => {
-                        if (!isScrolling && scrollPositionToIndex[0]) {
-                            const scrollPosition = window.scrollY
-                            const parentTopPosition = getElementFullOffsetTop(parentElement);
-                            const parentDistanceToTop = parentTopPosition - scrollPosition;
-                            const positiveDistance = parentDistanceToTop * -1;
-                            if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay) {
-                                if (!Object.values(scrollPositionToIndex).includes(scrollPosition) && !isCrossedCount) {
-                                    const [min, max] = getBoundingIndexes(scrollPosition)
-                                    const count = isScrolledUpOrDown === 'up' ? min : max;
-                                    if (count !== null) {
-                                        // if (justEnteredFromAbove && count > 0) {
-                                        //     autoScroll(count - 1)
-                                        //     justEnteredFromAbove = false
-                                        // } else {
-                                        autoScroll(count)
-                                        // }
+
+                    const getCountFromScrollPosition = (scrollPosition) => {
+                        for (let index = 0; index < 2; index++) {
+                            const min = Object.values(scrollPositionToIndex)[index - 1]
+                            const max = Object.values(scrollPositionToIndex)[index];
+                            if (index === 0 && scrollPosition <= max) {
+                                return index
+                            }
+                            if (scrollPosition > min && scrollPosition <= max) {
+                                return index
+                            }
+                        }
+                        return null
+                    }
+
+
+                    const autoScroll = (index) => {
+                        const scrollPosition = scrollPositionToIndex[index];
+                        const behavior = 'instant'
+                        if (scrollPosition) {
+                            window.scrollTo({
+                                top: scrollPosition,
+                                left: 0,
+                                behavior
+                            })
+                        }
+                    }
+
+                    const getBoundingIndexes = (scrollPosition) => {
+                        for (let index = 0; index < 2; index++) {
+                            const min = Object.values(scrollPositionToIndex)[index - 1]
+                            const max = Object.values(scrollPositionToIndex)[index];
+                            if (index === 0 && scrollPosition <= max) {
+                                return [null, index]
+                            }
+                            if (scrollPosition > min && scrollPosition <= max) {
+                                return [index - 1, index]
+                            }
+                        }
+                        return [null, null]
+                    }
+
+                    if (!layoutIsSet) {
+                        setInterval(() => {
+                            if (!isScrolling && useAnyAnimation && !shouldUseTouchAnimations) {
+                                const scrollPosition = window.scrollY
+                                const parentTopPosition = getElementFullOffsetTop(parentElement);
+                                const parentDistanceToTop = parentTopPosition - scrollPosition;
+                                const positiveDistance = parentDistanceToTop * -1;
+                                if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay) {
+                                    if (!Object.values(scrollPositionToIndex).includes(scrollPosition) && !isCrossedCount) {
+                                        const [min, max] = getBoundingIndexes(scrollPosition)
+                                        const count = isScrolledUpOrDown === 'up' ? min : max;
+                                        if (count !== null) {
+                                            // if (justEnteredFromAbove && count > 0) {
+                                            //     autoScroll(count - 1)
+                                            //     justEnteredFromAbove = false
+                                            // } else {
+                                            autoScroll(count)
+                                            // }
+                                        }
                                     }
                                 }
                             }
-                        }
-                    }, 50);
-                }
-
-
-                const changeDisplays = () => {
-                    clearTimeout(isScrollingTimeOutID)
-                    isScrolling = true
-                    isScrollingTimeOutID = setTimeout(() => {
-                        isScrolling = false
-                    }, 200)
-                    const scrollPosition = window.scrollY
-                    const parentTopPosition = getElementFullOffsetTop(parentElement);
-                    const parentDistanceToTop = parentTopPosition - scrollPosition;
-                    const positiveDistance = parentDistanceToTop * -1;
-
-                    if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay) {
-                        if (!scrollPositionToIndex[0]) {
-                            logTheScrollPositionsOfTheseIndex()
-                        }
-
-                        changeButtonSubText('TRANSFORM YOUR BUSINESS TODAY')
-                        const count = getCountFromScrollPosition(scrollPosition)
-                        if (count === 1) {
-                            stackChildren.forEach((stackChild) => {
-                                stackChild.classList.add('go-up')
-                            })
-                            stackChildren[0].classList.add('cover')
-                            stackChildren[1].classList.remove('cover')
-                        } else {
-                            stackChildren.forEach((stackChild) => {
-                                stackChild.classList.remove('go-up')
-                            })
-                            stackChildren[0].classList.remove('cover')
-                            stackChildren[1].classList.add('cover')
-                        }
-                        if (previousCount !== count) {
-                            previousCount = count;
-                            isCrossedCount = true
-                        } else {
-                            isCrossedCount = false
-                        }
-
-
-                    } else if (parentDistanceToTop <= 0 && positiveDistance > heightDelay && positiveDistance <= heightDelay + window.innerHeight) {
-                        // scrollToSection('#section-hCHffR5p7p')
-                    }
-
-                }
-
-                if (!layoutIsSet) {
-                    window.addEventListener('scroll', () => {
-                        setTimeout(() => {
-                            changeDisplays()
-                        }, 0)
-                    })
-
-                }
-                const handleWatchVideo = () => {
-                    const watchButton = document.querySelector('#button-qEuegzKTs6 button')
-                    const watchButton2 = document.querySelector('#button-ylwne1poij button')
-
-                    const videoRow = document.querySelector('#row-zNpAvepKag')
-                    const videoRowInner = document.querySelector('#row-zNpAvepKag>.inner')
-                    const videoRow2 = document.querySelector('#row-vF190QfavZ')
-                    const videoRowInner2 = document.querySelector('#row-vF190QfavZ>.inner')
-
-                    const closeButton1 = document.querySelector('#button-gJIYR0lhHT button')
-                    const closeButton2 = document.querySelector('#button-wncf6qJnUJ button')
-
-                    const onClose = () => {
-                        try {
-                            const iframe = videoRow.querySelector('iframe');
-                            const player = new Vimeo.Player(iframe);
-                            player.pause()
-                        } catch (error) {
-
-                        } finally {
-                            videoRow.style.display = 'none'
-                            // document.documentElement.style.overflow = 'auto'
-                        }
-                    }
-
-                    if (closeButton1) {
-                        closeButton1.addEventListener('click', (e) => {
-                            e.preventDefault()
-                            onClose()
-                        })
+                        }, 50);
                     }
 
 
+                    const changeDisplays = () => {
 
-                    const onClose2 = () => {
-                        try {
-                            const iframe = videoRow2.querySelector('iframe');
-                            const player = new Vimeo.Player(iframe);
-                            player.pause()
-                        } catch (error) {
-
-                        } finally {
-                            videoRow2.style.display = 'none'
-                            // document.documentElement.style.overflow = 'auto'
-                        }
-                    }
-
-                    window.addEventListener('click', (event) => {
-                        // event.preventDefault() 
-                        if (event.target == videoRow || event.target === videoRowInner) {
-                            onClose()
-                        } else if (event.target == videoRow2 || event.target === videoRowInner2) {
-                            onClose2()
-                        }
-                    })
-
-                    if (closeButton2) {
-                        closeButton2.addEventListener('click', (e) => {
-                            e.preventDefault()
-                            onClose2()
-                        })
-                    }
-
-
-                    if (watchButton) {
-                        watchButton.addEventListener('click', (e) => {
-                            e.preventDefault()
-                            if (videoRow) {
-                                videoRow.style.display = 'flex'
-                                // document.documentElement.style.overflow = 'hidden'
+                        clearTimeout(isScrollingTimeOutID)
+                        isScrolling = true
+                        isScrollingTimeOutID = setTimeout(() => {
+                            isScrolling = false
+                        }, 200)
+                        const scrollPosition = window.scrollY
+                        const parentTopPosition = getElementFullOffsetTop(parentElement);
+                        const parentDistanceToTop = parentTopPosition - scrollPosition;
+                        const positiveDistance = parentDistanceToTop * -1;
+                        if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay) {
+                            changeButtonSubText('TRANSFORM YOUR BUSINESS TODAY')
+                            if (useAnyAnimation) {
+                                const count = getCountFromScrollPosition(scrollPosition)
+                                if (!shouldUseTouchAnimations) {
+                                    container.style.transform = `translateY(0px)`
+                                    if (count === 0) {
+                                        stackChildren.forEach((stackChild) => {
+                                            stackChild.classList.remove('go-up')
+                                        })
+                                        stackChildren[0].classList.remove('cover')
+                                        stackChildren[1].classList.add('cover')
+                                    } else {
+                                        stackChildren.forEach((stackChild) => {
+                                            stackChild.classList.add('go-up')
+                                        })
+                                        stackChildren[0].classList.add('cover')
+                                        stackChildren[1].classList.remove('cover')
+                                    }
+                                } else {
+                                    stackChildren.forEach((stackChild) => {
+                                        stackChild.classList.remove('go-up')
+                                        stackChild.classList.remove('cover')
+                                    })
+                                    container.style.transform = `translateY(${parentDistanceToTop}px)`
+                                }
+                                if (previousCount !== count) {
+                                    previousCount = count;
+                                    isCrossedCount = true
+                                } else {
+                                    isCrossedCount = false
+                                }
+                            } else {
+                                container.style.transform = `translateY(0px)`
+                                stackChildren.forEach((stackChild) => {
+                                    stackChild.classList.remove('go-up')
+                                    stackChild.classList.remove('cover')
+                                })
                             }
-                        })
+                        } else if (parentDistanceToTop <= 0 && positiveDistance > heightDelay && positiveDistance <= heightDelay + window.innerHeight) {
+                            if (useAnyAnimation) {
+                                scrollToSection('#section-hCHffR5p7p')
+                            }
+                        }
                     }
 
-                    if (watchButton2) {
-                        watchButton2.addEventListener('click', (e) => {
-                            e.preventDefault()
-                            if (videoRow2) {
-                                videoRow2.style.display = 'flex'
-                                // document.documentElement.style.overflow = 'hidden'
-                            }
-                        })
+                    if (!layoutIsSet) {
+                        window.addEventListener('scroll', changeDisplays)
                     }
+                    layoutIsSet = true
                 }
-                if (!layoutIsSet) {
-                    handleWatchVideo()
-                }
-                layoutIsSet = true
             }
 
-            let resizeTimeout;
 
-            const handleWindowResize = () => {
-                clearTimeout(resizeTimeout);
-                resizeTimeout = setTimeout(() => {
-                    handleClientsAreSaying()
-                }, 1000);
+
+            const handleWatchVideo = () => {
+                const watchButton = document.querySelector('#button-qEuegzKTs6 button')
+                const watchButton2 = document.querySelector('#button-ylwne1poij button')
+
+                const videoRow = document.querySelector('#row-zNpAvepKag')
+                const videoRowInner = document.querySelector('#row-zNpAvepKag>.inner')
+                const videoRow2 = document.querySelector('#row-vF190QfavZ')
+                const videoRowInner2 = document.querySelector('#row-vF190QfavZ>.inner')
+
+                const closeButton1 = document.querySelector('#button-gJIYR0lhHT button')
+                const closeButton2 = document.querySelector('#button-wncf6qJnUJ button')
+
+                const onClose = () => {
+                    try {
+                        const iframe = videoRow.querySelector('iframe');
+                        const player = new Vimeo.Player(iframe);
+                        player.pause()
+                    } catch (error) {
+
+                    } finally {
+                        videoRow.style.display = 'none'
+                        // document.documentElement.style.overflow = 'auto'
+                    }
+                }
+
+                if (closeButton1) {
+                    closeButton1.addEventListener('click', (e) => {
+                        e.preventDefault()
+                        onClose()
+                    })
+                }
+
+
+
+                const onClose2 = () => {
+                    try {
+                        const iframe = videoRow2.querySelector('iframe');
+                        const player = new Vimeo.Player(iframe);
+                        player.pause()
+                    } catch (error) {
+
+                    } finally {
+                        videoRow2.style.display = 'none'
+                        // document.documentElement.style.overflow = 'auto'
+                    }
+                }
+
+                window.addEventListener('click', (event) => {
+                    // event.preventDefault() 
+                    if (event.target == videoRow || event.target === videoRowInner) {
+                        onClose()
+                    } else if (event.target == videoRow2 || event.target === videoRowInner2) {
+                        onClose2()
+                    }
+                })
+
+                if (closeButton2) {
+                    closeButton2.addEventListener('click', (e) => {
+                        e.preventDefault()
+                        onClose2()
+                    })
+                }
+
+
+                if (watchButton) {
+                    watchButton.addEventListener('click', (e) => {
+                        e.preventDefault()
+                        if (videoRow) {
+                            videoRow.style.display = 'flex'
+                            // document.documentElement.style.overflow = 'hidden'
+                        }
+                    })
+                }
+
+                if (watchButton2) {
+                    watchButton2.addEventListener('click', (e) => {
+                        e.preventDefault()
+                        if (videoRow2) {
+                            videoRow2.style.display = 'flex'
+                            // document.documentElement.style.overflow = 'hidden'
+                        }
+                    })
+                }
             }
-            window.addEventListener('resize', handleWindowResize);
-
-            handleClientsAreSaying()
+            if (!layoutIsSet) {
+                handleWatchVideo()
+            }
+            setInterval(() => {
+                handleClientsAreSaying()
+            }, 1000);
 
         } catch (error) {
             console.log('animateWhatClientsAreSaying', error);
@@ -1088,109 +1162,123 @@
     const animateWhatWeHelpWith = () => {
         try {
             let layoutIsSet = false
-            const handleWhatWeHelpWith = () => {
-                const floatingButtonSpaceToBottomScreen = fixBottomPaddingForSections('#section-hCHffR5p7p', false)
+            const sectionInner = document.querySelector('#section-hCHffR5p7p>.inner')
+            const listIDs = [
+                '#row-Bvp97zRHYJ',
+                '#row-Y7I-2mbyFK',
+                '#row-T5DwNzna9_',
+                '#row-Ufh4vUrvFE',
+                '#row-WVWYWhIo9B',
+                '#row-GCv5t3UwQG',
+                '#row-wKfqCubkdc',
+                '#row-QDRnuzpj2n',
+            ]
+            const listElements = listIDs.map(id => document.querySelector(id))
+            let wrapper = document.querySelector('#hCHffR5p7p-scroll-wrapper')
+            let container = document.querySelector('#hCHffR5p7p-scroll-container')
+            const title = document.querySelector('#row-pQYQLUoAyO')
+            const titleHeight = title.offsetHeight;
+            fixBottomPaddingForSections('#section-hCHffR5p7p', false)
+            fixTopPaddingForSections('#section-hCHffR5p7p')
+            if (!wrapper) {
+                wrapper = document.createElement('div')
+                wrapper.setAttribute('id', 'hCHffR5p7p-scroll-wrapper')
+            }
+            wrapper.classList.add('scroll-wrapper')
+            if (!container) {
+                container = document.createElement('div')
+                container.setAttribute('id', 'hCHffR5p7p-scroll-container')
+            }
+            container.classList.add('scroll-container')
 
-                const sectionInner = document.querySelector('#section-hCHffR5p7p>.inner')
-                let wrapper = document.querySelector('#hCHffR5p7p-scroll-wrapper')
-                if (!wrapper) {
-                    wrapper = document.createElement('div')
-                    wrapper.setAttribute('id', 'hCHffR5p7p-scroll-wrapper')
-                }
-                wrapper.classList.add('scroll-wrapper')
-                let container = document.querySelector('#hCHffR5p7p-scroll-container')
-                if (!container) {
-                    container = document.createElement('div')
-                    container.setAttribute('id', 'hCHffR5p7p-scroll-container')
-                }
-                container.classList.add('scroll-container')
+            if (!layoutIsSet) {
+                wrapper.appendChild(container)
+            }
+            listElements.forEach((element, index) => {
                 if (!layoutIsSet) {
-                    wrapper.appendChild(container)
+                    container.appendChild(element)
                 }
-                const listIDs = [
-                    '#row-Bvp97zRHYJ',
-                    '#row-Y7I-2mbyFK',
-                    '#row-T5DwNzna9_',
-                    '#row-Ufh4vUrvFE',
-                    '#row-WVWYWhIo9B',
-                    '#row-GCv5t3UwQG',
-                    '#row-wKfqCubkdc',
-                    '#row-QDRnuzpj2n',
-                ]
-                const listElements = listIDs.map(id => document.querySelector(id))
-                listElements.forEach((element, index) => {
-                    if (!layoutIsSet) {
-                        container.appendChild(element)
-                    }
-                    if (!layoutIsSet) {
-                        element.addEventListener('click', () => {
-                            const positiveDistance = index * window.innerHeight
-                            const parentDistanceToTop = -1 * positiveDistance
-                            const parentTopPosition = getElementFullOffsetTop(document.querySelector('#section-T-iFKIxbuE').parentNode);
-                            const scrollPosition = parentTopPosition - parentDistanceToTop
-                            window.scrollTo({
-                                left: 0,
-                                top: scrollPosition,
-                                behavior: 'instant'
-                            })
+                if (!layoutIsSet) {
+                    element.addEventListener('click', () => {
+                        const positiveDistance = index * window.innerHeight
+                        const parentDistanceToTop = -1 * positiveDistance
+                        const parentTopPosition = getElementFullOffsetTop(document.querySelector('#section-T-iFKIxbuE').parentNode);
+                        const scrollPosition = parentTopPosition - parentDistanceToTop
+                        window.scrollTo({
+                            left: 0,
+                            top: scrollPosition,
+                            behavior: 'instant'
                         })
-                    }
-                })
-                if (!layoutIsSet) {
-                    sectionInner.append(wrapper)
+                    })
                 }
+            })
+            if (!layoutIsSet) {
+                sectionInner.append(wrapper)
+            }
+            const containerHeight = container.offsetHeight;
+            let previousFreeHeight = 0;
+            let previousWidth = 0;
+            let previousFloatingButtonHeight = 0
+            let overflownContainerHeight = 0;
+            let useScrollOnly;
+            let shouldUseTouchAnimations;
+            let heightDelay
+            const handleWhatWeHelpWith = () => {
                 const sectionHeight = sectionInner.offsetHeight;
                 const sectionTopPadding = parseInt(getComputedStyle(sectionInner).paddingTop)
                 const sectionBottomPadding = parseInt(getComputedStyle(sectionInner).paddingBottom)
                 const sectionInnerHeight = sectionHeight - sectionTopPadding - sectionBottomPadding
-                const title = document.querySelector('#row-pQYQLUoAyO')
-                const titleHeight = title.offsetHeight;
                 const freeHeight = sectionInnerHeight - titleHeight;
-                wrapper.style.height = `${freeHeight}px`
+                if (freeHeight !== previousFreeHeight || document.documentElement.clientWidth !== previousWidth || previousFloatingButtonHeight !== floatingButtonHeight) {
+                    previousFreeHeight = freeHeight;
+                    previousFloatingButtonHeight = floatingButtonHeight
+                    previousWidth = document.documentElement.clientWidth
+                    wrapper.style.height = `${freeHeight}px`
+                    overflownContainerHeight = containerHeight - freeHeight + floatingButtonHeight
 
-                const containerHeight = container.offsetHeight;
-                const scrollShift = containerHeight - freeHeight + floatingButtonSpaceToBottomScreen
+                    useAnyAnimation = overflownContainerHeight > 0
 
-                const useScrollOnly = scrollShift < 0
 
-                const heightDelay = useScrollOnly ? window.innerHeight / 2 : scrollShift;
-                const parentElement = handleCustomSticky('#section-hCHffR5p7p', heightDelay)
-
-                const changeDisplays = () => {
-                    const scrollPosition = window.scrollY
-                    const parentTopPosition = getElementFullOffsetTop(parentElement);
-                    const parentDistanceToTop = parentTopPosition - scrollPosition;
-                    const positiveDistance = parentDistanceToTop * -1
-
-                    if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay && !useScrollOnly) {
-                        container.style.transform = `translateY(${parentDistanceToTop}px)`
-                    } else if (parentDistanceToTop <= 0 && positiveDistance > heightDelay && positiveDistance <= heightDelay + window.innerHeight) {
-                        scrollToSection('#section-T-iFKIxbuE')
+                    if (useAnyAnimation) {
+                        heightDelay = overflownContainerHeight
+                    } else if (shouldUseTouchAnimations) {
+                        heightDelay = 0
+                    } else {
+                        heightDelay = window.innerHeight / 2
                     }
-                }
 
-                if (!layoutIsSet) {
-                    window.addEventListener('scroll', () => {
-                        setTimeout(() => {
-                            changeDisplays()
-                        }, 0)
-                    })
+                    const parentElement = handleCustomSticky('#section-hCHffR5p7p', heightDelay)
+
+                    const changeDisplays = () => {
+                        const scrollPosition = window.scrollY
+                        const parentTopPosition = getElementFullOffsetTop(parentElement);
+                        const parentDistanceToTop = parentTopPosition - scrollPosition;
+                        const positiveDistance = parentDistanceToTop * -1
+
+                        if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay && !useScrollOnly) {
+                            container.style.transform = `translateY(${parentDistanceToTop}px)`
+                        } else if (parentDistanceToTop <= 0 && positiveDistance > heightDelay && positiveDistance <= heightDelay + window.innerHeight) {
+                            if (useAnyAnimation) {
+                                scrollToSection('#section-T-iFKIxbuE')
+                            }
+                        }
+                    }
+
+                    if (!layoutIsSet) {
+                        window.addEventListener('scroll', () => {
+                            setTimeout(() => {
+                                changeDisplays()
+                            }, 0)
+                        })
+                    }
+                    changeDisplays()
+                    layoutIsSet = true
                 }
-                changeDisplays()
-                layoutIsSet = true
             }
 
-            let resizeTimeout;
-
-            const handleWindowResize = () => {
-                clearTimeout(resizeTimeout);
-                resizeTimeout = setTimeout(() => {
-                    handleWhatWeHelpWith()
-                }, 1000);
-            }
-            window.addEventListener('resize', handleWindowResize);
-
-            handleWhatWeHelpWith()
+            setInterval(() => {
+                handleWhatWeHelpWith()
+            }, 1000);
 
 
         } catch (error) {
@@ -1886,276 +1974,284 @@
     const animateOurProcesses = () => {
         try {
             let layoutIsSet = false
+            fixBottomPaddingForSections('#section-ekIK0EfwBp', false)
+            fixTopPaddingForSections('#section-ekIK0EfwBp', true)
+            const sectionInner = document.querySelector('#section-ekIK0EfwBp>.inner')
+            let wrapper = document.querySelector('#ekIK0EfwBp-scroll-wrapper')
+            if (!wrapper) {
+                wrapper = document.createElement('div')
+                wrapper.setAttribute('id', 'ekIK0EfwBp-scroll-wrapper')
+            }
+            wrapper.classList.add('ekIK0EfwBp-scroll-wrapper')
+            let container = document.querySelector('#ekIK0EfwBp-scroll-container')
+            if (!container) {
+                container = document.createElement('div')
+                container.setAttribute('id', 'ekIK0EfwBp-scroll-container')
+            }
+            container.classList.add('ekIK0EfwBp-scroll-container')
+            if (!layoutIsSet) {
+                wrapper.appendChild(container)
+            }
+            const listIDs = [
+                "#row-v401wbCKdd",
+                "#row-XKNabX21ox",
+                "#row-ZF69tc7Sx4",
+                "#row-yiza6zSG8x",
+                "#row--OmxzUELMI",
+                "#row-5UEM-s-KLA",
+                "#row-Gpeq01kKzr",
+                "#row-uWqd6b8pbn",
+            ]
+            if (!layoutIsSet) {
+                sectionInner.append(wrapper)
+            }
+            const title = document.querySelector('#row-qJpG8s_klK')
+            const titleHeight = title.offsetHeight;
+
+            const headersIds = [
+                "#heading-gVGhmDi6sf",
+                "#heading-Bqa4MiWPAa",
+                "#heading-x8Xq8MxvXU",
+                "#heading-Q9b2Nrl2gj",
+                "#heading-nKbrnFliH4",
+                "#heading-OtFCgUFZ52",
+                "#heading-V127dU-abJ",
+            ]
+
+            const titleIDs = [
+                "#heading-D_Deu2fAZO",
+                "#heading-oldFebf24I",
+                "#heading-KRaKgg7KHd",
+                "#heading-1HBdujIoBr",
+                "#heading-TZVZ2AednD",
+                "#heading-Te-paZY0kP",
+                "#heading-_zHb6Sxtex",
+            ]
+
+            const paragraphsIDs = [
+                "#paragraph-KlM11iwF8H",
+                "#paragraph-teR91LSf_W",
+                "#paragraph-LqFoYek_nI",
+                "#paragraph-NewDfg1rKm",
+                "#paragraph-vT-R8PMI54",
+                "#paragraph-LFQVq9FZ8T",
+                "#paragraph-1nclZNm8EE",
+                "#paragraph-SVE56WC51Z",
+            ]
+
+            const titleElements = titleIDs.map(titleID => document.querySelector(titleID))
+
+            const headersElements = headersIds.map(headersId => document.querySelector(headersId))
+            const paragraphsElements = paragraphsIDs.map(paragraphID => document.querySelector(paragraphID))
+            const listElements = listIDs.map(id => document.querySelector(id))
+
+            let overflownContainerHeight;
+            let heightDelay;
+            let shouldUseTouchAnimations;
+            let useAnyAnimation;
+            let previousFloatingButtonHeight;
+            let previousFreeHeight = 0;
+            let previousWidth = 0;
+
             const handleOurProcess = () => {
-                const floatingButtonSpaceToBottomScreen = fixBottomPaddingForSections('#section-ekIK0EfwBp', false)
-
-                const sectionInner = document.querySelector('#section-ekIK0EfwBp>.inner')
-
-
-
-                let wrapper = document.querySelector('#ekIK0EfwBp-scroll-wrapper')
-                if (!wrapper) {
-                    wrapper = document.createElement('div')
-                    wrapper.setAttribute('id', 'ekIK0EfwBp-scroll-wrapper')
-                }
-                wrapper.classList.add('ekIK0EfwBp-scroll-wrapper')
-                let container = document.querySelector('#ekIK0EfwBp-scroll-container')
-                if (!container) {
-                    container = document.createElement('div')
-                    container.setAttribute('id', 'ekIK0EfwBp-scroll-container')
-                }
-                container.classList.add('ekIK0EfwBp-scroll-container')
-                if (!layoutIsSet) {
-                    wrapper.appendChild(container)
-                }
-                const listIDs = [
-                    "#row-v401wbCKdd",
-                    "#row-XKNabX21ox",
-                    "#row-ZF69tc7Sx4",
-                    "#row-yiza6zSG8x",
-                    "#row--OmxzUELMI",
-                    "#row-5UEM-s-KLA",
-                    "#row-Gpeq01kKzr",
-                    "#row-uWqd6b8pbn",
-                ]
-                if (!layoutIsSet) {
-                    sectionInner.append(wrapper)
-                }
                 const sectionHeight = sectionInner.offsetHeight;
                 const sectionTopPadding = parseInt(getComputedStyle(sectionInner).paddingTop)
                 const sectionBottomPadding = parseInt(getComputedStyle(sectionInner).paddingBottom)
                 const sectionInnerHeight = sectionHeight - sectionTopPadding - sectionBottomPadding
-                const title = document.querySelector('#row-qJpG8s_klK')
-                const titleHeight = title.offsetHeight;
                 const freeHeight = sectionInnerHeight - titleHeight;
-                wrapper.style.height = `${freeHeight}px`
-                const listElements = listIDs.map(id => document.querySelector(id))
-                listElements.forEach((element, index) => {
-                    const innerElement = document.querySelector(`#${element.id}>.inner`)
-                    innerElement.style.minHeight = `${freeHeight - floatingButtonSpaceToBottomScreen - 96 / 2}px`
-                    if (!layoutIsSet) {
-                        container.appendChild(element)
-                    }
-                })
-                const containerHeight = container.offsetHeight;
-                const scrollShift = containerHeight - freeHeight + floatingButtonSpaceToBottomScreen
-
-
-                const headersIds = [
-                    "#heading-gVGhmDi6sf",
-                    "#heading-Bqa4MiWPAa",
-                    "#heading-x8Xq8MxvXU",
-                    "#heading-Q9b2Nrl2gj",
-                    "#heading-nKbrnFliH4",
-                    "#heading-OtFCgUFZ52",
-                    "#heading-V127dU-abJ",
-                ]
-
-                const titleIDs = [
-                    "#heading-D_Deu2fAZO",
-                    "#heading-oldFebf24I",
-                    "#heading-KRaKgg7KHd",
-                    "#heading-1HBdujIoBr",
-                    "#heading-TZVZ2AednD",
-                    "#heading-Te-paZY0kP",
-                    "#heading-_zHb6Sxtex",
-                ]
-
-                const paragraphsIDs = [
-                    "#paragraph-KlM11iwF8H",
-                    "#paragraph-teR91LSf_W",
-                    "#paragraph-LqFoYek_nI",
-                    "#paragraph-NewDfg1rKm",
-                    "#paragraph-vT-R8PMI54",
-                    "#paragraph-LFQVq9FZ8T",
-                    "#paragraph-1nclZNm8EE",
-                    "#paragraph-SVE56WC51Z",
-                ]
-
-                const titleElements = titleIDs.map(titleID => document.querySelector(titleID))
-
-                const headersElements = headersIds.map(headersId => document.querySelector(headersId))
-                const paragraphsElements = paragraphsIDs.map(paragraphID => document.querySelector(paragraphID))
-
-
-                const listElementsIncreasingHeight = listElements.reduce((total, current, index) => {
-                    return total.concat((total[index - 1] || 0) + current.offsetHeight)
-                }, [])
-
-                const getPresentScrolledIndex = (positiveDistance = 0) => {
-                    for (let index = 0; index < listElementsIncreasingHeight.length; index++) {
-                        const height = listElementsIncreasingHeight[index];
-                        if (positiveDistance < height) {
-                            return [index, listElementsIncreasingHeight[index - 1] || 0]
+                if (freeHeight !== previousFreeHeight || document.documentElement.clientWidth !== previousWidth || previousFloatingButtonHeight !== floatingButtonHeight) {
+                    wrapper.style.height = `${freeHeight}px`
+                    listElements.forEach((element, index) => {
+                        const innerElement = document.querySelector(`#${element.id}>.inner`)
+                        innerElement.style.minHeight = `${freeHeight - floatingButtonSpaceToBottomScreen - floatingButtonHeight / 2}px`
+                        if (!layoutIsSet) {
+                            container.appendChild(element)
                         }
-                    }
-                    return [listElementsIncreasingHeight.length - 1, listElementsIncreasingHeight[listElementsIncreasingHeight.length - 1]]
-                }
-
-                const getScrollHeight = (count = 0) => {
-                    const height = listElementsIncreasingHeight[count - 1] || 0
-                    return height
-                }
-                const useScrollOnly = scrollShift < 0
-
-                // const heightDelay = useScrollOnly ? window.innerHeight / 2 : scrollShift;
-                const heightDelay = window.innerHeight * 8
-                const parentElement = handleCustomSticky('#section-ekIK0EfwBp', heightDelay)
+                    })
+                    const containerHeight = container.offsetHeight;
+                    scrollShift = containerHeight - freeHeight + floatingButtonSpaceToBottomScreen
 
 
-                const scrollPositionToIndex = {}
-                let isCrossedCount = false;
-                let isScrolling = false;
-                let isScrollingTimeOutID;
-                let previousCount = 0
 
-                const logTheScrollPositionsOfTheseIndex = () => {
-                    for (let index = 0; index < 8; index++) {
-                        const positiveDistance = ((index + 1) * heightDelay) / 8
-                        const parentDistanceToTop = positiveDistance * -1;
-                        const parentTopPosition = getElementFullOffsetTop(parentElement);
-                        const scrollPosition = parentTopPosition - parentDistanceToTop;
-                        scrollPositionToIndex[index] = scrollPosition
-                    }
-                }
+                    listElementsIncreasingHeight = listElements.reduce((total, current, index) => {
+                        return total.concat((total[index - 1] || 0) + current.offsetHeight)
+                    }, [])
 
-
-                const getCountFromScrollPosition = (scrollPosition) => {
-                    for (let index = 0; index < 8; index++) {
-                        const min = Object.values(scrollPositionToIndex)[index - 1]
-                        const max = Object.values(scrollPositionToIndex)[index];
-                        if (index === 0 && scrollPosition <= max) {
-                            return index
+                    const getPresentScrolledIndex = (positiveDistance = 0) => {
+                        for (let index = 0; index < listElementsIncreasingHeight.length; index++) {
+                            const height = listElementsIncreasingHeight[index];
+                            if (positiveDistance < height) {
+                                return [index, listElementsIncreasingHeight[index - 1] || 0]
+                            }
                         }
-                        if (scrollPosition > min && scrollPosition <= max) {
-                            return index
-                        }
+                        return [listElementsIncreasingHeight.length - 1, listElementsIncreasingHeight[listElementsIncreasingHeight.length - 1]]
                     }
-                    return null
-                }
 
-
-                const autoScroll = (index) => {
-                    const scrollPosition = scrollPositionToIndex[index];
-                    const behavior = 'instant'
-                    if (scrollPosition) {
-                        window.scrollTo({
-                            top: scrollPosition,
-                            left: 0,
-                            behavior
-                        })
+                    const getScrollHeight = (count = 0) => {
+                        const height = listElementsIncreasingHeight[count - 1] || 0
+                        return height
                     }
-                }
 
-                const getBoundingIndexes = (scrollPosition) => {
-                    for (let index = 0; index < 8; index++) {
-                        const min = Object.values(scrollPositionToIndex)[index - 1]
-                        const max = Object.values(scrollPositionToIndex)[index];
-                        if (index === 0 && scrollPosition <= max) {
-                            return [null, index]
-                        }
-                        if (scrollPosition > min && scrollPosition <= max) {
-                            return [index - 1, index]
-                        }
-                    }
-                    return [null, null]
-                }
+                    useScrollOnly = scrollShift < 0
 
-                if (!layoutIsSet) {
-                    setInterval(() => {
-                        if (!isScrolling && scrollPositionToIndex[0]) {
-                            const scrollPosition = window.scrollY
+                    // const heightDelay = useScrollOnly ? window.innerHeight / 2 : scrollShift;
+                    const heightDelay = window.innerHeight * 8
+                    const parentElement = handleCustomSticky('#section-ekIK0EfwBp', heightDelay)
+
+
+                    const scrollPositionToIndex = {}
+                    let isCrossedCount = false;
+                    let isScrolling = false;
+                    let isScrollingTimeOutID;
+                    let previousCount = 0
+
+                    const logTheScrollPositionsOfTheseIndex = () => {
+                        for (let index = 0; index < 8; index++) {
+                            const positiveDistance = ((index + 1) * heightDelay) / 8
+                            const parentDistanceToTop = positiveDistance * -1;
                             const parentTopPosition = getElementFullOffsetTop(parentElement);
-                            const parentDistanceToTop = parentTopPosition - scrollPosition;
-                            const positiveDistance = parentDistanceToTop * -1;
-                            if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay) {
-                                if (!Object.values(scrollPositionToIndex).includes(scrollPosition) && !isCrossedCount) {
-                                    const [min, max] = getBoundingIndexes(scrollPosition)
-                                    const count = isScrolledUpOrDown === 'up' ? min : max;
-                                    if (count !== null) {
-                                        // if (justEnteredFromAbove && count > 0) {
-                                        //     autoScroll(count - 1)
-                                        //     justEnteredFromAbove = false
-                                        // } else {
-                                        autoScroll(count)
-                                        // }
+                            const scrollPosition = parentTopPosition - parentDistanceToTop;
+                            scrollPositionToIndex[index] = scrollPosition
+                        }
+                    }
+
+
+                    const getCountFromScrollPosition = (scrollPosition) => {
+                        for (let index = 0; index < 8; index++) {
+                            const min = Object.values(scrollPositionToIndex)[index - 1]
+                            const max = Object.values(scrollPositionToIndex)[index];
+                            if (index === 0 && scrollPosition <= max) {
+                                return index
+                            }
+                            if (scrollPosition > min && scrollPosition <= max) {
+                                return index
+                            }
+                        }
+                        return null
+                    }
+
+
+                    const autoScroll = (index) => {
+                        const scrollPosition = scrollPositionToIndex[index];
+                        const behavior = 'instant'
+                        if (scrollPosition) {
+                            window.scrollTo({
+                                top: scrollPosition,
+                                left: 0,
+                                behavior
+                            })
+                        }
+                    }
+
+                    const getBoundingIndexes = (scrollPosition) => {
+                        for (let index = 0; index < 8; index++) {
+                            const min = Object.values(scrollPositionToIndex)[index - 1]
+                            const max = Object.values(scrollPositionToIndex)[index];
+                            if (index === 0 && scrollPosition <= max) {
+                                return [null, index]
+                            }
+                            if (scrollPosition > min && scrollPosition <= max) {
+                                return [index - 1, index]
+                            }
+                        }
+                        return [null, null]
+                    }
+
+                    if (!layoutIsSet) {
+                        setInterval(() => {
+                            if (!isScrolling && scrollPositionToIndex[0]) {
+                                const scrollPosition = window.scrollY
+                                const parentTopPosition = getElementFullOffsetTop(parentElement);
+                                const parentDistanceToTop = parentTopPosition - scrollPosition;
+                                const positiveDistance = parentDistanceToTop * -1;
+                                if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay) {
+                                    if (!Object.values(scrollPositionToIndex).includes(scrollPosition) && !isCrossedCount) {
+                                        const [min, max] = getBoundingIndexes(scrollPosition)
+                                        const count = isScrolledUpOrDown === 'up' ? min : max;
+                                        if (count !== null) {
+                                            // if (justEnteredFromAbove && count > 0) {
+                                            //     autoScroll(count - 1)
+                                            //     justEnteredFromAbove = false
+                                            // } else {
+                                            autoScroll(count)
+                                            // }
+                                        }
                                     }
                                 }
                             }
-                        }
-                    }, 50);
-                }
-
-
-
-                const changeDisplays = () => {
-                    clearTimeout(isScrollingTimeOutID)
-                    isScrolling = true
-                    isScrollingTimeOutID = setTimeout(() => {
-                        isScrolling = false
-                    }, 200)
-                    const scrollPosition = window.scrollY
-                    const parentTopPosition = getElementFullOffsetTop(parentElement);
-                    const parentDistanceToTop = parentTopPosition - scrollPosition;
-                    const positiveDistance = parentDistanceToTop * -1
-
-                    if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay && !useScrollOnly) {
-                        if (!scrollPositionToIndex[0]) {
-                            logTheScrollPositionsOfTheseIndex()
-                        }
-                        const count = getCountFromScrollPosition(scrollPosition)
-
-                        const height = getScrollHeight(count)
-                        container.style.transform = `translateY(-${height}px)`
-                        headersElements.forEach((headersElement, index) => {
-                            if (count !== 0) {
-                                if (count - 1 === index) {
-                                    headersElement.classList.add('active')
-                                    titleElements[index].classList.add('active')
-                                } else {
-                                    headersElement.classList.remove('active')
-                                    titleElements[index].classList.remove('active')
-                                }
-                            }
-                        })
-
-                        paragraphsElements.forEach((paragraphsElement, index) => {
-                            if (count === index) {
-                                paragraphsElement.classList.add('active')
-                            } else {
-                                paragraphsElement.classList.remove('active')
-                            }
-                        })
-
-
-                        if (previousCount !== count) {
-                            previousCount = count;
-                            isCrossedCount = true
-                        } else {
-                            isCrossedCount = false
-                        }
-
-
-
-                    } else if (parentDistanceToTop <= 0 && positiveDistance > heightDelay && positiveDistance <= heightDelay + window.innerHeight) {
-                        scrollToSection('#section-Pu__96wdWR')
+                        }, 50);
                     }
-                }
-                if (!layoutIsSet) {
-                    window.addEventListener('scroll', () => {
-                        setTimeout(() => {
-                            changeDisplays()
-                        }, 0)
-                    })
-                }
-                changeDisplays()
 
-                if (!layoutIsSet) {
-                    createToolTip('#paragraph-LFQVq9FZ8T', `We usually plan our efforts to assure that you'll be experiencing \nthe first set of valuable improvements by the 3rd month of \nworking with us (or sooner). We then continue building up other \nimprovements on top of them.`, true)
+
+
+                    const changeDisplays = () => {
+                        clearTimeout(isScrollingTimeOutID)
+                        isScrolling = true
+                        isScrollingTimeOutID = setTimeout(() => {
+                            isScrolling = false
+                        }, 200)
+                        const scrollPosition = window.scrollY
+                        const parentTopPosition = getElementFullOffsetTop(parentElement);
+                        const parentDistanceToTop = parentTopPosition - scrollPosition;
+                        const positiveDistance = parentDistanceToTop * -1
+
+                        if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay && !useScrollOnly) {
+                            if (!scrollPositionToIndex[0]) {
+                                logTheScrollPositionsOfTheseIndex()
+                            }
+                            const count = getCountFromScrollPosition(scrollPosition)
+
+                            const height = getScrollHeight(count)
+                            container.style.transform = `translateY(-${height}px)`
+                            headersElements.forEach((headersElement, index) => {
+                                if (count !== 0) {
+                                    if (count - 1 === index) {
+                                        headersElement.classList.add('active')
+                                        titleElements[index].classList.add('active')
+                                    } else {
+                                        headersElement.classList.remove('active')
+                                        titleElements[index].classList.remove('active')
+                                    }
+                                }
+                            })
+
+                            paragraphsElements.forEach((paragraphsElement, index) => {
+                                if (count === index) {
+                                    paragraphsElement.classList.add('active')
+                                } else {
+                                    paragraphsElement.classList.remove('active')
+                                }
+                            })
+
+
+                            if (previousCount !== count) {
+                                previousCount = count;
+                                isCrossedCount = true
+                            } else {
+                                isCrossedCount = false
+                            }
+
+
+
+                        } else if (parentDistanceToTop <= 0 && positiveDistance > heightDelay && positiveDistance <= heightDelay + window.innerHeight) {
+                            scrollToSection('#section-Pu__96wdWR')
+                        }
+                    }
+                    if (!layoutIsSet) {
+                        window.addEventListener('scroll', () => {
+                            setTimeout(() => {
+                                changeDisplays()
+                            }, 0)
+                        })
+                    }
+                    changeDisplays()
+
+                    if (!layoutIsSet) {
+                        createToolTip('#paragraph-LFQVq9FZ8T', `We usually plan our efforts to assure that you'll be experiencing \nthe first set of valuable improvements by the 3rd month of \nworking with us (or sooner). We then continue building up other \nimprovements on top of them.`, true)
+                    }
                 }
                 layoutIsSet = true
             }
-
             let resizeTimeout;
 
             const handleWindowResize = () => {
@@ -2173,157 +2269,6 @@
         }
     }
 
-
-    // const animateOurProcesses = () => {
-    //     fixBottomPaddingForSections('#section-ekIK0EfwBp')
-
-    //     const heightDelay = window.innerHeight * 4;
-    //     const parentElement = handleCustomSticky('#section-ekIK0EfwBp', heightDelay)
-
-
-    //     const steps = document.querySelectorAll('.custom-stepper-wrapper .custom-stepper-container .custom-stepper .custom-step')
-    //     const container = document.querySelector('.custom-stepper-wrapper .custom-stepper-container')
-    //     const scrollableElement = document.querySelector('.custom-stepper-wrapper')
-    //     const wrapperWidth = scrollableElement.offsetWidth;
-
-    //     const headers = [
-    //         '#heading-D_Deu2fAZO',
-    //         '#heading-oldFebf24I',
-    //         '#heading-KRaKgg7KHd',
-    //         '#heading-1HBdujIoBr',
-    //         '#heading-TZVZ2AednD',
-    //         '#heading-Te-paZY0kP',
-    //         '#heading-_zHb6Sxtex'
-    //     ].map(header => document.querySelector(header))
-
-    //     const paragraphs = [
-    //         '#paragraph-teR91LSf_W',
-    //         '#paragraph-LqFoYek_nI',
-    //         '#paragraph-NewDfg1rKm',
-    //         '#paragraph-vT-R8PMI54',
-    //         '#paragraph-LFQVq9FZ8T',
-    //         '#paragraph-1nclZNm8EE',
-    //         '#paragraph-SVE56WC51Z'
-    //     ].map(paragraph => document.querySelector(paragraph))
-
-    //     const changeDisplays = (count = 0) => {
-    //         headers.forEach((header, index) => {
-    //             if (index === count - 1) {
-    //                 header.style.display = 'block'
-    //                 header.style.opacity = '1'
-    //             } else {
-    //                 header.style.display = 'none'
-    //                 header.style.opacity = '0'
-    //             }
-    //         })
-
-    //         paragraphs.forEach((paragraph, index) => {
-    //             if (index === count - 1) {
-    //                 paragraph.style.display = 'block'
-    //                 paragraph.style.opacity = '1'
-    //             } else {
-    //                 paragraph.style.display = 'none'
-    //                 paragraph.style.opacity = '0'
-    //             }
-    //         })
-
-    //         steps.forEach((step, index) => {
-    //             if (index === count - 1) {
-    //                 step.classList.add('active')
-    //             } else {
-    //                 step.classList.remove('active')
-    //             }
-    //         })
-    //     }
-
-    //     const scrollWrapper = (positiveDistance) => {
-    //         const determinant = ((positiveDistance * steps[0].offsetWidth * 6) / (heightDelay)) - steps[0].offsetWidth
-    //         container.style.transform = `translateX(-${determinant}px)`
-    //     }
-
-    //     const processTests = document.querySelector('#row-ADQPGi1sPe')
-    //     const processGeneralInfo = document.querySelector('#row-R8P-coMVmC')
-    //     const stepperArrow = document.querySelector('.custom-stepper-arrow')
-    //     const stepperArrowSmall = document.querySelector('.custom-stepper-arrow-small')
-    //     const handleZoomIn = () => {
-    //         processTests.style.display = 'block'
-    //         processGeneralInfo.style.display = 'none'
-    //         scrollableElement.classList.remove('small')
-    //         steps.forEach((step, index) => {
-    //             step.style = ""
-    //             const stepNumber = step.querySelector('.custom-step-number');
-    //             stepNumber.style = ''
-    //             stepNumber.classList.remove('small')
-    //             const stepNumberText = stepNumber.querySelector('h1')
-    //             stepNumberText.classList.remove('small')
-    //             const stepLabel = step.querySelector('.custom-step-label');
-    //             stepLabel.classList.remove('small')
-    //             stepNumber.classList.remove('small')
-    //         })
-    //         stepperArrow.style.display = 'block'
-    //         stepperArrowSmall.style.display = 'none'
-    //     }
-    //     const handleZoomOut = () => {
-    //         container.style.transform = `translateX(0px)`
-
-    //         processTests.style.display = 'none'
-    //         processGeneralInfo.style.display = 'block'
-    //         const widthForEachItem = wrapperWidth / 7
-    //         scrollableElement.classList.add('small')
-    //         steps.forEach((step, index) => {
-    //             if (index === 0) {
-    //                 step.classList.add('active')
-    //             } else {
-    //                 step.classList.remove('active')
-    //             }
-    //             step.style.width = `${widthForEachItem}px`
-    //             const stepNumber = step.querySelector('.custom-step-number');
-    //             const numberWidth = 40 * widthForEachItem / 100
-    //             stepNumber.style.width = `${numberWidth}px`
-    //             stepNumber.style.height = `${numberWidth}px`
-    //             stepNumber.classList.add('small')
-    //             const stepNumberText = stepNumber.querySelector('h1')
-    //             stepNumberText.classList.add('small')
-    //             const stepLabel = step.querySelector('.custom-step-label');
-    //             stepLabel.classList.add('small')
-    //             stepNumber.classList.add('small')
-    //         })
-    //         stepperArrow.style.display = 'none'
-    //         stepperArrowSmall.style.display = 'block'
-    //     }
-    //     handleZoomOut()
-
-    //     window.addEventListener('scroll', () => {
-    //         setTimeout(() => {
-    //             const scrollPosition = window.scrollY
-    //             const parentTopPosition = getElementFullOffsetTop(parentElement);
-    //             const parentDistanceToTop = parentTopPosition - scrollPosition;
-    //             const positiveDistance = parentDistanceToTop * -1
-
-
-    //             if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay) {
-    //                 let count = Math.floor((positiveDistance / heightDelay) * 8)
-    //                 changeButtonSubText('START YOUR TRANSFORMATION TODAY')
-    //                 if (count > 7) {
-    //                     count = 7
-    //                 }
-    //                 if (count < 0) {
-    //                     count = 0
-    //                 }
-    //                 if (count === 0) {
-    //                     handleZoomOut()
-    //                 } else {
-    //                     handleZoomIn()
-    //                     changeDisplays(count)
-    //                     scrollWrapper(positiveDistance)
-    //                 }
-    //             } else if (parentDistanceToTop <= 0 && positiveDistance > heightDelay + window.innerHeight/2 && positiveDistance <= heightDelay + window.innerHeight) {
-    //                 scrollToSection('#section-Pu__96wdWR')
-    //             }
-    //         }, 0)
-
-    //     })
-    // }
 
     animateOurProcesses()
 
@@ -2343,90 +2288,112 @@
     const animateResultsWeGet = () => {
         try {
             let layoutIsSet = false
+            fixBottomPaddingForSections('#section-Pu__96wdWR', false)
+            const sectionInner = document.querySelector('#section-Pu__96wdWR>.inner')
+            let wrapper = document.querySelector('#Pu__96wdWR-scroll-wrapper')
+            if (!wrapper) {
+                wrapper = document.createElement('div')
+                wrapper.setAttribute('id', 'Pu__96wdWR-scroll-wrapper')
+            }
+            wrapper.classList.add('Pu__96wdWR-scroll-wrapper')
+            let container = document.querySelector('#Pu__96wdWR-scroll-container')
+            if (!container) {
+                container = document.createElement('div')
+                container.setAttribute('id', 'Pu__96wdWR-scroll-container')
+            }
+            container.classList.add('Pu__96wdWR-scroll-container')
+            if (!layoutIsSet) {
+                wrapper.appendChild(container)
+            }
+            const listIDs = [
+                '#row-1vvhVUvfrt',
+                '#row-TofV-PmQ9v',
+                '#row-6fD-n-5gT1',
+                '#row-sOt2BXksB9',
+                '#row-HjVEF1Zc0t',
+                '#row-YU0qo44sQD '
+            ]
+            const listElements = listIDs.map(id => document.querySelector(id))
+            if (!layoutIsSet) {
+                listElements.forEach((element, index) => {
+                    container.appendChild(element)
+                })
+                sectionInner.append(wrapper)
+            }
+            const containerHeight = container.offsetHeight;
+            const title = document.querySelector('#row-lw7C8-dgr_')
+            const titleHeight = title.offsetHeight;
+            let previousFreeHeight = 0;
+            let previousWidth = 0;
+            let previousFloatingButtonHeight = 0
+            let overflownContainerHeight = 0;
+            let useScrollOnly;
+            let shouldUseTouchAnimations;
+            let heightDelay
             const handleResultsWeGet = () => {
-                const floatingButtonSpaceToBottomScreen = fixBottomPaddingForSections('#section-Pu__96wdWR', false)
-                const sectionInner = document.querySelector('#section-Pu__96wdWR>.inner')
-                let wrapper = document.querySelector('#Pu__96wdWR-scroll-wrapper')
-                if (!wrapper) {
-                    wrapper = document.createElement('div')
-                    wrapper.setAttribute('id', 'Pu__96wdWR-scroll-wrapper')
-                }
-                wrapper.classList.add('Pu__96wdWR-scroll-wrapper')
-                let container = document.querySelector('#Pu__96wdWR-scroll-container')
-                if (!container) {
-                    container = document.createElement('div')
-                    container.setAttribute('id', 'Pu__96wdWR-scroll-container')
-                }
-                container.classList.add('Pu__96wdWR-scroll-container')
-                if (!layoutIsSet) {
-                    wrapper.appendChild(container)
-                }
-                const listIDs = [
-                    '#row-1vvhVUvfrt',
-                    '#row-TofV-PmQ9v',
-                    '#row-6fD-n-5gT1',
-                    '#row-sOt2BXksB9',
-                    '#row-HjVEF1Zc0t',
-                    '#row-YU0qo44sQD '
-                ]
-                const listElements = listIDs.map(id => document.querySelector(id))
-                if (!layoutIsSet) {
-                    listElements.forEach((element, index) => {
-                        container.appendChild(element)
-                    })
-                    sectionInner.append(wrapper)
-                }
                 const sectionHeight = sectionInner.offsetHeight;
                 const sectionTopPadding = parseInt(getComputedStyle(sectionInner).paddingTop)
                 const sectionBottomPadding = parseInt(getComputedStyle(sectionInner).paddingBottom)
                 const sectionInnerHeight = sectionHeight - sectionTopPadding - sectionBottomPadding
-                const title = document.querySelector('#row-lw7C8-dgr_')
-                const titleHeight = title.offsetHeight;
                 const freeHeight = sectionInnerHeight - titleHeight;
-                wrapper.style.height = `${freeHeight}px`
+                if (freeHeight !== previousFreeHeight || document.documentElement.clientWidth !== previousWidth || previousFloatingButtonHeight !== floatingButtonHeight) {
+                    previousFreeHeight = freeHeight;
+                    previousFloatingButtonHeight = floatingButtonHeight
+                    previousWidth = document.documentElement.clientWidth
+                    wrapper.style.height = `${freeHeight}px`
 
-                const containerHeight = container.offsetHeight;
-                const scrollShift = containerHeight - freeHeight + floatingButtonSpaceToBottomScreen
+                    overflownContainerHeight = containerHeight - freeHeight + floatingButtonHeight
 
+                    useAnyAnimation = overflownContainerHeight > 0
 
-                const useScrollOnly = scrollShift < 0
+                    const shouldUseTouchAnimations = getShouldUseTouchAnimations()
 
-                const heightDelay = useScrollOnly ? window.innerHeight / 2 : scrollShift;
-                const parentElement = handleCustomSticky('#section-Pu__96wdWR', heightDelay)
-
-                const changeDisplays = () => {
-
-                    const scrollPosition = window.scrollY
-                    const parentTopPosition = getElementFullOffsetTop(parentElement);
-                    const parentDistanceToTop = parentTopPosition - scrollPosition;
-                    const positiveDistance = parentDistanceToTop * -1
-
-                    if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay && !useScrollOnly) {
-                        changeButtonSubText('START YOUR TRANSFORMATION TODAY')
-                    } else if (parentDistanceToTop <= 0 && positiveDistance > heightDelay && positiveDistance <= heightDelay + window.innerHeight) {
-                        scrollToSection('#section-hYmwrwe-tQ')
+                    if (useAnyAnimation) {
+                        heightDelay = overflownContainerHeight
+                    } else if (shouldUseTouchAnimations) {
+                        heightDelay = 0
+                    } else {
+                        heightDelay = window.innerHeight / 2
                     }
-                    const translateY = (() => {
-                        if (parentDistanceToTop > 0) {
-                            return 0
-                        }
-                        if (parentDistanceToTop < heightDelay * -1) {
-                            return heightDelay * -1
-                        }
-                        return parentDistanceToTop
-                    })()
-                    container.style.transform = `translateY(${translateY}px)`
-                }
 
-                if (!layoutIsSet) {
-                    window.addEventListener('scroll', () => {
-                        setTimeout(() => {
-                            changeDisplays()
-                        }, 0)
-                    })
+                    const parentElement = handleCustomSticky('#section-Pu__96wdWR', heightDelay)
+
+                    const changeDisplays = () => {
+
+                        const scrollPosition = window.scrollY
+                        const parentTopPosition = getElementFullOffsetTop(parentElement);
+                        const parentDistanceToTop = parentTopPosition - scrollPosition;
+                        const positiveDistance = parentDistanceToTop * -1
+
+                        if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay && !useScrollOnly) {
+                            changeButtonSubText('START YOUR TRANSFORMATION TODAY')
+                            const translateY = (() => {
+                                if (parentDistanceToTop > 0) {
+                                    return 0
+                                }
+                                if (parentDistanceToTop < heightDelay * -1) {
+                                    return heightDelay * -1
+                                }
+                                return parentDistanceToTop
+                            })()
+                            container.style.transform = `translateY(${translateY}px)`
+                        } else if (parentDistanceToTop <= 0 && positiveDistance > heightDelay && positiveDistance <= heightDelay + window.innerHeight) {
+                            if (useAnyAnimation) {
+                                scrollToSection('#section-hYmwrwe-tQ')
+                            }
+                        }
+                    }
+
+                    if (!layoutIsSet) {
+                        window.addEventListener('scroll', () => {
+                            setTimeout(() => {
+                                changeDisplays()
+                            }, 0)
+                        })
+                    }
+                    changeDisplays()
+                    layoutIsSet = true
                 }
-                changeDisplays()
-                layoutIsSet = true
             }
 
             let resizeTimeout;
@@ -2462,8 +2429,10 @@
     const animateYesWeMeanIt = () => {
         try {
             let layoutIsSet = false
+            let heightDelay
+            fixBottomPaddingForSections('#section-hYmwrwe-tQ', false)
+            fixTopPaddingForSections('#section-hYmwrwe-tQ',)
             const handleYesWeMeanIt = () => {
-                const floatingButtonSpaceToBottomScreen = fixBottomPaddingForSections('#section-hYmwrwe-tQ', false)
                 const sectionInner = document.querySelector('#section-hYmwrwe-tQ>.inner')
                 let wrapper = document.querySelector('#tQ-scroll-wrapper')
                 if (!wrapper) {
@@ -2503,11 +2472,21 @@
                 wrapper.style.height = `${freeHeight}px`
 
                 const containerHeight = container.offsetHeight;
-                const scrollShift = containerHeight - freeHeight + floatingButtonSpaceToBottomScreen
+                const scrollShift = containerHeight - freeHeight + floatingButtonHeight
 
                 const useScrollOnly = scrollShift < 0
 
-                const heightDelay = useScrollOnly ? window.innerHeight / 2 : scrollShift;
+
+                const shouldUseTouchAnimations = getShouldUseTouchAnimations()
+
+                if (!useScrollOnly) {
+                    heightDelay = scrollShift
+                } else if (shouldUseTouchAnimations) {
+                    heightDelay = 10
+                } else {
+                    heightDelay = window.innerHeight / 2
+                }
+
                 const parentElement = handleCustomSticky('#section-hYmwrwe-tQ', heightDelay)
 
                 const changeDisplays = () => {
@@ -2569,9 +2548,10 @@
     const animateGuarantee = () => {
         try {
             let layoutIsSet = false
+            let heightDelay
+            fixBottomPaddingForSections('#section-sX4oEYBYhl', false)
+            fixTopPaddingForSections('#section-sX4oEYBYhl')
             const handleGuarantee = () => {
-                const floatingButtonSpaceToBottomScreen = fixBottomPaddingForSections('#section-sX4oEYBYhl', false)
-
                 const sectionInner = document.querySelector('#section-sX4oEYBYhl>.inner')
                 let wrapper = document.querySelector('#sX4oEYBYhl-scroll-wrapper')
                 if (!wrapper) {
@@ -2608,12 +2588,21 @@
                 wrapper.style.height = `${freeHeight}px`
 
                 const containerHeight = container.offsetHeight;
-                const scrollShift = containerHeight - freeHeight + floatingButtonSpaceToBottomScreen
+                const scrollShift = containerHeight - freeHeight + floatingButtonHeight
 
 
                 const useScrollOnly = scrollShift < 0
 
-                const heightDelay = useScrollOnly ? window.innerHeight / 2 : scrollShift;
+
+                const shouldUseTouchAnimations = getShouldUseTouchAnimations()
+
+                if (!useScrollOnly) {
+                    heightDelay = scrollShift
+                } else if (shouldUseTouchAnimations) {
+                    heightDelay = 10
+                } else {
+                    heightDelay = window.innerHeight / 2
+                }
                 const parentElement = handleCustomSticky('#section-sX4oEYBYhl', heightDelay)
 
                 const changeDisplays = () => {
@@ -2681,10 +2670,10 @@
     const animateWillThisWorkForYou = () => {
         try {
             let layoutIsSet = false
-
+            fixBottomPaddingForSections('#section-4czTLbhIWg', false)
+            fixTopPaddingForSections('#section-4czTLbhIWg')
+            let heightDelay
             const handleWillThisWorkForYou = () => {
-                const floatingButtonSpaceToBottomScreen = fixBottomPaddingForSections('#section-4czTLbhIWg', false)
-
                 const sectionInner = document.querySelector('#section-4czTLbhIWg>.inner')
                 let wrapper = document.querySelector('#czTLbhIWg-scroll-wrapper')
                 if (!wrapper) {
@@ -2725,12 +2714,20 @@
                 wrapper.style.height = `${freeHeight}px`
 
                 const containerHeight = container.offsetHeight;
-                const scrollShift = containerHeight - freeHeight + floatingButtonSpaceToBottomScreen
+                const scrollShift = containerHeight - freeHeight + floatingButtonHeight
 
 
                 const useScrollOnly = scrollShift < 0
+                const shouldUseTouchAnimations = getShouldUseTouchAnimations()
 
-                const heightDelay = useScrollOnly ? window.innerHeight / 2 : scrollShift;
+                if (!useScrollOnly) {
+                    heightDelay = scrollShift
+                } else if (shouldUseTouchAnimations) {
+                    heightDelay = 10
+                } else {
+                    heightDelay = window.innerHeight / 2
+                }
+
                 const parentElement = handleCustomSticky('#section-4czTLbhIWg', heightDelay)
 
                 const changeDisplays = () => {
@@ -2797,8 +2794,10 @@
     const animateWhatIfYourSituation = () => {
         try {
             let layoutIsSet = false
+            let heightDelay
+            fixBottomPaddingForSections('#section-WrgUhJoovE', false)
+            fixTopPaddingForSections('#section-WrgUhJoovE',)
             const handleYourSituation = () => {
-                const floatingButtonSpaceToBottomScreen = fixBottomPaddingForSections('#section-WrgUhJoovE', false)
                 const sectionInner = document.querySelector('#section-WrgUhJoovE>.inner')
                 let wrapper = document.querySelector('#WrgUhJoovE-scroll-wrapper')
                 if (!wrapper) {
@@ -2838,10 +2837,18 @@
                 wrapper.style.height = `${freeHeight}px`
 
                 const containerHeight = container.offsetHeight;
-                const scrollShift = containerHeight - freeHeight + floatingButtonSpaceToBottomScreen
+                const scrollShift = containerHeight - freeHeight + floatingButtonHeight;
                 const useScrollOnly = scrollShift < 0
 
-                const heightDelay = useScrollOnly ? window.innerHeight / 2 : scrollShift;
+                const shouldUseTouchAnimations = getShouldUseTouchAnimations()
+
+                if (!useScrollOnly) {
+                    heightDelay = scrollShift
+                } else if (shouldUseTouchAnimations) {
+                    heightDelay = 10
+                } else {
+                    heightDelay = window.innerHeight / 2
+                }
                 const parentElement = handleCustomSticky('#section-WrgUhJoovE', heightDelay)
 
                 const changeDisplays = () => {
@@ -2905,9 +2912,10 @@
         try {
 
             let layoutIsSet = false
-
+            fixBottomPaddingForSections('#section-1X7C4wa4u_', false)
+            fixTopPaddingForSections('#section-1X7C4wa4u_',)
+            let heightDelay
             const handleStillNotSure = () => {
-                const floatingButtonSpaceToBottomScreen = fixBottomPaddingForSections('#section-1X7C4wa4u_', false)
                 const sectionInner = document.querySelector('#section-1X7C4wa4u_>.inner')
                 let wrapper = document.querySelector('#X7C4wa4u_sc')
                 if (!wrapper) {
@@ -2948,11 +2956,18 @@
                 wrapper.style.height = `${freeHeight}px`
 
                 const containerHeight = container.offsetHeight;
-                const scrollShift = containerHeight - freeHeight + floatingButtonSpaceToBottomScreen
+                const scrollShift = containerHeight - freeHeight + floatingButtonHeight
 
                 const useScrollOnly = scrollShift < 0
+                const shouldUseTouchAnimations = getShouldUseTouchAnimations()
 
-                const heightDelay = useScrollOnly ? window.innerHeight / 2 : scrollShift;
+                if (!useScrollOnly) {
+                    heightDelay = scrollShift
+                } else if (shouldUseTouchAnimations) {
+                    heightDelay = 10
+                } else {
+                    heightDelay = window.innerHeight / 2
+                }
                 const parentElement = handleCustomSticky('#section-1X7C4wa4u_', heightDelay)
 
 
