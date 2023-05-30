@@ -1,7 +1,6 @@
 <script src="https://player.vimeo.com/api/player.js"></script>
 <script>
 
-
     // =====================================
     // START HELPER  FUNCTIONS
     // =====================================
@@ -29,7 +28,6 @@
         });
         return isTouchDevice && isMobile && !isDesktopOrLaptop();
     }
-
 
     let isScrolledUpOrDown = 'down'
     const getIsScrolledUpOrDown = () => {
@@ -294,10 +292,7 @@
                 }, 0)
             }
 
-            const forLargeScreensAbove1024 = () => {
-                toggleNavBars();
-                window.addEventListener('scroll', scrollingEventHandlerForNavbar);
-            }
+
 
             const openButton = document.querySelector('#image-M_5uM8v5BD')
             const closeButton = document.querySelector('#image-aaYcYZIx-9')
@@ -313,17 +308,30 @@
                 mobileNavbar.classList.remove('active')
             }
 
-
+            let eventListenerAdded = false
+            const forLargeScreensAbove1024 = () => {
+                header.style = ''
+                toggleNavBars();
+                if (!eventListenerAdded) {
+                    window.addEventListener('scroll', scrollingEventHandlerForNavbar);
+                    eventListenerAdded = true
+                }
+            }
+            let eventSmallListenerAdded = false
 
             const forSmallScreensBelow1024 = () => {
+                window.removeEventListener('scroll', scrollingEventHandlerForNavbar);
                 closeMobileNavbar();
-                openButton.addEventListener('click', openMobileNavbar)
-                closeButton.addEventListener('click', closeMobileNavbar)
+                if (!eventSmallListenerAdded) {
+                    openButton.addEventListener('click', openMobileNavbar)
+                    closeButton.addEventListener('click', closeMobileNavbar)
+                    mobileNavAnchors.forEach(mobileNavAnchor => {
+                        mobileNavAnchor.addEventListener('click', closeMobileNavbar)
+                    })
+                    eventSmallListenerAdded = true
+                }
                 header.style.marginTop = `${mobileNavParent.offsetHeight}px`
                 navBarHeight = parseInt(mobileNavParent.offsetHeight);
-                mobileNavAnchors.forEach(mobileNavAnchor => {
-                    mobileNavAnchor.addEventListener('click', closeMobileNavbar)
-                })
             }
 
             const logoImage = document.querySelector('#nav-menu-5tdLVoJjnG img')
@@ -343,24 +351,10 @@
                 }
             }
 
-            let resizeTimeout;
+            setInterval(() => {
+                handleNavbar();
+            }, 1000);
 
-            const handleWindowResize = () => {
-                clearTimeout(resizeTimeout);
-                resizeTimeout = setTimeout(() => {
-                    window.removeEventListener('scroll', scrollingEventHandlerForNavbar);
-                    openButton.removeEventListener('click', openMobileNavbar)
-                    closeButton.removeEventListener('click', closeMobileNavbar)
-                    header.style = ''
-                    mobileNavAnchors.forEach(mobileNavAnchor => {
-                        mobileNavAnchor.removeEventListener('click', closeMobileNavbar)
-                    })
-                    handleNavbar();
-                }, 1000);
-            }
-
-            handleNavbar();
-            window.addEventListener('resize', handleWindowResize);
         } catch (error) {
             console.log('animateNavBar', error);
         }
@@ -419,33 +413,36 @@
 
 
             const handleButtons = () => {
-                setTimeout(() => {
-                    handleStickyButton()
-                }, 0)
+                handleStickyButton()
             }
 
+            let parentAppended = false
+            let insertBefore = false
+            let eventScrollHandled = false
             const handleHeader = () => {
                 if (document.documentElement.clientWidth > 1024) {
-                    parent.appendChild(threeMonths)
+                    if (!parentAppended) {
+                        parent.appendChild(threeMonths)
+                        parentAppended = true
+                    }
                 } else {
-                    sectionInner.insertBefore(threeMonths, parent)
+                    if (!insertBefore) {
+                        sectionInner.insertBefore(threeMonths, parent)
+                        insertBefore = true
+                    }
                 }
-                window.addEventListener('scroll', handleButtons)
-                handleButtons()
+                if (!eventScrollHandled) {
+                    window.addEventListener('scroll', handleButtons)
+                    handleButtons()
+                    eventScrollHandled = true
+                }
             }
 
-            let resizeTimeout;
 
-            const handleWindowResize = () => {
-                clearTimeout(resizeTimeout);
-                window.removeEventListener('scroll', handleButtons)
-                resizeTimeout = setTimeout(() => {
-                    handleHeader();
-                }, 1000);
-            }
+            setInterval(() => {
+                handleHeader();
+            }, 1000);
 
-            handleHeader();
-            window.addEventListener('resize', handleWindowResize);
         } catch (error) {
             console.log('animateHeader', error);
         }
@@ -462,44 +459,52 @@
     // =====================================
 
 
-    const animatesBeforeAndAfter = () => {
+
+    const animatesBeforeAndAfterNoScrollAnimation = () => {
         try {
             let layoutAlreadySet = false;
             let forceScrollPositionTimeoutID;
             let forceSnapTimeoutID;
-            const section = document.querySelector('#section-6KNcZ1CMyo')
-            section.style.display = 'none'
-            return
+            fixBottomPaddingForSections('#section-6KNcZ1CMyo')
+            fixTopPaddingForSections('#section-6KNcZ1CMyo')
+            const rowIDs = [
+                '#row-1CvP7CZYAM',
+                '#row-jIpu4rvCzI',
+                '#row-zh6mu-2hP1',
+                '#row-xq5TdFlW8B'
+            ]
+            const rows = rowIDs.map(id => document.querySelector(id))
+            const dots = document.querySelectorAll('#col-vVEf2kCcgf>.inner>div')
+            const max = rowIDs.length;
+
+            const getMaxHeightOfAllRows = () => {
+                let maxHeightOfRows = 0;
+                for (let index = 0; index < max; index++) {
+                    const row = rows[index];
+                    row.style.height = "auto"
+                    row.style.display = "block"
+                    maxHeightOfRows = maxHeightOfRows < row.offsetHeight ? row.offsetHeight : maxHeightOfRows
+                    row.style.height = "100%"
+                }
+                return maxHeightOfRows
+            }
+
+            const containerID = 'before-after-stack-container';
+            let container;
+            const buttonSubTexts = [
+                'EMPOWER YOUR OPERATIONS TODAY',
+                'STREAMLINE YOUR BUSINESS TODAY',
+                'FIX OPERATIONAL ERRORS TODAY',
+                'UNLOCK YOUR FULL BUSINESS POTENTIAL'
+            ]
+
             const setLayout = () => {
                 clearTimeout(forceScrollPositionTimeoutID)
                 clearTimeout(forceSnapTimeoutID)
-                fixBottomPaddingForSections('#section-6KNcZ1CMyo')
-                const rowIDs = [
-                    '#row-1CvP7CZYAM',
-                    '#row-jIpu4rvCzI',
-                    '#row-zh6mu-2hP1',
-                    '#row-xq5TdFlW8B'
-                ]
-                const rows = rowIDs.map(id => document.querySelector(id))
-                const max = rowIDs.length;
-                const dots = document.querySelectorAll('#col-vVEf2kCcgf>.inner>div')
-
-
-                const getMaxHeightOfAllRows = () => {
-                    let maxHeightOfRows = 0;
-                    for (let index = 0; index < max; index++) {
-                        const row = rows[index];
-                        row.style.height = "auto"
-                        row.style.display = "block"
-                        maxHeightOfRows = maxHeightOfRows < row.offsetHeight ? row.offsetHeight : maxHeightOfRows
-                        row.style.height = "100%"
-                    }
-                    return maxHeightOfRows
-                }
-                const containerID = 'before-after-stack-container'
                 const containerHeight = getMaxHeightOfAllRows();
-                let container;
+
                 const formCube = () => {
+
                     if (!layoutAlreadySet) {
                         container = document.createElement('div');
                         container.classList.add('stack-container');
@@ -507,16 +512,18 @@
                     } else {
                         container = document.querySelector(`#${containerID}`)
                     }
+
                     container.style.height = `${containerHeight}px`;
 
                     if (!layoutAlreadySet) {
                         rows[0].parentNode.appendChild(container);
                     }
+
                     return rows.map((row, index) => {
                         let stackChild = document.querySelector(`#stack-child-${index}`)
                         if (!stackChild) {
-                            stackChild = document.createElement('div')
-                            stackChild.setAttribute('id', `stack-child-${index}`)
+                            stackChild = document.createElement('div');
+                            stackChild.setAttribute('id', `stack-child-${index}`);
                             stackChild.classList.add('stack-child')
                             row.classList.add('stack-main-row')
                             const cols = row.querySelectorAll(`#${row.id}>.inner>div`)
@@ -532,85 +539,13 @@
                 }
 
 
-                const stackChildren = formCube()
-
-                const heightDelay = stackChildren[0].offsetHeight * 6
-
-                const buttonSubTexts = [
-                    'EMPOWER YOUR OPERATIONS TODAY',
-                    'STREAMLINE YOUR BUSINESS TODAY',
-                    'FIX OPERATIONAL ERRORS TODAY',
-                    'UNLOCK YOUR FULL BUSINESS POTENTIAL'
-                ]
+                const stackChildren = formCube();
 
 
-                const changeDisplays = (count = 0, positiveDistance) => {
-                    clearTimeout(forceSnapTimeoutID)
-                    for (let index = 0; index < max; index++) {
-                        const stackChild = stackChildren[index];
-                        const dot = dots[index];
-                        stackChild.style.transition = 'transform 0.3s'
-                        if (count > index || index === 0) {
-                            stackChild.style.transform = 'translateY(0)'
-                            dot.classList.add('active')
-                        } else if (count === index) {
-                            if (positiveDistance) {
-                                const actualCount = (positiveDistance / heightDelay) * 4
-                                const remainder = actualCount - count;
-                                const remainderInPercentage = remainder * 100;
-                                let translateY = 100 - remainderInPercentage;
-                                // translateY = translateY < 0 ? 0 : translateY
-                                // if (translateY < 20 && isScrolledUpOrDown === 'down') {
-                                //     stackChild.style.transition = 'transform 0.3s'
-                                //     forceSnapTimeoutID = setTimeout(() => {
-                                //         stackChild.style.transition = 'none'
-                                //     }, 300);
-                                //     translateY = 0
-                                // } else if (translateY > 80 && isScrolledUpOrDown === 'up') {
-                                //     stackChild.style.transition = 'transform 0.3s'
-                                //     forceSnapTimeoutID = setTimeout(() => {
-                                //         stackChild.style.transition = 'none'
-                                //     }, 300);
-                                //     translateY = 100
-                                // }
-                                stackChild.style.transform = `translateY(${translateY}%)`
-                                // stackChild.classList.remove('hide')
-                                if (translateY < 50) {
-                                    dot.classList.add('active')
-                                }
-                                // if (translateY !== 0 && translateY !== 100) {
-                                //     forceScrollPositionTimeoutID = setTimeout(() => {
-                                //         if (isScrolledUpOrDown === 'down') {
-                                //             stackChild.style.transition = 'transform 0.3s'
-                                //             forceSnapTimeoutID = setTimeout(() => {
-                                //                 stackChild.style.transition = 'none'
-                                //             }, 300);
-                                //             stackChild.style.transform = `translateY(0%)`
-                                //         } else {
-                                //             stackChild.style.transition = 'transform 0.3s'
-                                //             forceSnapTimeoutID = setTimeout(() => {
-                                //                 stackChild.style.transition = 'none'
-                                //             }, 300);
-                                //             stackChild.style.transform = `translateY(100%)`
-                                //             dot.classList.remove('active')
-                                //         }
-                                //     }, 200);
-                                // }
-                            } else {
-                                stackChild.style.transform = 'translateY(0%)'
-                                dot.classList.add('active')
-                            }
-                        } else {
-                            stackChild.style.transform = 'translateY(100%)'
-                            // stackChild.classList.add('hide')
-                            dot.classList.remove('active')
-                        }
-                    }
-                }
-                changeDisplays();
 
-
+                const heightDelay = stackChildren[0].offsetHeight * 6;
                 const parentElement = handleCustomSticky('#section-6KNcZ1CMyo', heightDelay)
+
 
                 let isScrolling = false;
                 let isScrollingTimeOutID;
@@ -618,7 +553,52 @@
                 const scrollPositionToIndex = {}
                 let isCrossedCount = false;
                 let justEnteredFromAbove = false;
-                let isPresentlyAbove = false
+                let isPresentlyAbove = false;
+
+
+                const changeDisplays = (count = 0, scrollPosition = 0) => {
+                    clearTimeout(forceSnapTimeoutID)
+                    if (shouldUseTouchAnimations) {
+                        for (let index = 0; index < max; index++) {
+                            const stackChild = stackChildren[index];
+                            const dot = dots[index];
+                            stackChild.style.transition = 'none'
+                            if (count > index || index === 0) {
+                                stackChild.style.transform = 'translateY(0)'
+                                dot.classList.add('active')
+                            } else if (count === index) {
+                                const countScrollPosition = scrollPositionToIndex[count]
+                                const remainder = countScrollPosition - scrollPosition;
+                                const maxRemainder = countScrollPosition - scrollPositionToIndex[count - 1]
+                                const remainderInPercentage = (remainder / maxRemainder) * 100;
+                                let translateY = remainderInPercentage
+                                stackChild.style.transform = `translateY(${translateY}%)`
+                                if (translateY < 50) {
+                                    dot.classList.add('active')
+                                }
+                            } else {
+                                stackChild.style.transform = 'translateY(100%)'
+                                dot.classList.remove('active')
+                            }
+                        }
+
+                    } else {
+                        for (let index = 0; index < max; index++) {
+                            const stackChild = stackChildren[index];
+                            const dot = dots[index];
+                            stackChild.style.transition = 'transform 0.3s'
+                            if (count >= index || index === 0) {
+                                stackChild.style.transform = 'translateY(0)'
+                                dot.classList.add('active')
+                            } else {
+                                stackChild.style.transform = 'translateY(100%)'
+                                dot.classList.remove('active')
+                            }
+                        }
+                    }
+
+                }
+                changeDisplays();
 
                 const logTheScrollPositionsOfTheseIndex = () => {
                     for (let index = 0; index < 4; index++) {
@@ -631,13 +611,8 @@
                 }
                 logTheScrollPositionsOfTheseIndex()
 
-                const autoScroll = (index) => {
+                const autoScroll = (index, behavior = 'instant') => {
                     const scrollPosition = scrollPositionToIndex[index];
-                    const behavior = 'instant'
-                    // if ((scrollPosition === undefined || scrollPosition === null) && index > Object.values(scrollPositionToIndex).length - 1) {
-                    //     scrollPosition = scrollPositionToIndex[Object.values(scrollPositionToIndex).length - 1] + (scrollPositionToIndex[Object.values(scrollPositionToIndex).length - 1] - scrollPositionToIndex[Object.values(scrollPositionToIndex).length - 2]) + (window.innerHeight / 3)
-                    //     behavior = 'smooth'
-                    // }
                     if (scrollPosition) {
                         window.scrollTo({
                             top: scrollPosition,
@@ -740,7 +715,7 @@
                     if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay) {
                         const count = getCountFromScrollPosition(scrollPosition)
                         if (count !== null) {
-                            changeDisplays(count)
+                            changeDisplays(count, scrollPosition)
                             changeButtonSubText(buttonSubTexts[count])
                             if (previousCount !== count) {
                                 previousCount = count;
@@ -787,6 +762,292 @@
             console.log('animatesBeforeAndAfter', error);
         }
 
+    }
+
+
+    const animatesBeforeAndAfterScrollAnimation = () => {
+        try {
+            let layoutAlreadySet = false;
+            let forceScrollPositionTimeoutID;
+            let forceSnapTimeoutID;
+            fixBottomPaddingForSections('#section-6KNcZ1CMyo')
+            fixTopPaddingForSections('#section-6KNcZ1CMyo')
+            const rowIDs = [
+                '#row-1CvP7CZYAM',
+                '#row-jIpu4rvCzI',
+                '#row-zh6mu-2hP1',
+                '#row-xq5TdFlW8B'
+            ]
+            const rows = rowIDs.map(id => document.querySelector(id))
+            const dots = document.querySelectorAll('#col-vVEf2kCcgf>.inner>div')
+            const max = rowIDs.length;
+
+            const getMaxHeightOfAllRows = () => {
+                let maxHeightOfRows = 0;
+                for (let index = 0; index < max; index++) {
+                    const row = rows[index];
+                    row.style.height = "auto"
+                    row.style.display = "block"
+                    maxHeightOfRows = maxHeightOfRows < row.offsetHeight ? row.offsetHeight : maxHeightOfRows
+                    row.style.height = "100%"
+                }
+                return maxHeightOfRows
+            }
+
+            const containerID = 'before-after-stack-container';
+            let container;
+            const buttonSubTexts = [
+                'EMPOWER YOUR OPERATIONS TODAY',
+                'STREAMLINE YOUR BUSINESS TODAY',
+                'FIX OPERATIONAL ERRORS TODAY',
+                'UNLOCK YOUR FULL BUSINESS POTENTIAL'
+            ]
+
+            let isScrolling = false;
+            let isScrollingTimeOutID;
+            let previousCount = 0
+            const scrollPositionToIndex = {}
+            let isCrossedCount = false;
+            let justEnteredFromAbove = false;
+            let isPresentlyAbove = false;
+
+            const setLayout = () => {
+                const containerHeight = getMaxHeightOfAllRows();
+
+                const formCube = () => {
+
+                    if (!layoutAlreadySet) {
+                        container = document.createElement('div');
+                        container.classList.add('stack-container');
+                        container.setAttribute('id', containerID);
+                    } else {
+                        container = document.querySelector(`#${containerID}`)
+                    }
+
+                    if (!layoutAlreadySet) {
+                        container.style.height = `${containerHeight}px`;
+                    }
+                    if (!layoutAlreadySet) {
+                        rows[0].parentNode.appendChild(container);
+                    }
+
+                    return rows.map((row, index) => {
+                        let stackChild = document.querySelector(`#stack-child-${index}`)
+                        if (!stackChild) {
+                            stackChild = document.createElement('div');
+                            stackChild.setAttribute('id', `stack-child-${index}`);
+                            stackChild.classList.add('stack-child')
+                            row.classList.add('stack-main-row')
+                            const cols = row.querySelectorAll(`#${row.id}>.inner>div`)
+                            cols.forEach(col => {
+                                col.classList.add('stack-main-col')
+                            })
+                            stackChild.appendChild(row)
+                            container.appendChild(stackChild)
+                            return stackChild
+                        }
+                        return stackChild
+                    })
+                }
+
+
+                const stackChildren = formCube();
+
+
+
+                const heightDelay = max * containerHeight
+                const parentElement = handleCustomSticky('#section-6KNcZ1CMyo', heightDelay)
+
+
+
+
+
+                const changeDisplays = (count = 0, scrollPosition = 0) => {
+                    clearTimeout(forceSnapTimeoutID)
+                    for (let index = 0; index < max; index++) {
+                        const stackChild = stackChildren[index];
+                        const dot = dots[index];
+                        stackChild.style.transition = 'none'
+                        if (count > index || index === 0) {
+                            stackChild.style.transform = 'translateY(0)'
+                            dot.classList.add('active')
+                        } else if (count === index) {
+                            const countScrollPosition = scrollPositionToIndex[count]
+                            const remainder = countScrollPosition - scrollPosition;
+                            const maxRemainder = countScrollPosition - scrollPositionToIndex[count - 1]
+                            const remainderInPercentage = (remainder / maxRemainder) * 100;
+                            let translateY = remainderInPercentage
+                            stackChild.style.transform = `translateY(${translateY}%)`
+                            if (translateY < 50) {
+                                dot.classList.add('active')
+                            }
+                        } else {
+                            stackChild.style.transform = 'translateY(100%)'
+                            dot.classList.remove('active')
+                        }
+                    }
+                }
+
+                const logTheScrollPositionsOfTheseIndex = () => {
+                    for (let index = 0; index < 4; index++) {
+                        const positiveDistance = ((index + 1) * heightDelay) / 4
+                        const parentDistanceToTop = positiveDistance * -1;
+                        const parentTopPosition = getElementFullOffsetTop(parentElement);
+                        const scrollPosition = parentTopPosition - parentDistanceToTop;
+                        scrollPositionToIndex[index] = scrollPosition
+                    }
+                }
+                logTheScrollPositionsOfTheseIndex()
+
+                const autoScroll = (index, behavior = 'smooth') => {
+                    const scrollPosition = scrollPositionToIndex[index];
+                    if (scrollPosition) {
+                        window.scrollTo({
+                            top: scrollPosition,
+                            left: 0,
+                            behavior
+                        })
+                    }
+                }
+
+
+                const handleDotsEventListeners = () => {
+                    dots.forEach((dot, index) => {
+                        dot.addEventListener('click', () => {
+                            autoScroll(index)
+                        })
+                    })
+                }
+
+                if (!layoutAlreadySet) {
+                    handleDotsEventListeners()
+                }
+
+                const getCountFromScrollPosition = (scrollPosition) => {
+                    for (let index = 0; index < 4; index++) {
+                        const min = Object.values(scrollPositionToIndex)[index - 1]
+                        const max = Object.values(scrollPositionToIndex)[index];
+                        if (index === 0 && scrollPosition <= max) {
+                            return index
+                        }
+                        if (scrollPosition > min && scrollPosition <= max) {
+                            return index
+                        }
+                    }
+                    return null
+                }
+
+                const getBoundingIndexes = (scrollPosition) => {
+                    for (let index = 0; index < 4; index++) {
+                        const min = Object.values(scrollPositionToIndex)[index - 1]
+                        const max = Object.values(scrollPositionToIndex)[index];
+                        if (index === 0 && scrollPosition <= max) {
+                            return [null, index]
+                        }
+                        if (scrollPosition > min && scrollPosition <= max) {
+                            return [index - 1, index]
+                        }
+                    }
+                    return [null, null]
+                }
+
+                const getIsNotHalfPastZero = (scrollPosition) => {
+                    const zeroScrollPosition = scrollPositionToIndex[0]
+                    const oneThScrollPosition = scrollPositionToIndex[1]
+                    const difference = oneThScrollPosition - zeroScrollPosition;
+                    const half = difference / 2
+                    return !(scrollPosition > zeroScrollPosition && scrollPosition < half)
+                }
+
+                if (!layoutAlreadySet) {
+                    setInterval(() => {
+                        if (!isScrolling) {
+                            const scrollPosition = window.scrollY
+                            const parentTopPosition = getElementFullOffsetTop(parentElement);
+                            const parentDistanceToTop = parentTopPosition - scrollPosition;
+                            const positiveDistance = parentDistanceToTop * -1;
+                            if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay) {
+                                if (!Object.values(scrollPositionToIndex).includes(scrollPosition) && !isCrossedCount) {
+                                    const [min, max] = getBoundingIndexes(scrollPosition)
+                                    const count = isScrolledUpOrDown === 'up' ? min : max;
+                                    if (count !== null) {
+                                        // if (justEnteredFromAbove && count > 0) {
+                                        //     autoScroll(count - 1)
+                                        //     justEnteredFromAbove = false
+                                        // } else {
+                                        autoScroll(count)
+                                        // }
+                                    }
+                                }
+                            }
+                        }
+                    }, 100);
+                }
+                const scrollEventHandler = () => {
+                    clearTimeout(isScrollingTimeOutID)
+                    isScrolling = true
+                    isScrollingTimeOutID = setTimeout(() => {
+                        isScrolling = false
+                        if (isPresentlyAbove) {
+                            justEnteredFromAbove = true
+                            isPresentlyAbove = false
+                        } else {
+                            justEnteredFromAbove = false
+                        }
+                    }, 200)
+                    const scrollPosition = window.scrollY
+                    const parentTopPosition = getElementFullOffsetTop(parentElement);
+                    const parentDistanceToTop = parentTopPosition - scrollPosition;
+                    const positiveDistance = parentDistanceToTop * -1
+                    let changeButtonText = false;
+                    if (parentDistanceToTop <= 0 && positiveDistance <= heightDelay) {
+                        const count = getCountFromScrollPosition(scrollPosition)
+                        if (count !== null) {
+                            changeDisplays(count, scrollPosition)
+                            changeButtonSubText(buttonSubTexts[count])
+                            if (previousCount !== count) {
+                                previousCount = count;
+                                isCrossedCount = true
+                            } else {
+                                isCrossedCount = false
+                            }
+                        }
+
+                    } else if (parentDistanceToTop <= 0 && positiveDistance > heightDelay + window.innerHeight / 2 && positiveDistance <= heightDelay + window.innerHeight) {
+                        isPresentlyAbove = false
+                    } else if (parentDistanceToTop > 0) {
+                        isPresentlyAbove = true
+                    }
+                }
+
+
+
+                if (!layoutAlreadySet) {
+                    window.addEventListener('scroll', scrollEventHandler)
+                    changeDisplays();
+                    scrollEventHandler()
+                }
+                layoutAlreadySet = true
+            }
+
+
+
+            setInterval(setLayout, 1000);
+
+        } catch (error) {
+            console.log('animatesBeforeAndAfter', error);
+        }
+
+    }
+
+
+    const animatesBeforeAndAfter = () => {
+        const shouldUseTouchAnimations = getShouldUseTouchAnimations()
+        if (shouldUseTouchAnimations) {
+            animatesBeforeAndAfterScrollAnimation()
+        } else {
+            animatesBeforeAndAfterNoScrollAnimation()
+        }
     }
     animatesBeforeAndAfter();
 
@@ -2986,10 +3247,9 @@
 
     animateFooter()
 
-    // =====================================
-    // END FOOTER
-    // =====================================
-
+        // =====================================
+        // END FOOTER
+        // =====================================
 
 
 </script>
